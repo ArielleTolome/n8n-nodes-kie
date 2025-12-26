@@ -33,7 +33,8 @@
 	"n8n": {
 		"n8nNodesApiVersion": 1,
 		"nodes": [
-			"dist/nodes/Seedream/Seedream.node.js"
+			"dist/nodes/Seedream/Seedream.node.js",
+			"dist/nodes/Sora2/Sora2.node.js"
 		],
 		"credentials": [
 			"dist/credentials/KieAiApi.credentials.js"
