@@ -109,10 +109,12 @@ export class Seedream implements INodeType {
 				placeholder: 'Draw the following system of binary linear equations...',
 			},
 			{
-				displayName: 'Input Image URL',
-				name: 'imageUrl',
-				type: 'string',
-				required: true,
+				displayName: 'Input Images',
+				name: 'inputImages',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
 				displayOptions: {
 					show: {
 						resource: ['job'],
@@ -120,9 +122,24 @@ export class Seedream implements INodeType {
 						model: ['bytedance/seedream-v4-edit'],
 					},
 				},
-				default: '',
-				description: 'URL of the input image to edit. For multiple images, separate by comma.',
-				placeholder: 'https://example.com/image.png',
+				default: {},
+				placeholder: 'Add Image',
+				options: [
+					{
+						displayName: 'Image',
+						name: 'image',
+						values: [
+							{
+								displayName: 'Image URL',
+								name: 'url',
+								type: 'string',
+								default: '',
+								placeholder: 'https://example.com/image.png',
+							},
+						],
+					},
+				],
+				description: 'URLs of the input images to edit',
 			},
 			{
 				displayName: 'Image Size',
@@ -291,6 +308,7 @@ export class Seedream implements INodeType {
 			try {
 				if (resource === 'job') {
 					if (operation === 'createTask') {
+						const model = this.getNodeParameter('model', i) as string;
 						const prompt = this.getNodeParameter('prompt', i) as string;
 						const imageSize = this.getNodeParameter('imageSize', i) as string;
 						const imageResolution = this.getNodeParameter('imageResolution', i) as string;
@@ -299,7 +317,7 @@ export class Seedream implements INodeType {
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
 
 						const body: IDataObject = {
-							model: 'bytedance/seedream-v4-text-to-image',
+							model,
 							input: {
 								prompt,
 								image_size: imageSize,
@@ -307,6 +325,17 @@ export class Seedream implements INodeType {
 								max_images: maxImages,
 							},
 						};
+
+						if (model === 'bytedance/seedream-v4-edit') {
+							// @ts-ignore
+							const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
+							const images = (inputImages?.image as IDataObject[]) || [];
+							const imageUrls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
+							
+							if (imageUrls.length > 0) {
+								(body.input as IDataObject).image_urls = imageUrls;
+							}
+						}
 
 						if (seed && seed !== 0) {
 							(body.input as IDataObject).seed = seed;
@@ -318,7 +347,7 @@ export class Seedream implements INodeType {
 
 						const response = await this.helpers.httpRequestWithAuthentication.call(
 							this,
-							'seedreamApi',
+							'kieAiApi',
 							{
 								method: 'POST',
 								url: 'https://api.kie.ai/api/v1/jobs/createTask',
@@ -336,7 +365,7 @@ export class Seedream implements INodeType {
 
 						const response = await this.helpers.httpRequestWithAuthentication.call(
 							this,
-							'seedreamApi',
+							'kieAiApi',
 							{
 								method: 'GET',
 								url: `https://api.kie.ai/api/v1/jobs/recordInfo`,
