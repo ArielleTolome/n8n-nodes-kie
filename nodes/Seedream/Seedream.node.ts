@@ -22,7 +22,7 @@ export class Seedream implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'seedreamApi',
+				name: 'kieAiApi',
 				required: true,
 			},
 		],
@@ -68,6 +68,30 @@ export class Seedream implements INodeType {
 				default: 'createTask',
 				required: true,
 			},
+			{
+				displayName: 'Model',
+				name: 'model',
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['createTask'],
+					},
+				},
+				options: [
+					{
+						name: 'Seedream V4 Text to Image',
+						value: 'bytedance/seedream-v4-text-to-image',
+					},
+					{
+						name: 'Seedream V4 Edit',
+						value: 'bytedance/seedream-v4-edit',
+					},
+				],
+				default: 'bytedance/seedream-v4-text-to-image',
+				description: 'The AI model to use for generation',
+				required: true,
+			},
 			// Create Task parameters
 			{
 				displayName: 'Prompt',
@@ -81,8 +105,24 @@ export class Seedream implements INodeType {
 					},
 				},
 				default: '',
-				description: 'The text prompt used to generate the image (max 5000 characters)',
+				description: 'The text prompt used to generate or edit the image (max 5000 characters)',
 				placeholder: 'Draw the following system of binary linear equations...',
+			},
+			{
+				displayName: 'Input Image URL',
+				name: 'imageUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['createTask'],
+						model: ['bytedance/seedream-v4-edit'],
+					},
+				},
+				default: '',
+				description: 'URL of the input image to edit. For multiple images, separate by comma.',
+				placeholder: 'https://example.com/image.png',
 			},
 			{
 				displayName: 'Image Size',

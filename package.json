@@ -1,7 +1,7 @@
 {
-	"name": "@myspacet_ai/n8n-nodes-seedream",
-	"version": "1.2.1",
-	"description": "n8n node for Seedream V4 Text To Image API",
+	"name": "@myspacet_ai/n8n-nodes-ai-hub",
+	"version": "1.0.0",
+	"description": "AI Hub for n8n by MySpacet - All-in-one collection of AI services from Kie.ai",
 	"keywords": [
 		"n8n-community-node-package",
 		"seedream",
@@ -36,7 +36,7 @@
 			"dist/nodes/Seedream/Seedream.node.js"
 		],
 		"credentials": [
-			"dist/credentials/SeedreamApi.credentials.js"
+			"dist/credentials/KieAiApi.credentials.js"
 		]
 	},
 	"devDependencies": {

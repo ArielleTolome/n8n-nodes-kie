@@ -6,13 +6,13 @@ USER root
 RUN mkdir -p /home/node/.n8n/custom
 
 # Копируем архив
-COPY myspacet_ai-n8n-nodes-seedream-1.1.2.tgz /home/node/.n8n/custom/
+COPY myspacet_ai-n8n-nodes-ai-hub-1.0.0.tgz /home/node/.n8n/custom/
 
 # Переходим в папку custom
 WORKDIR /home/node/.n8n/custom
 
 # Устанавливаем пакет (это распакует его и установит зависимости, если они есть)
-RUN npm install myspacet_ai-n8n-nodes-seedream-1.1.2.tgz
+RUN npm install myspacet_ai-n8n-nodes-ai-hub-1.0.0.tgz
 
 # Возвращаем права пользователю node
 RUN chown -R node:node /home/node/.n8n
