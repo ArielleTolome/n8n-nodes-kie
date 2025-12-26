@@ -10,10 +10,10 @@ export class Sora2 implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Sora 2 Pro',
 		name: 'sora2',
-		icon: 'file:seedream-logo4.svg', // Можно будет заменить на Sora иконку позже
+		icon: 'file:sora-bubble.svg',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		subtitle: '={{$parameter["operation"]}}',
 		description: 'Generate videos using Sora 2 Pro Text To Video API',
 		defaults: {
 			name: 'Sora 2 Pro',
@@ -142,16 +142,30 @@ export class Sora2 implements INodeType {
 				},
 				options: [
 					{
-						name: 'High',
+						name: 'High (1080p)',
 						value: 'high',
 					},
 					{
-						name: 'Standard',
+						name: 'Standard (720p)',
 						value: 'standard',
 					},
 				],
 				default: 'high',
 				description: 'The quality or size of the generated video',
+			},
+			{
+				displayName: 'Character IDs',
+				name: 'characterIds',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['createTask'],
+					},
+				},
+				default: '',
+				description: 'Optional list of character IDs for consistent character generation (comma-separated)',
+				placeholder: 'char_12345, char_67890',
 			},
 			{
 				displayName: 'Remove Watermark',
@@ -179,6 +193,18 @@ export class Sora2 implements INodeType {
 				default: '',
 				description: 'Optional callback URL for task completion notifications',
 				placeholder: 'https://your-domain.com/api/callback',
+			},
+			{
+				displayName: 'Инструкции по настройке и примеры использования в телеграм канале <a href="https://t.me/myspacet_ai" target="_blank">https://t.me/myspacet_ai</a>',
+				name: 'telegramNotice',
+				type: 'notice',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['createTask'],
+					},
+				},
+				default: '',
 			},
 			// Query Task Status parameters
 			{
@@ -214,6 +240,7 @@ export class Sora2 implements INodeType {
 						const nFrames = this.getNodeParameter('nFrames', i) as string;
 						const size = this.getNodeParameter('size', i) as string;
 						const removeWatermark = this.getNodeParameter('removeWatermark', i) as boolean;
+						const characterIds = this.getNodeParameter('characterIds', i, '') as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
 
 						const body: IDataObject = {
@@ -226,6 +253,10 @@ export class Sora2 implements INodeType {
 								remove_watermark: removeWatermark,
 							},
 						};
+
+						if (characterIds && characterIds.trim() !== '') {
+							(body.input as IDataObject).character_id_list = characterIds.split(',').map((id) => id.trim());
+						}
 
 						if (callbackUrl && callbackUrl.trim() !== '') {
 							body.callBackUrl = callbackUrl;

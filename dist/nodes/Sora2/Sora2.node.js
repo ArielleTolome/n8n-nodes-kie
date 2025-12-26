@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Seedream = void 0;
-class Seedream {
+exports.Sora2 = void 0;
+class Sora2 {
     constructor() {
         this.description = {
-            displayName: 'Seedream v4',
-            name: 'seedream',
-            icon: 'file:seedream-bubble.svg',
+            displayName: 'Sora 2 Pro',
+            name: 'sora2',
+            icon: 'file:sora-bubble.svg',
             group: ['transform'],
             version: 1,
             subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-            description: 'Generate images using Seedream V4 Text To Image API',
+            description: 'Generate videos using Sora 2 Pro Text To Video API',
             defaults: {
-                name: 'Seedream V4',
+                name: 'Sora 2 Pro',
             },
             inputs: ['main'],
             outputs: ['main'],
@@ -51,7 +51,7 @@ class Seedream {
                         {
                             name: 'Create Task',
                             value: 'createTask',
-                            description: 'Create a new image generation task',
+                            description: 'Create a new video generation task',
                             action: 'Create a task',
                         },
                         {
@@ -62,30 +62,6 @@ class Seedream {
                         },
                     ],
                     default: 'createTask',
-                    required: true,
-                },
-                {
-                    displayName: 'Model',
-                    name: 'model',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            resource: ['job'],
-                            operation: ['createTask'],
-                        },
-                    },
-                    options: [
-                        {
-                            name: 'Seedream V4 Text to Image',
-                            value: 'bytedance/seedream-v4-text-to-image',
-                        },
-                        {
-                            name: 'Seedream V4 Edit',
-                            value: 'bytedance/seedream-v4-edit',
-                        },
-                    ],
-                    default: 'bytedance/seedream-v4-text-to-image',
-                    description: 'The AI model to use for generation',
                     required: true,
                 },
                 // Create Task parameters
@@ -101,45 +77,12 @@ class Seedream {
                         },
                     },
                     default: '',
-                    description: 'The text prompt used to generate or edit the image (max 5000 characters)',
-                    placeholder: 'Draw the following system of binary linear equations...',
+                    description: 'The text prompt describing the desired video motion (max 10000 characters)',
+                    placeholder: 'a happy dog running in the garden',
                 },
                 {
-                    displayName: 'Input Images',
-                    name: 'inputImages',
-                    type: 'fixedCollection',
-                    typeOptions: {
-                        multipleValues: true,
-                    },
-                    displayOptions: {
-                        show: {
-                            resource: ['job'],
-                            operation: ['createTask'],
-                            model: ['bytedance/seedream-v4-edit'],
-                        },
-                    },
-                    default: {},
-                    placeholder: 'Add Image',
-                    options: [
-                        {
-                            displayName: 'Image',
-                            name: 'image',
-                            values: [
-                                {
-                                    displayName: 'Image URL',
-                                    name: 'url',
-                                    type: 'string',
-                                    default: '',
-                                    placeholder: 'https://example.com/image.png',
-                                },
-                            ],
-                        },
-                    ],
-                    description: 'URLs of the input images to edit',
-                },
-                {
-                    displayName: 'Image Size',
-                    name: 'imageSize',
+                    displayName: 'Aspect Ratio',
+                    name: 'aspectRatio',
                     type: 'options',
                     displayOptions: {
                         show: {
@@ -149,48 +92,20 @@ class Seedream {
                     },
                     options: [
                         {
-                            name: 'Landscape 16:9',
-                            value: 'landscape_16_9',
+                            name: 'Landscape',
+                            value: 'landscape',
                         },
                         {
-                            name: 'Landscape 21:9',
-                            value: 'landscape_21_9',
-                        },
-                        {
-                            name: 'Landscape 3:2',
-                            value: 'landscape_3_2',
-                        },
-                        {
-                            name: 'Landscape 4:3',
-                            value: 'landscape_4_3',
-                        },
-                        {
-                            name: 'Portrait 2:3',
-                            value: 'portrait_3_2',
-                        },
-                        {
-                            name: 'Portrait 3:4',
-                            value: 'portrait_4_3',
-                        },
-                        {
-                            name: 'Portrait 9:16',
-                            value: 'portrait_16_9',
-                        },
-                        {
-                            name: 'Square',
-                            value: 'square',
-                        },
-                        {
-                            name: 'Square HD',
-                            value: 'square_hd',
+                            name: 'Portrait',
+                            value: 'portrait',
                         },
                     ],
-                    default: 'square_hd',
-                    description: 'The size/aspect ratio of the generated image',
+                    default: 'landscape',
+                    description: 'The aspect ratio of the generated video',
                 },
                 {
-                    displayName: 'Image Resolution',
-                    name: 'imageResolution',
+                    displayName: 'Video Duration',
+                    name: 'nFrames',
                     type: 'options',
                     displayOptions: {
                         show: {
@@ -200,24 +115,20 @@ class Seedream {
                     },
                     options: [
                         {
-                            name: '1K',
-                            value: '1K',
+                            name: '10 Seconds',
+                            value: '10',
                         },
                         {
-                            name: '2K',
-                            value: '2K',
-                        },
-                        {
-                            name: '4K',
-                            value: '4K',
+                            name: '15 Seconds',
+                            value: '15',
                         },
                     ],
-                    default: '1K',
-                    description: 'Final image resolution (combined with image size determines pixel dimensions)',
+                    default: '10',
+                    description: 'The number of seconds/frames to be generated',
                 },
                 {
-                    displayName: 'Max Images',
-                    name: 'maxImages',
+                    displayName: 'Quality Size',
+                    name: 'size',
                     type: 'options',
                     displayOptions: {
                         show: {
@@ -226,31 +137,44 @@ class Seedream {
                         },
                     },
                     options: [
-                        { name: '1', value: 1 },
-                        { name: '2', value: 2 },
-                        { name: '3', value: 3 },
-                        { name: '4', value: 4 },
-                        { name: '5', value: 5 },
-                        { name: '6', value: 6 },
+                        {
+                            name: 'High (1080p)',
+                            value: 'high',
+                        },
+                        {
+                            name: 'Standard (720p)',
+                            value: 'standard',
+                        },
                     ],
-                    default: 1,
-                    description: 'Maximum number of images to generate (1-6)',
+                    default: 'high',
+                    description: 'The quality or size of the generated video',
                 },
                 {
-                    displayName: 'Seed',
-                    name: 'seed',
-                    type: 'number',
-                    typeOptions: {
-                        numberStepSize: 1,
-                    },
+                    displayName: 'Character IDs',
+                    name: 'characterIds',
+                    type: 'string',
                     displayOptions: {
                         show: {
                             resource: ['job'],
                             operation: ['createTask'],
                         },
                     },
-                    default: 0,
-                    description: 'Random seed to control the stochasticity of image generation (leave 0 for random)',
+                    default: '',
+                    description: 'Optional list of character IDs for consistent character generation (comma-separated)',
+                    placeholder: 'char_12345, char_67890',
+                },
+                {
+                    displayName: 'Remove Watermark',
+                    name: 'removeWatermark',
+                    type: 'boolean',
+                    displayOptions: {
+                        show: {
+                            resource: ['job'],
+                            operation: ['createTask'],
+                        },
+                    },
+                    default: true,
+                    description: 'Whether to remove watermarks from the generated video',
                 },
                 {
                     displayName: 'Callback URL',
@@ -306,33 +230,25 @@ class Seedream {
             try {
                 if (resource === 'job') {
                     if (operation === 'createTask') {
-                        const model = this.getNodeParameter('model', i);
                         const prompt = this.getNodeParameter('prompt', i);
-                        const imageSize = this.getNodeParameter('imageSize', i);
-                        const imageResolution = this.getNodeParameter('imageResolution', i);
-                        const maxImages = this.getNodeParameter('maxImages', i);
-                        const seed = this.getNodeParameter('seed', i, 0);
+                        const aspectRatio = this.getNodeParameter('aspectRatio', i);
+                        const nFrames = this.getNodeParameter('nFrames', i);
+                        const size = this.getNodeParameter('size', i);
+                        const removeWatermark = this.getNodeParameter('removeWatermark', i);
+                        const characterIds = this.getNodeParameter('characterIds', i, '');
                         const callbackUrl = this.getNodeParameter('callbackUrl', i, '');
                         const body = {
-                            model,
+                            model: 'sora-2-pro-text-to-video',
                             input: {
                                 prompt,
-                                image_size: imageSize,
-                                image_resolution: imageResolution,
-                                max_images: maxImages,
+                                aspect_ratio: aspectRatio,
+                                n_frames: nFrames,
+                                size: size,
+                                remove_watermark: removeWatermark,
                             },
                         };
-                        if (model === 'bytedance/seedream-v4-edit') {
-                            // @ts-ignore
-                            const inputImages = this.getNodeParameter('inputImages', i);
-                            const images = (inputImages === null || inputImages === void 0 ? void 0 : inputImages.image) || [];
-                            const imageUrls = images.map((img) => img.url).filter((url) => url && url.trim() !== '');
-                            if (imageUrls.length > 0) {
-                                body.input.image_urls = imageUrls;
-                            }
-                        }
-                        if (seed && seed !== 0) {
-                            body.input.seed = seed;
+                        if (characterIds && characterIds.trim() !== '') {
+                            body.input.character_id_list = characterIds.split(',').map((id) => id.trim());
                         }
                         if (callbackUrl && callbackUrl.trim() !== '') {
                             body.callBackUrl = callbackUrl;
@@ -374,4 +290,4 @@ class Seedream {
         return [this.helpers.returnJsonArray(returnData)];
     }
 }
-exports.Seedream = Seedream;
+exports.Sora2 = Sora2;

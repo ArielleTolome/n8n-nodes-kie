@@ -1,12 +1,12 @@
 const gulp = require('gulp');
 
 gulp.task('build:icons', function (done) {
-	// Copy icons flat to dist/nodes/Seedream
-	gulp.src('nodes/Seedream/*.svg')
-		.pipe(gulp.dest('dist/nodes/Seedream'));
+	// Copy icons from all nodes to dist/nodes, preserving directory structure
+	gulp.src('nodes/**/*.svg')
+		.pipe(gulp.dest('dist/nodes'));
 
-	// Copy icons flat to dist/credentials
-	gulp.src('nodes/Seedream/*.svg')
+	// Copy icons to credentials (flat, assume they are needed there too)
+	gulp.src('nodes/**/*.svg')
 		.pipe(gulp.dest('dist/credentials'));
 
 	done();

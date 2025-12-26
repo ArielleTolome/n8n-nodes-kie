@@ -8,15 +8,15 @@ import {
 
 export class Seedream implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Seedream',
+		displayName: 'Seedream v4',
 		name: 'seedream',
-		icon: 'file:seedream-logo4.svg',
+		icon: 'file:seedream-bubble.svg',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		subtitle: '={{$parameter["operation"]}}',
 		description: 'Generate images using Seedream V4 Text To Image API',
 		defaults: {
-			name: 'Seedream',
+			name: 'Seedream V4',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -222,18 +222,21 @@ export class Seedream implements INodeType {
 			{
 				displayName: 'Max Images',
 				name: 'maxImages',
-				type: 'number',
-				typeOptions: {
-					minValue: 1,
-					maxValue: 6,
-					numberStepSize: 1,
-				},
+				type: 'options',
 				displayOptions: {
 					show: {
 						resource: ['job'],
 						operation: ['createTask'],
 					},
 				},
+				options: [
+					{ name: '1', value: 1 },
+					{ name: '2', value: 2 },
+					{ name: '3', value: 3 },
+					{ name: '4', value: 4 },
+					{ name: '5', value: 5 },
+					{ name: '6', value: 6 },
+				],
 				default: 1,
 				description: 'Maximum number of images to generate (1-6)',
 			},
@@ -392,4 +395,3 @@ export class Seedream implements INodeType {
 		return [this.helpers.returnJsonArray(returnData)];
 	}
 }
-

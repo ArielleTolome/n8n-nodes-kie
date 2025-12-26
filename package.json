@@ -1,6 +1,6 @@
 {
 	"name": "@myspacet_ai/n8n-nodes-ai-hub",
-	"version": "1.0.0",
+	"version": "1.0.8",
 	"description": "AI Hub for n8n by MySpacet - All-in-one collection of AI services from Kie.ai",
 	"keywords": [
 		"n8n-community-node-package",
@@ -57,4 +57,3 @@
 		"form-data": "^4.0.4"
 	}
 }
-
