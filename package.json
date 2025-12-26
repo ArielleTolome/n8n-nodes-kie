@@ -1,0 +1,59 @@
+{
+	"name": "@myspacet_ai/n8n-nodes-seedream",
+	"version": "1.2.1",
+	"description": "n8n node for Seedream V4 Text To Image API",
+	"keywords": [
+		"n8n-community-node-package",
+		"seedream",
+		"text-to-image",
+		"ai"
+	],
+	"license": "MIT",
+	"homepage": "",
+	"author": {
+		"name": "",
+		"email": ""
+	},
+	"repository": {
+		"type": "git",
+		"url": ""
+	},
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "tsc && gulp build:icons",
+		"dev": "tsc --watch",
+		"format": "prettier nodes credentials --write",
+		"lint": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json",
+		"lintfix": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json --fix",
+		"prepublishOnly": "npm run build && npm run lint -s"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"nodes": [
+			"dist/nodes/Seedream/Seedream.node.js"
+		],
+		"credentials": [
+			"dist/credentials/SeedreamApi.credentials.js"
+		]
+	},
+	"devDependencies": {
+		"@typescript-eslint/parser": "^6.21.0",
+		"eslint": "^8.57.1",
+		"eslint-plugin-n8n-nodes-base": "^1.11.0",
+		"gulp": "^5.0.0",
+		"n8n-workflow": "*",
+		"prettier": "^3.3.3",
+		"typescript": "^5.6.3"
+	},
+	"dependencies": {
+		"n8n-workflow": "*"
+	},
+	"overrides": {
+		"braces": "^3.0.3",
+		"form-data": "^4.0.4"
+	}
+}
+

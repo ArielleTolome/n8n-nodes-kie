@@ -1,0 +1,46 @@
+{
+	"node": {
+		"version": "1.0.0",
+		"name": "Seedream",
+		"displayName": "Seedream",
+		"description": "Generate images using Seedream V4 Text To Image API",
+		"defaults": {
+			"name": "Seedream"
+		},
+		"inputs": ["main"],
+		"outputs": ["main"],
+		"properties": [
+			{
+				"displayName": "Resource",
+				"name": "resource",
+				"type": "options",
+				"default": "job",
+				"options": [
+					{
+						"name": "Job",
+						"value": "job"
+					}
+				]
+			},
+			{
+				"displayName": "Operation",
+				"name": "operation",
+				"type": "options",
+				"default": "createTask",
+				"options": [
+					{
+						"name": "Create Task",
+						"value": "createTask",
+						"description": "Create a new image generation task"
+					},
+					{
+						"name": "Query Task Status",
+						"value": "queryTaskStatus",
+						"description": "Query the status of a task"
+					}
+				]
+			}
+		]
+	}
+}
+

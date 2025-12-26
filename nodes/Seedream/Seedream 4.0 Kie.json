@@ -1,0 +1,257 @@
+{
+  "name": "Seedream 4.0 Kie",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -16
+      ],
+      "id": "e6d95542-0deb-4581-9e1c-5ac411292bb7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "prompt": "Иллюстрация в стиле советских новогодних открыток 1960–1980‑х годов, тёплые приглушённые цвета, лёгкая винтажная зернистость, зимний городской пейзаж с заснежёнными ёлками и огнями, Дед Мороз и Снегурочка поздравляют улыбающихся детей, мягкий рассеянный свет, атмосфера ностальгии и семейного праздника. На лицевой стороне открытки крупная надпись «С новым годом» классическим советским шрифтом, текст чёткий и хорошо читаемый.",
+        "imageSize": "square"
+      },
+      "type": "@myspacet_ai/n8n-nodes-seedream.seedream",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -16
+      ],
+      "id": "026df589-5a6d-4066-91e5-2c3cf5225f4b",
+      "name": "Create a task",
+      "credentials": {
+        "seedreamApi": {
+          "id": "VCAbDCv0OkpmK9fI",
+          "name": "Seedream hc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "queryTaskStatus",
+        "taskId": "={{ $json.data.taskId }}"
+      },
+      "type": "@myspacet_ai/n8n-nodes-seedream.seedream",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -16
+      ],
+      "id": "f0b09791-8863-4be4-9f38-c32ca503e89a",
+      "name": "Query task status",
+      "credentials": {
+        "seedreamApi": {
+          "id": "VCAbDCv0OkpmK9fI",
+          "name": "Seedream hc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8bc4fe1-89d6-411d-8b84-aa0e6f45d71f",
+              "leftValue": "={{ $json.data.state }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -16
+      ],
+      "id": "8191c474-a372-4027-a9b8-8c2f7f0f6dc0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        176
+      ],
+      "id": "2c5dbf33-37ca-463f-8a3f-0fcea5910efd",
+      "name": "Wait",
+      "webhookId": "180ce69a-04af-400b-87fe-783f04e64e96"
+    },
+    {
+      "parameters": {
+        "url": "={{ JSON.parse($json.data.resultJson).resultUrls[0] }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        656,
+        -32
+      ],
+      "id": "048ce299-5cb7-4071-92ef-ca087bd713da",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "content": "## Seedream 4.0 oт Kie\n**При первом запуске попросит установить ноду, разрешайте",
+        "height": 400,
+        "width": 256,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -208,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "cf91048b-1644-410d-a7d5-d079f796e843",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Узел Seedream 4.0 \n[Официальная страница](https://www.npmjs.com/package/@myspacet_ai/n8n-nodes-seedream)\n\n### Как настроить?\n\nRU: Для получения ключа API зарегистрируйтесь по ссылке автора: [kie.ai](https://kie.ai/?ref=61a3dfe897fb3596cef5cce97e7d82c5) и получите приветственные бонусы (согласно условиям сервиса). \nПосле регистрации: вкладка API keys -> кнопка Create new key -> вставьте ключ ниже.\n\nДалее без сложных настроек API запросов используете узел ",
+        "height": 432,
+        "width": 656
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1184,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "01705565-bcc7-46e9-9f27-1c79340e89f5",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {
+    "Create a task": [
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "49242e949f56ad1cfded1f9d01177e2b",
+            "recordId": "49242e949f56ad1cfded1f9d01177e2b"
+          }
+        }
+      }
+    ],
+    "Query task status": [
+      {
+        "json": {
+          "code": 200,
+          "msg": "success",
+          "data": {
+            "taskId": "49242e949f56ad1cfded1f9d01177e2b",
+            "model": "bytedance/seedream-v4-text-to-image",
+            "state": "waiting",
+            "param": "{\"input\":\"{\\\"image_size\\\":\\\"square\\\",\\\"image_resolution\\\":\\\"1K\\\",\\\"max_images\\\":1,\\\"prompt\\\":\\\"Иллюстрация в стиле советских новогодних открыток 1960–1980‑х годов, тёплые приглушённые цвета, лёгкая винтажная зернистость, зимний городской пейзаж с заснежёнными ёлками и огнями, Дед Мороз и Снегурочка поздравляют улыбающихся детей, мягкий рассеянный свет, атмосфера ностальгии и семейного праздника. На лицевой стороне открытки крупная надпись «С новым годом» классическим советским шрифтом, текст чёткий и хорошо читаемый.\\\"}\",\"model\":\"bytedance/seedream-v4-text-to-image\"}",
+            "resultJson": "",
+            "failCode": null,
+            "failMsg": null,
+            "costTime": null,
+            "completeTime": null,
+            "createTime": 1766685755163
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task": {
+      "main": [
+        [
+          {
+            "node": "Query task status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query task status": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Query task status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2202bd94-215e-4e9c-aba5-266cf81ef731",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cef238c6a35610ae0fe80936cfde4120c00e471e83ab774970b0a8b5b2e85285"
+  },
+  "id": "8zoD7xwBrv9K2uoc",
+  "tags": []
+}
