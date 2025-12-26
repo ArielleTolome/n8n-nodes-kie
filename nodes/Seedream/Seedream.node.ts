@@ -209,6 +209,7 @@ export class Seedream implements INodeType {
 				typeOptions: {
 					minValue: 1,
 					maxValue: 6,
+					numberStepSize: 1,
 				},
 				displayOptions: {
 					show: {
@@ -223,6 +224,9 @@ export class Seedream implements INodeType {
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
+				typeOptions: {
+					numberStepSize: 1,
+				},
 				displayOptions: {
 					show: {
 						resource: ['job'],
