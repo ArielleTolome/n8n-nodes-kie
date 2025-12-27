@@ -5,8 +5,10 @@ gulp.task('build:icons', function (done) {
 	gulp.src('nodes/**/*.svg')
 		.pipe(gulp.dest('dist/nodes'));
 
-	// Copy icons to credentials (flat, assume they are needed there too)
+	// Copy icons to credentials
 	gulp.src('nodes/**/*.svg')
+		.pipe(gulp.dest('dist/credentials'));
+	gulp.src('credentials/*.svg')
 		.pipe(gulp.dest('dist/credentials'));
 
 	done();

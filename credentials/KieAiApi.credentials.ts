@@ -11,7 +11,7 @@ export class KieAiApi implements ICredentialType {
 
 	displayName = 'AI Hub Kie API';
 
-	icon: Icon = 'file:seedream-logo4.svg';
+	icon: Icon = 'file:kie-bubble.svg';
 
 	// documentationUrl = 'https://kie.ai/api-key';
 

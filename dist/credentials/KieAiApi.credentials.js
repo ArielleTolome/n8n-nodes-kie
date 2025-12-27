@@ -5,7 +5,7 @@ class KieAiApi {
     constructor() {
         this.name = 'kieAiApi';
         this.displayName = 'AI Hub Kie API';
-        this.icon = 'file:seedream-logo4.svg';
+        this.icon = 'file:kie-bubble.svg';
         // documentationUrl = 'https://kie.ai/api-key';
         this.properties = [
             {

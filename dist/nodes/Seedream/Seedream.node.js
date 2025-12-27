@@ -6,10 +6,10 @@ class Seedream {
         this.description = {
             displayName: 'Seedream v4',
             name: 'seedream',
-            icon: 'file:seedream-bubble.svg',
+            icon: 'file:seedream-logo.svg',
             group: ['transform'],
             version: 1,
-            subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+            subtitle: '={{$parameter["operation"]}}',
             description: 'Generate images using Seedream V4 Text To Image API',
             defaults: {
                 name: 'Seedream V4',

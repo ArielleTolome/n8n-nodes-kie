@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Sora2 = void 0;
-class Sora2 {
+exports.Sora2Pro = void 0;
+class Sora2Pro {
     constructor() {
         this.description = {
             displayName: 'Sora 2 Pro',
-            name: 'sora2',
-            icon: 'file:sora-bubble.svg',
+            name: 'sora2Pro',
+            icon: 'file:sora2-pro-bubble.svg',
             group: ['transform'],
             version: 1,
-            subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+            subtitle: '={{$parameter["operation"]}}',
             description: 'Generate videos using Sora 2 Pro Text To Video API',
             defaults: {
                 name: 'Sora 2 Pro',
@@ -290,4 +290,4 @@ class Sora2 {
         return [this.helpers.returnJsonArray(returnData)];
     }
 }
-exports.Sora2 = Sora2;
+exports.Sora2Pro = Sora2Pro;

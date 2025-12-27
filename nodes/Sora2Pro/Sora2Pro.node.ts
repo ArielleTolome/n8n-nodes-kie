@@ -6,11 +6,11 @@ import {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 
-export class Sora2 implements INodeType {
+export class Sora2Pro implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Sora 2 Pro',
-		name: 'sora2',
-		icon: 'file:sora-bubble.svg',
+		name: 'sora2Pro',
+		icon: 'file:sora2-pro-bubble.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
