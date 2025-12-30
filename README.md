@@ -1,4 +1,4 @@
-# AI Hub by MySpacet (Kie.ai) for n8n
+# AI Hub for n8n (Kie.ai)
 
 Professional nodes collection for working with powerful AI models via single Kie.ai API. Sora 2 Pro (Video), Seedream v4 (Image), and GPT-image-1.5 (Edit) in your n8n workflows.
 
