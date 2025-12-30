@@ -12,7 +12,7 @@ class Seedream {
             subtitle: '={{$parameter["operation"]}}',
             description: 'Generate images using Seedream V4 Text To Image API',
             defaults: {
-                name: 'Seedream V4',
+                name: 'Seedream v4',
             },
             inputs: ['main'],
             outputs: ['main'],
@@ -49,46 +49,28 @@ class Seedream {
                     },
                     options: [
                         {
-                            name: 'Create Task',
-                            value: 'createTask',
-                            description: 'Create a new image generation task',
-                            action: 'Create a task',
+                            name: 'Text-to-Image',
+                            value: 'textToImage',
+                            description: 'Generate image from text prompt',
+                            action: 'Text-to-Image',
+                        },
+                        {
+                            name: 'Image-Edit',
+                            value: 'imageEdit',
+                            description: 'Edit existing image using text prompt',
+                            action: 'Image-Edit',
                         },
                         {
                             name: 'Query Task Status',
                             value: 'queryTaskStatus',
-                            description: 'Query the status of a task',
-                            action: 'Query task status',
+                            description: 'Check the status of a generation task',
+                            action: 'Get Task Status',
                         },
                     ],
-                    default: 'createTask',
+                    default: 'textToImage',
                     required: true,
                 },
-                {
-                    displayName: 'Model',
-                    name: 'model',
-                    type: 'options',
-                    displayOptions: {
-                        show: {
-                            resource: ['job'],
-                            operation: ['createTask'],
-                        },
-                    },
-                    options: [
-                        {
-                            name: 'Seedream V4 Text to Image',
-                            value: 'bytedance/seedream-v4-text-to-image',
-                        },
-                        {
-                            name: 'Seedream V4 Edit',
-                            value: 'bytedance/seedream-v4-edit',
-                        },
-                    ],
-                    default: 'bytedance/seedream-v4-text-to-image',
-                    description: 'The AI model to use for generation',
-                    required: true,
-                },
-                // Create Task parameters
+                // Common Parameters (Prompt)
                 {
                     displayName: 'Prompt',
                     name: 'prompt',
@@ -97,13 +79,14 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     default: '',
                     description: 'The text prompt used to generate or edit the image (max 5000 characters)',
                     placeholder: 'Draw the following system of binary linear equations...',
                 },
+                // Image Edit Specific Parameter
                 {
                     displayName: 'Input Images',
                     name: 'inputImages',
@@ -114,8 +97,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
-                            model: ['bytedance/seedream-v4-edit'],
+                            operation: ['imageEdit'],
                         },
                     },
                     default: {},
@@ -137,6 +119,7 @@ class Seedream {
                     ],
                     description: 'URLs of the input images to edit',
                 },
+                // Common Parameters (Size, etc.)
                 {
                     displayName: 'Image Size',
                     name: 'imageSize',
@@ -144,7 +127,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     options: [
@@ -195,7 +178,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     options: [
@@ -222,7 +205,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     options: [
@@ -246,7 +229,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     default: 0,
@@ -259,7 +242,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     default: '',
@@ -273,7 +256,7 @@ class Seedream {
                     displayOptions: {
                         show: {
                             resource: ['job'],
-                            operation: ['createTask'],
+                            operation: ['textToImage', 'imageEdit'],
                         },
                     },
                     default: '',
@@ -305,8 +288,11 @@ class Seedream {
         for (let i = 0; i < items.length; i++) {
             try {
                 if (resource === 'job') {
-                    if (operation === 'createTask') {
-                        const model = this.getNodeParameter('model', i);
+                    if (operation === 'textToImage' || operation === 'imageEdit') {
+                        // Determine model based on operation
+                        const model = operation === 'imageEdit'
+                            ? 'bytedance/seedream-v4-edit'
+                            : 'bytedance/seedream-v4-text-to-image';
                         const prompt = this.getNodeParameter('prompt', i);
                         const imageSize = this.getNodeParameter('imageSize', i);
                         const imageResolution = this.getNodeParameter('imageResolution', i);
@@ -322,7 +308,7 @@ class Seedream {
                                 max_images: maxImages,
                             },
                         };
-                        if (model === 'bytedance/seedream-v4-edit') {
+                        if (operation === 'imageEdit') {
                             // @ts-ignore
                             const inputImages = this.getNodeParameter('inputImages', i);
                             const images = (inputImages === null || inputImages === void 0 ? void 0 : inputImages.image) || [];

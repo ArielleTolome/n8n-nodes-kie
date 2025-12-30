@@ -16,7 +16,7 @@ export class Seedream implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Generate images using Seedream V4 Text To Image API',
 		defaults: {
-			name: 'Seedream V4',
+			name: 'Seedream v4',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -53,46 +53,28 @@ export class Seedream implements INodeType {
 				},
 				options: [
 					{
-						name: 'Create Task',
-						value: 'createTask',
-						description: 'Create a new image generation task',
-						action: 'Create a task',
+						name: 'Text-to-Image',
+						value: 'textToImage',
+						description: 'Generate image from text prompt',
+						action: 'Text-to-Image',
+					},
+					{
+						name: 'Image-Edit',
+						value: 'imageEdit',
+						description: 'Edit existing image using text prompt',
+						action: 'Image-Edit',
 					},
 					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
-						description: 'Query the status of a task',
-						action: 'Query task status',
+						description: 'Check the status of a generation task',
+						action: 'Get Task Status',
 					},
 				],
-				default: 'createTask',
+				default: 'textToImage',
 				required: true,
 			},
-			{
-				displayName: 'Model',
-				name: 'model',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['job'],
-						operation: ['createTask'],
-					},
-				},
-				options: [
-					{
-						name: 'Seedream V4 Text to Image',
-						value: 'bytedance/seedream-v4-text-to-image',
-					},
-					{
-						name: 'Seedream V4 Edit',
-						value: 'bytedance/seedream-v4-edit',
-					},
-				],
-				default: 'bytedance/seedream-v4-text-to-image',
-				description: 'The AI model to use for generation',
-				required: true,
-			},
-			// Create Task parameters
+			// Common Parameters (Prompt)
 			{
 				displayName: 'Prompt',
 				name: 'prompt',
@@ -101,13 +83,14 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: '',
 				description: 'The text prompt used to generate or edit the image (max 5000 characters)',
 				placeholder: 'Draw the following system of binary linear equations...',
 			},
+			// Image Edit Specific Parameter
 			{
 				displayName: 'Input Images',
 				name: 'inputImages',
@@ -118,8 +101,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
-						model: ['bytedance/seedream-v4-edit'],
+						operation: ['imageEdit'],
 					},
 				},
 				default: {},
@@ -141,6 +123,7 @@ export class Seedream implements INodeType {
 				],
 				description: 'URLs of the input images to edit',
 			},
+			// Common Parameters (Size, etc.)
 			{
 				displayName: 'Image Size',
 				name: 'imageSize',
@@ -148,7 +131,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				options: [
@@ -199,7 +182,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				options: [
@@ -226,7 +209,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				options: [
@@ -250,7 +233,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: 0,
@@ -263,7 +246,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: '',
@@ -277,7 +260,7 @@ export class Seedream implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: '',
@@ -310,8 +293,12 @@ export class Seedream implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				if (resource === 'job') {
-					if (operation === 'createTask') {
-						const model = this.getNodeParameter('model', i) as string;
+					if (operation === 'textToImage' || operation === 'imageEdit') {
+						// Determine model based on operation
+						const model = operation === 'imageEdit' 
+							? 'bytedance/seedream-v4-edit' 
+							: 'bytedance/seedream-v4-text-to-image';
+							
 						const prompt = this.getNodeParameter('prompt', i) as string;
 						const imageSize = this.getNodeParameter('imageSize', i) as string;
 						const imageResolution = this.getNodeParameter('imageResolution', i) as string;
@@ -329,7 +316,7 @@ export class Seedream implements INodeType {
 							},
 						};
 
-						if (model === 'bytedance/seedream-v4-edit') {
+						if (operation === 'imageEdit') {
 							// @ts-ignore
 							const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
 							const images = (inputImages?.image as IDataObject[]) || [];

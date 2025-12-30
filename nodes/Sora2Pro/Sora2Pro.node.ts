@@ -53,16 +53,16 @@ export class Sora2Pro implements INodeType {
 				},
 				options: [
 					{
-						name: 'Create Task',
+						name: 'Text-to-Video',
 						value: 'createTask',
-						description: 'Create a new video generation task',
-						action: 'Create a task',
+						description: 'Generate video from text prompt',
+						action: 'Text-to-Video',
 					},
 					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
-						description: 'Query the status of a task',
-						action: 'Query task status',
+						description: 'Check the status of a generation task',
+						action: 'Get Task Status',
 					},
 				],
 				default: 'createTask',
@@ -96,11 +96,11 @@ export class Sora2Pro implements INodeType {
 				},
 				options: [
 					{
-						name: 'Landscape',
+						name: 'Landscape (16:9)',
 						value: 'landscape',
 					},
 					{
-						name: 'Portrait',
+						name: 'Portrait (9:16)',
 						value: 'portrait',
 					},
 				],
@@ -177,7 +177,7 @@ export class Sora2Pro implements INodeType {
 						operation: ['createTask'],
 					},
 				},
-				default: true,
+				default: false,
 				description: 'Whether to remove watermarks from the generated video',
 			},
 			{
