@@ -2,18 +2,18 @@ FROM docker.n8n.io/n8nio/n8n
 
 USER root
 
-# Создаем директорию для кастомных узлов
-RUN mkdir -p /home/node/.n8n/custom
+# Создаем чистую папку для узлов (вне .n8n)
+RUN mkdir -p /opt/nodes
 
-# Копируем архив версии 1.0.20
-COPY myspacet_ai-n8n-nodes-ai-hub-1.0.20.tgz /home/node/.n8n/custom/
-WORKDIR /home/node/.n8n/custom
+# Копируем архив версии 1.0.27
+COPY myspacet_ai-n8n-nodes-ai-hub-1.0.27.tgz /opt/nodes/
+WORKDIR /opt/nodes
 
-# Устанавливаем наш пакет
-RUN npm install myspacet_ai-n8n-nodes-ai-hub-1.0.20.tgz
+# Устанавливаем пакет
+RUN npm install myspacet_ai-n8n-nodes-ai-hub-1.0.27.tgz
 
 # Возвращаем права пользователю node
-RUN chown -R node:node /home/node/.n8n
+RUN chown -R node:node /opt/nodes
 
 USER node
 WORKDIR /home/node

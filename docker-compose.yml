@@ -1,0 +1,17 @@
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: n8n-custom
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_CUSTOM_EXTENSIONS=/opt/nodes/node_modules/@myspacet_ai/n8n-nodes-ai-hub/dist
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
+    volumes:
+      # Монтируем ТОЛЬКО данные, не трогая папку с узлами внутри контейнера
+      - /Users/tinarum/.n8n/database.sqlite:/home/node/.n8n/database.sqlite
+      - /Users/tinarum/.n8n/config:/home/node/.n8n/config
+      - /Users/tinarum/.n8n/binaryData:/home/node/.n8n/binaryData
+    restart: unless-stopped
