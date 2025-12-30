@@ -1,2 +1,3 @@
 *.tgz
 BUILD_INSTRUCTIONS.md
+dist/
