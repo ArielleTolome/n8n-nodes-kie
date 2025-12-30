@@ -8,7 +8,7 @@ import {
 
 export class Seedream implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Seedream v4',
+		displayName: 'Seedream v4 (Kie.ai)',
 		name: 'seedream',
 		icon: 'file:seedream-v4-bubble.svg',
 		group: ['transform'],
@@ -16,7 +16,7 @@ export class Seedream implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Generate images using Seedream V4 Text To Image API',
 		defaults: {
-			name: 'Seedream v4',
+			name: 'Seedream v4 (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],

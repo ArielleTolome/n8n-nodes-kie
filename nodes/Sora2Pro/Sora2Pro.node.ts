@@ -8,7 +8,7 @@ import {
 
 export class Sora2Pro implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Sora 2 Pro',
+		displayName: 'Sora 2 Pro (Kie.ai)',
 		name: 'sora2Pro',
 		icon: 'file:sora2-pro-bubble.svg',
 		group: ['transform'],
@@ -16,7 +16,7 @@ export class Sora2Pro implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Generate videos using Sora 2 Pro Text To Video API',
 		defaults: {
-			name: 'Sora 2 Pro',
+			name: 'Sora 2 Pro (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],

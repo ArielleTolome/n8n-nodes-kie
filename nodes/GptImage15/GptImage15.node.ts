@@ -8,7 +8,7 @@ import {
 
 export class GptImage15 implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'GPT-image-1.5',
+		displayName: 'GPT-image-1.5 (Kie.ai)',
 		name: 'gptImage15',
 		icon: 'file:gpt-image-1_5-bubble.svg',
 		group: ['transform'],
@@ -16,7 +16,7 @@ export class GptImage15 implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Generate images using GPT-image-1.5 Image To Image API',
 		defaults: {
-			name: 'GPT-image-1.5',
+			name: 'GPT-image-1.5 (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
