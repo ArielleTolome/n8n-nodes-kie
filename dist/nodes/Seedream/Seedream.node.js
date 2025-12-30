@@ -6,7 +6,7 @@ class Seedream {
         this.description = {
             displayName: 'Seedream v4',
             name: 'seedream',
-            icon: 'file:seedream-logo.svg',
+            icon: 'file:seedream-v4-bubble.svg',
             group: ['transform'],
             version: 1,
             subtitle: '={{$parameter["operation"]}}',
