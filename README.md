@@ -1,51 +1,47 @@
-# n8n-nodes-seedream
+# AI Hub by MySpacet (Kie.ai) for n8n
 
-n8n community node for Seedream V4 Text To Image API
+Коллекция профессиональных узлов для работы с самыми мощными AI моделями через единый API Kie.ai. Генерация видео (Sora 2 Pro), высококачественных изображений (Seedream v4) и интеллектуальное редактирование (GPT-image-1.5) прямо в ваших workflow n8n.
 
-## Description
+## 🚀 Доступные инструменты
 
-This node allows you to generate images using the Seedream V4 Text To Image API. It supports:
+### 🎥 Sora 2 Pro (Kie.ai)
+*   **Text-to-Video**: Создание реалистичных видеороликов по текстовому описанию.
+*   **Высокое качество**: Поддержка 1080p и 720p.
+*   **Гибкость**: Длительность до 15 секунд.
 
-- **Create Task**: Create a new image generation task with customizable parameters
-- **Query Task Status**: Check the status of a task and retrieve results
+### 🎨 Seedream v4 (Kie.ai)
+*   **Text-to-Image**: Генерация детализированных артов и фотографий.
+*   **Image-Edit**: Профессиональное редактирование существующих изображений.
+*   **Вариативность**: Настройка Seed, разрешения до 4K и выбор соотношения сторон.
 
-## Features
+### 🧠 GPT-image-1.5 (Kie.ai)
+*   **Text-to-Image**: Умная генерация изображений на базе архитектуры GPT.
+*   **Image-to-Image**: Глубокое понимание контекста при изменении ваших фото.
+*   **Качество**: Режимы Medium и High для идеального результата.
 
-- Generate images from text prompts
-- Support for multiple image sizes and resolutions
-- Configurable number of images (1-6)
-- Optional seed for reproducible results
-- Optional callback URL for task completion notifications
+## ⚙️ Установка
 
-## Installation
+1. Перейдите в **Settings > Community Nodes > Install a community node**.
+2. Введите название пакета:
+   ```bash
+   @myspacet_ai/n8n-nodes-ai-hub
+   ```
+3. Нажмите **Install**.
 
-To install this node, go to **Settings > Community Nodes > Install a node** in your n8n instance and enter:
+## 🔑 Настройка доступа
 
-```bash
-@myspacet_ai/n8n-nodes-seedream
-```
+EN: One key for all Kie.ai services. Register via author's link on the website: [kie.ai](https://kie.ai?ref=61a3dfe897fb3596cef5cce97e7d82c5) and get welcome bonuses (exact amount in kie.ai terms). After registration: API keys tab -> Create new key button -> paste below.
 
-## Credentials
+RU: Один ключ для всех сервисов Kie.ai. Зарегистрируйтесь по ссылке автора на сайте: [kie.ai](https://kie.ai?ref=61a3dfe897fb3596cef5cce97e7d82c5) и получите приветственные бонусы (точное количество в условиях kie.ai). После регистрации: вкладка API keys -> кнопка Create new key -> вставьте ключ ниже.
 
-To use this node, you need an API Key from **kie.ai**. 
+## 🛠 Использование
 
-1. **Register here**: [https://kie.ai?ref=61a3dfe897fb3596cef5cce97e7d82c5](https://kie.ai?ref=61a3dfe897fb3596cef5cce97e7d82c5) (Using this link supports future updates for this node).
-2. Go to the **API keys** tab and click **Create new key**.
-3. Create a new **Seedream API** credential in n8n and paste your key.
+Все узлы работают по двухэтапной схеме:
+1.  **Create Task**: Вы отправляете запрос (промпт, настройки) и получаете `taskId`.
+2.  **Get Task Status**: Используйте полученный `taskId`, чтобы забрать готовый результат после завершения обработки.
 
-## Usage
+---
+💡 **Инструкции и примеры** в нашем телеграм-канале: [https://t.me/myspacet_ai](https://t.me/myspacet_ai)
 
-### Create Task
-1. Add the Seedream node to your workflow.
-2. Select "Create Task" operation.
-3. Enter your prompt and configure parameters.
-4. Execute to get a `taskId`.
-
-### Query Task Status
-1. Select "Query Task Status" operation.
-2. Enter the `taskId` from the previous step.
-3. Execute to get the generated image URLs.
-
-## License
-
+## Лицензия
 MIT
