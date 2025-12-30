@@ -8,6 +8,8 @@ module.exports = {
 	parserOptions: {
 		project: './tsconfig.json',
 		sourceType: 'module',
+		warnOnUnsupportedTypeScriptVersion: false,
+		extraFileExtensions: ['.json'],
 	},
 	plugins: ['n8n-nodes-base'],
 	extends: [
