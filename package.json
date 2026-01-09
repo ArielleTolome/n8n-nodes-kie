@@ -1,6 +1,6 @@
 {
 	"name": "@myspacet_ai/n8n-nodes-ai-hub",
-	"version": "1.0.30",
+	"version": "1.0.31",
 	"description": "AI Hub for n8n (Kie.ai) - Collection of AI services: Sora 2 Pro, Seedream v4, GPT-image-1.5",
 	"keywords": [
 		"n8n-community-node-package",
