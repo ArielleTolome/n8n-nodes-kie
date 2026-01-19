@@ -44,7 +44,8 @@
 		"nodes": [
 			"dist/nodes/Seedream/Seedream.node.js",
 			"dist/nodes/Sora2Pro/Sora2Pro.node.js",
-			"dist/nodes/GptImage15/GptImage15.node.js"
+			"dist/nodes/GptImage15/GptImage15.node.js",
+			"dist/nodes/ElevenlabsV3/ElevenlabsV3.node.js"
 		],
 		"credentials": [
 			"dist/credentials/KieAiApi.credentials.js"
