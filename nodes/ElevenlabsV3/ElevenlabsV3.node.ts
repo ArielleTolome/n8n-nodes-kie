@@ -178,6 +178,69 @@ export class ElevenlabsV3 implements INodeType {
 				description: 'Select the language code',
 			},
 			{
+				displayName: 'Dialogue',
+				name: 'dialogue',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToDialogue'],
+					},
+				},
+				default: {},
+				placeholder: 'Add Dialogue Line',
+				options: [
+					{
+						name: 'dialogueItems',
+						displayName: 'Dialogue Item',
+						values: [
+							{
+								displayName: 'Voice Name',
+								name: 'voice',
+								type: 'options',
+								options: [
+									{ name: 'Adam', value: 'Adam' },
+									{ name: 'Alice', value: 'Alice' },
+									{ name: 'Bill', value: 'Bill' },
+									{ name: 'Brian', value: 'Brian' },
+									{ name: 'Callum', value: 'Callum' },
+									{ name: 'Charlie', value: 'Charlie' },
+									{ name: 'Chris', value: 'Chris' },
+									{ name: 'Daniel', value: 'Daniel' },
+									{ name: 'Eric', value: 'Eric' },
+									{ name: 'George', value: 'George' },
+									{ name: 'Harry', value: 'Harry' },
+									{ name: 'Jessica', value: 'Jessica' },
+									{ name: 'Laura', value: 'Laura' },
+									{ name: 'Liam', value: 'Liam' },
+									{ name: 'Lily', value: 'Lily' },
+									{ name: 'Matilda', value: 'Matilda' },
+									{ name: 'River', value: 'River' },
+									{ name: 'Roger', value: 'Roger' },
+									{ name: 'Sarah', value: 'Sarah' },
+									{ name: 'Will', value: 'Will' },
+								],
+								default: 'Liam',
+								description: 'Select the voice for this dialogue line',
+							},
+							{
+								displayName: 'Text',
+								name: 'text',
+								type: 'string',
+								typeOptions: {
+									rows: 4,
+								},
+								default: '',
+								description: 'Text to speak. Can include emotions like [excitedly] or pauses [two second pause].',
+							},
+						],
+					},
+				],
+			},
+			{
 				displayName: 'Callback URL',
 				name: 'callbackUrl',
 				type: 'string',
@@ -235,12 +298,20 @@ export class ElevenlabsV3 implements INodeType {
 						const stability = this.getNodeParameter('stability', i) as number;
 						const languageCode = this.getNodeParameter('languageCode', i) as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const dialogueItems = this.getNodeParameter('dialogue', i, {}) as IDataObject;
+
+						const dialogue = [];
+						if (dialogueItems.dialogueItems) {
+							// @ts-ignore
+							dialogue.push(...dialogueItems.dialogueItems);
+						}
 
 						const body: IDataObject = {
 							model: 'elevenlabs/text-to-dialogue-v3',
 							input: {
 								stability,
 								language_code: languageCode,
+								dialogue,
 							},
 						};
 
