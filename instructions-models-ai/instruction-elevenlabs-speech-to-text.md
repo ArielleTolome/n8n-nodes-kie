@@ -1,10 +1,10 @@
-# Text To Speech Turbo 2 5 API Documentation
+# Speech To Text API Documentation
 
-> Generate content using the Text To Speech Turbo 2 5 model
+> Generate content using the Speech To Text model
 
 ## Overview
 
-This document describes how to use the Text To Speech Turbo 2 5 model for content generation. The process consists of two steps:
+This document describes how to use the Speech To Text model for content generation. The process consists of two steps:
 1. Create a generation task
 2. Query task status and results
 
@@ -32,7 +32,7 @@ Get API Key:
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| model | string | Yes | Model name, format: `elevenlabs/text-to-speech-turbo-2-5` |
+| model | string | Yes | Model name, format: `elevenlabs/speech-to-text` |
 | input | object | Yes | Input parameters object |
 | callBackUrl | string | No | Callback URL for task completion notifications. If provided, the system will send POST requests to this URL when the task completes (success or fail). If not provided, no callback notifications will be sent. Example: `"https://your-domain.com/api/callback"` |
 
@@ -42,7 +42,7 @@ The `model` parameter specifies which AI model to use for content generation.
 
 | Property | Value | Description |
 |----------|-------|-------------|
-| **Format** | `elevenlabs/text-to-speech-turbo-2-5` | The exact model identifier for this API |
+| **Format** | `elevenlabs/speech-to-text` | The exact model identifier for this API |
 | **Type** | string | Must be passed as a string value |
 | **Required** | Yes | This parameter is mandatory for all requests |
 
@@ -68,225 +68,43 @@ The `callBackUrl` parameter allows you to receive automatic notifications when y
 
 ### input Object Parameters
 
-#### text
+#### audio_url
 - **Type**: `string`
 - **Required**: Yes
-- **Description**: The text to convert to speech
-- **Max Length**: 5000 characters
-- **Default Value**: `"Unlock powerful API with Kie.ai! Affordable, scalable APl integration, free trial playground, and secure, reliable performance."`
-
-#### voice
-- **Type**: `string`
-- **Required**: No
-- **Description**: The voice to use for speech generation
-- **Options**:
-  - `Rachel`: Rachel
-  - `Aria`: Aria
-  - `Roger`: Roger
-  - `Sarah`: Sarah
-  - `Laura`: Laura
-  - `Charlie`: Charlie
-  - `George`: George
-  - `Callum`: Callum
-  - `River`: River
-  - `Liam`: Liam
-  - `Charlotte`: Charlotte
-  - `Alice`: Alice
-  - `Matilda`: Matilda
-  - `Will`: Will
-  - `Jessica`: Jessica
-  - `Eric`: Eric
-  - `Chris`: Chris
-  - `Brian`: Brian
-  - `Daniel`: Daniel
-  - `Lily`: Lily
-  - `Bill`: Bill
-  - `BIvP0GN1cAtSRTxNHnWS`: Ellen - Serious, Direct and Confident
-  - `aMSt68OGf4xUZAnLpTU8`: Juniper - Grounded and Professional
-  - `RILOU7YmBhvwJGDGjNmP`: Jane - Professional Audiobook Reader
-  - `EkK5I93UQWFDigLMpZcX`: James - Husky, Engaging and Bold
-  - `Z3R5wn05IrDiVCyEkUrK`: Arabella - Mysterious and Emotive
-  - `tnSpp4vdxKPjI9w0GnoV`: Hope - upbeat and clear
-  - `NNl6r8mD7vthiJatiJt1`: Bradford - Expressive and Articulate
-  - `YOq2y2Up4RgXP2HyXjE5`: Xavier - Dominating, Metalic Announcer
-  - `Bj9UqZbhQsanLzgalpEG`: Austin - Deep, Raspy and Authentic
-  - `c6SfcYrb2t09NHXiT80T`: Jarnathan - Confident and Versatile
-  - `B8gJV1IhpuegLxdpXFOE`: Kuon - Cheerful, Clear and Steady
-  - `exsUS4vynmxd379XN4yO`: Blondie - Conversational
-  - `BpjGufoPiobT79j2vtj4`: Priyanka - Calm, Neutral and Relaxed
-  - `2zRM7PkgwBPiau2jvVXc`: Monika Sogam - Deep and Natural
-  - `1SM7GgM6IMuvQlz2BwM3`: Mark - Casual, Relaxed and Light
-  - `ouL9IsyrSnUkCmfnD02u`: Grimblewood Thornwhisker - Snarky Gnome & Magical Maintainer
-  - `5l5f8iK3YPeGga21rQIX`: Adeline - Feminine and Conversational
-  - `scOwDtmlUjD3prqpp97I`: Sam - Support Agent
-  - `NOpBlnGInO9m6vDvFkFC`: Spuds Oxley - Wise and Approachable
-  - `BZgkqPqms7Kj9ulSkVzn`: Eve - Authentic, Energetic and Happy
-  - `wo6udizrrtpIxWGp2qJk`: Northern Terry
-  - `yjJ45q8TVCrtMhEKurxY`: Dr. Von - Quirky, Mad Scientist
-  - `gU0LNdkMOQCOrPrwtbee`: British Football Announcer
-  - `DGzg6RaUqxGRTHSBjfgF`: Brock - Commanding and Loud Sergeant
-  - `DGTOOUoGpoP6UZ9uSWfA`: Célian - Documentary Narrator
-  - `x70vRnQBMBu4FAYhjJbO`: Nathan – Virtual Radio Host
-  - `P1bg08DkjqiVEzOn76yG`: Viraj - Rich and Soft
-  - `qDuRKMlYmrm8trt5QyBn`: Taksh - Calm, Serious and Smooth
-  - `kUUTqKQ05NMGulF08DDf`: Guadeloupe Merryweather - Emotional
-  - `qXpMhyvQqiRxWQs4qSSB`: Horatius – Energetic Character Voice
-  - `TX3LPaxmHKxFdv7VOQHJ`: Liam - Energetic, Social Media Creator
-  - `iP95p4xoKVk53GoZ742B`: Chris - Charming, Down-to-Earth
-  - `SOYHLrjzK2X1ezoPC6cr`: Harry - Fierce Warrior
-  - `N2lVS1w4EtoT3dr4eOWO`: Callum - Husky Trickster
-  - `FGY2WhTYpPnrIDTdsKH5`: Laura - Enthusiast, Quirky Attitude
-  - `XB0fDUnXU5powFXDhCwa`: Charlotte
-  - `cgSgspJ2msm6clMCkdW9`: Jessica - Playful, Bright, Warm
-  - `MnUw1cSnpiLoLhpd3Hqp`: Heather Rey - Rushed and Friendly
-  - `kPzsL2i3teMYv0FxEYQ6`: Brittney - Social Media Voice - Fun, Youthful & Informative
-  - `UgBBYS2sOqTuMpoF3BR0`: Mark - Natural Conversations
-  - `IjnA9kwZJHJ20Fp7Vmy6`: Matthew - Casual, Friendly and Smooth
-  - `KoQQbl9zjAdLgKZjm8Ol`: Pro Narrator - Convincing story teller
-  - `hpp4J3VqNfWAUOO0d1Us`: Bella - Professional, Bright, Warm
-  - `pNInz6obpgDQGcFmaJgB`: Adam - Dominant, Firm
-  - `nPczCjzI2devNBz1zQrb`: Brian - Deep, Resonant and Comforting
-  - `L0Dsvb3SLTyegXwtm47J`: Archer
-  - `uYXf8XasLslADfZ2MB4u`: Hope - Bubbly, Gossipy and Girly
-  - `gs0tAILXbY5DNrJrsM6F`: Jeff - Classy, Resonating and Strong
-  - `DTKMou8ccj1ZaWGBiotd`: Jamahal - Young, Vibrant, and Natural
-  - `vBKc2FfBKJfcZNyEt1n6`: Finn - Youthful, Eager and Energetic
-  - `TmNe0cCqkZBMwPWOd3RD`: Smith - Mellow, Spontaneous, and Bassy
-  - `DYkrAHD8iwork3YSUBbs`: Tom - Conversations & Books
-  - `56AoDkrOh6qfVPDXZ7Pt`: Cassidy - Crisp, Direct and Clear
-  - `eR40ATw9ArzDf9h3v7t7`: Addison 2.0 - Australian Audiobook & Podcast
-  - `g6xIsTj2HwM6VR4iXFCw`: Jessica Anne Bogart - Chatty and Friendly
-  - `lcMyyd2HUfFzxdCaC4Ta`: Lucy - Fresh & Casual
-  - `6aDn1KB0hjpdcocrUkmq`: Tiffany - Natural and Welcoming
-  - `Sq93GQT4X1lKDXsQcixO`: Felix - Warm, positive & contemporary RP
-  - `Felix - Warm, positive & contemporary RPFelix - Warm, positive & contemporary RP`: Malyx - Echoey, Menacing and Deep Demon
-  - `piI8Kku0DcvcL6TTSeQt`: Flicker - Cheerful Fairy & Sparkly Sweetness
-  - `KTPVrSVAEUSJRClDzBw7`: Bob - Rugged and Warm Cowboy
-  - `flHkNRp1BlvT73UL6gyz`: Jessica Anne Bogart - Eloquent Villain
-  - `9yzdeviXkFddZ4Oz8Mok`: Lutz - Chuckling, Giggly and Cheerful
-  - `pPdl9cQBQq4p6mRkZy2Z`: Emma - Adorable and Upbeat
-  - `0SpgpJ4D3MpHCiWdyTg3`: Matthew Schmitz - Elitist, Arrogant, Conniving Tyrant
-  - `UFO0Yv86wqRxAt1DmXUu`: Sarcastic and Sultry Villain
-  - `oR4uRy4fHDUGGISL0Rev`: Myrrdin - Wise and Magical Narrator
-  - `zYcjlYFOd3taleS0gkk3`: Edward - Loud, Confident and Cocky
-  - `nzeAacJi50IvxcyDnMXa`: Marshal - Friendly, Funny Professor
-  - `ruirxsoakN0GWmGNIo04`: John Morgan - Gritty, Rugged Cowboy
-  - `1KFdM0QCwQn4rmn5nn9C`: Parasyte - Whispers from the Deep Dark
-  - `TC0Zp7WVFzhA8zpTlRqV`: Aria - Sultry Villain
-  - `ljo9gAlSqKOvF6D8sOsX`: Viking Bjorn - Epic Medieval Raider
-  - `PPzYpIqttlTYA83688JI`: Pirate Marshal
-  - `ZF6FPAbjXT4488VcRRnw`: Amelia - Enthusiastic and Expressive
-  - `8JVbfL6oEdmuxKn5DK2C`: Johnny Kid - Serious and Calm Narrator
-  - `iCrDUkL56s3C8sCRl7wb`: Hope - Poetic, Romantic and Captivating
-  - `1hlpeD1ydbI2ow0Tt3EW`: Olivia - Smooth, Warm and Engaging
-  - `wJqPPQ618aTW29mptyoc`: Ana Rita - Smooth, Expressive and Bright
-  - `EiNlNiXeDU1pqqOPrYMO`: John Doe - Deep
-  - `FUfBrNit0NNZAwb58KWH`: Angela - Conversational and Friendly
-  - `4YYIPFl9wE5c4L2eu2Gb`: Burt Reynolds™ - Deep, Smooth and clear
-  - `OYWwCdDHouzDwiZJWOOu`: David - Gruff Cowboy
-  - `6F5Zhi321D3Oq7v1oNT4`: Hank - Deep and Engaging Narrator
-  - `qNkzaJoHLLdpvgh5tISm`: Carter - Rich, Smooth and Rugged
-  - `YXpFCvM1S3JbWEJhoskW`: Wyatt- Wise Rustic Cowboy
-  - `9PVP7ENhDskL0KYHAKtD`: Jerry B. - Southern/Cowboy
-  - `LG95yZDEHg6fCZdQjLqj`: Phil - Explosive, Passionate Announcer
-  - `CeNX9CMwmxDxUF5Q2Inm`: Johnny Dynamite - Vintage Radio DJ
-  - `st7NwhTPEzqo2riw7qWC`: Blondie - Radio Host
-  - `aD6riP1btT197c6dACmy`: Rachel M - Pro British Radio Presenter
-  - `FF7KdobWPaiR0vkcALHF`: David - Movie Trailer Narrator
-  - `mtrellq69YZsNwzUSyXh`: Rex Thunder - Deep N Tough
-  - `dHd5gvgSOzSfduK4CvEg`: Ed - Late Night Announcer
-  - `cTNP6ZM2mLTKj2BFhxEh`: Paul French - Podcaster
-  - `eVItLK1UvXctxuaRV2Oq`: Jean - Alluring and Playful Femme Fatale
-  - `U1Vk2oyatMdYs096Ety7`: Michael - Deep, Dark and Urban
-  - `esy0r39YPLQjOczyOib8`: Britney - Calm and Calculative Villain
-  - `bwCXcoVxWNYMlC6Esa8u`: Matthew Schmitz - Gravel, Deep Anti-Hero
-  - `D2jw4N9m4xePLTQ3IHjU`: Ian - Strange and Distorted Alien
-  - `Tsns2HvNFKfGiNjllgqo`: Sven - Emotional and Nice
-  - `Atp5cNFg1Wj5gyKD7HWV`: Natasha - Gentle Meditation
-  - `1cxc5c3E9K6F1wlqOJGV`: Emily - Gentile, Soft and Meditative
-  - `1U02n4nD6AdIZ9CjF053`: Viraj - Smooth and Gentle
-  - `HgyIHe81F3nXywNwkraY`: Nate - Sultry, Whispery and Seductive
-  - `AeRdCCKzvd23BpJoofzx`: Nathaniel - Engaging, British and Calm
-  - `LruHrtVF6PSyGItzMNHS`: Benjamin - Deep, Warm, Calming
-  - `Qggl4b0xRMiqOwhPtVWT`: Clara - Relaxing, Calm and Soothing
-  - `zA6D7RyKdc2EClouEMkP`: AImee - Tranquil ASMR and Meditation
-  - `1wGbFxmAM3Fgw63G1zZJ`: Allison - Calm, Soothing and Meditative
-  - `hqfrgApggtO1785R4Fsn`: Theodore HQ - Serene and Grounded
-  - `sH0WdfE5fsKuM2otdQZr`: Koraly – Soft-spoken and Gentle
-  - `MJ0RnG71ty4LH3dvNfSd`: Leon - Soothing and Grounded
-- **Default Value**: `"Rachel"`
-
-#### stability
-- **Type**: `number`
-- **Required**: No
-- **Description**: Voice stability (0-1)
-- **Range**: 0 - 1 (step: 0.01)
-- **Default Value**: `0.5`
-
-#### similarity_boost
-- **Type**: `number`
-- **Required**: No
-- **Description**: Similarity boost (0-1)
-- **Range**: 0 - 1 (step: 0.01)
-- **Default Value**: `0.75`
-
-#### style
-- **Type**: `number`
-- **Required**: No
-- **Description**: Style exaggeration (0-1)
-- **Range**: 0 - 1 (step: 0.01)
-- **Default Value**: `0`
-
-#### speed
-- **Type**: `number`
-- **Required**: No
-- **Description**: Speech speed (0.7-1.2). Values below 1.0 slow down the speech, above 1.0 speed it up. Extreme values may affect quality.
-- **Range**: 0.7 - 1.2 (step: 0.01)
-- **Default Value**: `1`
-
-#### timestamps
-- **Type**: `boolean`
-- **Required**: No
-- **Description**: Whether to return timestamps for each word in the generated speech
-- **Default Value**: `false`
-
-#### previous_text
-- **Type**: `string`
-- **Required**: No
-- **Description**: The text that came before the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation.
-- **Max Length**: 5000 characters
-- **Default Value**: `""`
-
-#### next_text
-- **Type**: `string`
-- **Required**: No
-- **Description**: The text that comes after the text of the current request. Can be used to improve the speech's continuity when concatenating together multiple generations or to influence the speech's continuity in the current generation.
-- **Max Length**: 5000 characters
-- **Default Value**: `""`
+- **Description**: Please provide the URL of the uploaded file,URL of the audio file to transcribe
+- **Max File Size**: 200MB
+- **Accepted File Types**: audio/mpeg, audio/wav, audio/x-wav, audio/aac, audio/mp4, audio/ogg
+- **Default Value**: `"https://file.aiquickdraw.com/custom-page/akr/section-images/1757157053357tn37vxc8.mp3"`
 
 #### language_code
 - **Type**: `string`
 - **Required**: No
-- **Description**: Language code (ISO 639-1) used to enforce a language for the model. Currently only Turbo v2.5 and Flash v2.5 support language enforcement. For other models, an error will be returned if language code is provided.
+- **Description**: Language code of the audio
 - **Max Length**: 500 characters
 - **Default Value**: `""`
+
+#### tag_audio_events
+- **Type**: `boolean`
+- **Required**: No
+- **Description**: Tag audio events like laughter, applause, etc.
+- **Default Value**: `true`
+
+#### diarize
+- **Type**: `boolean`
+- **Required**: No
+- **Description**: Whether to annotate who is speaking
+- **Default Value**: `true`
 
 ### Request Example
 
 ```json
 {
-  "model": "elevenlabs/text-to-speech-turbo-2-5",
+  "model": "elevenlabs/speech-to-text",
   "input": {
-    "text": "Unlock powerful API with Kie.ai! Affordable, scalable APl integration, free trial playground, and secure, reliable performance.",
-    "voice": "Rachel",
-    "stability": 0.5,
-    "similarity_boost": 0.75,
-    "style": 42,
-    "speed": 1,
-    "timestamps": false,
-    "previous_text": "Enter your prompt here...",
-    "next_text": "Enter your prompt here...",
-    "language_code": ""
+    "audio_url": "https://file.aiquickdraw.com/custom-page/akr/section-images/1757157053357tn37vxc8.mp3",
+    "language_code": "",
+    "tag_audio_events": true,
+    "diarize": true
   }
 }
 ```
@@ -331,10 +149,10 @@ GET https://api.kie.ai/api/v1/jobs/recordInfo?taskId=281e5b0********************
   "msg": "success",
   "data": {
     "taskId": "281e5b0*********************f39b9",
-    "model": "elevenlabs/text-to-speech-turbo-2-5",
+    "model": "elevenlabs/speech-to-text",
     "state": "waiting",
-    "param": "{\"model\":\"elevenlabs/text-to-speech-turbo-2-5\",\"input\":{\"text\":\"Unlock powerful API with Kie.ai! Affordable, scalable APl integration, free trial playground, and secure, reliable performance.\",\"voice\":\"Rachel\",\"stability\":0.5,\"similarity_boost\":0.75,\"style\":42,\"speed\":1,\"timestamps\":false,\"previous_text\":\"Enter your prompt here...\",\"next_text\":\"Enter your prompt here...\",\"language_code\":\"\"}}",
-    "resultJson": "",
+    "param": "{\"model\":\"elevenlabs/speech-to-text\",\"input\":{\"audio_url\":\"https://file.aiquickdraw.com/custom-page/akr/section-images/1757157053357tn37vxc8.mp3\",\"language_code\":\"\",\"tag_audio_events\":true,\"diarize\":true}}",
+    "resultJson": "{\"resultObject\":{\"language_code\":\"eng\",\"language_probability\":0.9915943741798401,\"words\":[{\"speaker_id\":\"speaker_0\",\"start\":0.14,\"end\":0.339,\"text\":\"Ever\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":0.339,\"end\":0.459,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":0.459,\"end\":0.659,\"text\":\"tried\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":0.659,\"end\":0.74,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":0.74,\"end\":0.879,\"text\":\"Ki\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":0.879,\"end\":0.959,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":0.959,\"end\":2.279,\"text\":\"AI?\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":2.279,\"end\":2.279,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":2.279,\"end\":2.459,\"text\":\"They've\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":2.459,\"end\":2.48,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":2.48,\"end\":2.579,\"text\":\"got\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":2.579,\"end\":2.639,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":2.639,\"end\":2.699,\"text\":\"a\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":2.699,\"end\":2.719,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":2.72,\"end\":2.939,\"text\":\"bunch\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":2.939,\"end\":2.979,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":2.98,\"end\":3.119,\"text\":\"of\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":3.119,\"end\":3.139,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":3.139,\"end\":3.479,\"text\":\"solid\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":3.479,\"end\":3.5,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":3.5,\"end\":3.759,\"text\":\"AI\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":3.759,\"end\":3.839,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":3.839,\"end\":4.78,\"text\":\"APIs,\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":4.78,\"end\":4.779,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":4.779,\"end\":4.899,\"text\":\"and\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":4.899,\"end\":4.92,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":4.92,\"end\":5.019,\"text\":\"the\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":5.019,\"end\":5.039,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":5.039,\"end\":5.48,\"text\":\"prices\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":5.48,\"end\":5.5,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":5.5,\"end\":5.619,\"text\":\"are\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":5.619,\"end\":5.639,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":5.639,\"end\":5.799,\"text\":\"more\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":5.799,\"end\":5.819,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":5.819,\"end\":6.019,\"text\":\"than\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":6.019,\"end\":6.199,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":6.199,\"end\":6.739,\"text\":\"50%\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":6.739,\"end\":6.759,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":6.759,\"end\":7.039,\"text\":\"lower\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":7.039,\"end\":7.059,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":7.059,\"end\":7.179,\"text\":\"than\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":7.179,\"end\":7.199,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":7.199,\"end\":7.299,\"text\":\"the\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":7.299,\"end\":7.339,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":7.339,\"end\":7.679,\"text\":\"usual\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":7.679,\"end\":7.699,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":7.699,\"end\":7.839,\"text\":\"big\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":7.839,\"end\":7.879,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":7.879,\"end\":8.079,\"text\":\"name\",\"type\":\"word\"},{\"speaker_id\":\"speaker_0\",\"start\":8.079,\"end\":8.099,\"text\":\" \",\"type\":\"spacing\"},{\"speaker_id\":\"speaker_0\",\"start\":8.099,\"end\":9.659,\"text\":\"platforms.\",\"type\":\"word\"}],\"text\":\"Ever tried Ki AI? They've got a bunch of solid AI APIs, and the prices are more than 50% lower than the usual big name platforms.\"}}",
     "failCode": null,
     "failMsg": null,
     "costTime": null,
