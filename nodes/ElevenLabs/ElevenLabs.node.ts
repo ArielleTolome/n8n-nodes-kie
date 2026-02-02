@@ -823,12 +823,14 @@ export class ElevenLabs implements INodeType {
 						const model_id = this.getNodeParameter('modelIdSTT', i) as string;
 						const language_code = this.getNodeParameter('languageCodeSTT', i, '') as string;
 						const tag_audio_events = this.getNodeParameter('tagAudioEvents', i) as boolean;
+						const diarize = this.getNodeParameter('diarize', i) as boolean;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
 
 						const input: IDataObject = {
-							audioUrl,
+							audio_url: audioUrl,
 							model_id,
 							tag_audio_events,
+							diarize,
 						};
 
 						if (language_code && language_code !== 'auto') {
