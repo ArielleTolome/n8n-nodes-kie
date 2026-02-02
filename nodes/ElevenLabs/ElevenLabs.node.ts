@@ -14,7 +14,7 @@ export class ElevenLabs implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate speech and dialogue using ElevenLabs API via Kie.ai',
+		description: 'Generate speech, sound effects, and dialogue using ElevenLabs API via Kie.ai',
 		defaults: {
 			name: 'ElevenLabs (Kie.ai)',
 		},
@@ -63,6 +63,18 @@ export class ElevenLabs implements INodeType {
 						value: 'speechToText',
 						description: 'Transcribe audio to text',
 						action: 'Speech to text',
+					},
+					{
+						name: 'Sound Effects',
+						value: 'soundEffects',
+						description: 'Generate sound effects from text',
+						action: 'Sound effects',
+					},
+					{
+						name: 'Audio Isolation',
+						value: 'audioIsolation',
+						description: 'Isolate voice from audio',
+						action: 'Audio isolation',
 					},
 					{
 						name: 'Text-to-Dialogue',
@@ -381,11 +393,11 @@ export class ElevenLabs implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['speechToText'],
+						operation: ['speechToText', 'audioIsolation'],
 					},
 				},
 				default: '',
-				description: 'The URL of the audio file to transcribe',
+				description: 'The URL of the audio file',
 				placeholder: 'https://example.com/audio.mp3',
 			},
 			{
@@ -430,6 +442,90 @@ export class ElevenLabs implements INodeType {
 				},
 				default: false,
 				description: 'Whether to tag audio events in the transcription',
+			},
+			// Sound Effects Parameters
+			{
+				displayName: 'Description',
+				name: 'text',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['soundEffects'],
+					},
+				},
+				default: '',
+				description: 'The text describing the sound effect to generate',
+				placeholder: 'A dog barking in the distance',
+			},
+			{
+				displayName: 'Duration (Seconds)',
+				name: 'durationSeconds',
+				type: 'number',
+				typeOptions: {
+					minValue: 0.5,
+					maxValue: 22,
+					numberStepSize: 0.1,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['soundEffects'],
+					},
+				},
+				default: 10,
+				description: 'Duration in seconds (0.5-22). If not set, optimal duration will be determined from prompt.',
+			},
+			{
+				displayName: 'Prompt Influence',
+				name: 'promptInfluence',
+				type: 'number',
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberStepSize: 0.01,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['soundEffects'],
+					},
+				},
+				default: 0.3,
+				description: 'How closely to follow the prompt (0-1). Higher values mean less variation.',
+			},
+			{
+				displayName: 'Loop',
+				name: 'loop',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['soundEffects'],
+					},
+				},
+				default: false,
+				description: 'Whether to create a sound effect that loops smoothly',
+			},
+			{
+				displayName: 'Output Format',
+				name: 'outputFormat',
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['soundEffects'],
+					},
+				},
+				options: [
+					{ name: 'MP3 44100Hz 128kbps', value: 'mp3_44100_128' },
+					{ name: 'MP3 44100Hz 192kbps', value: 'mp3_44100_192' },
+					{ name: 'PCM 44100Hz', value: 'pcm_44100' },
+					{ name: 'PCM 24000Hz', value: 'pcm_24000' },
+				],
+				default: 'mp3_44100_128',
+				description: 'Output format of the generated audio',
 			},
 			// Text-to-Dialogue Parameters
 			{
@@ -610,7 +706,7 @@ export class ElevenLabs implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['textToSpeech', 'speechToText', 'textToDialogue'],
+						operation: ['textToSpeech', 'speechToText', 'textToDialogue', 'soundEffects', 'audioIsolation'],
 					},
 				},
 				default: '',
@@ -624,7 +720,7 @@ export class ElevenLabs implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['textToSpeech', 'speechToText', 'textToDialogue'],
+						operation: ['textToSpeech', 'speechToText', 'textToDialogue', 'soundEffects', 'audioIsolation'],
 					},
 				},
 				default: '',
@@ -727,6 +823,79 @@ export class ElevenLabs implements INodeType {
 						const body: IDataObject = {
 							model: 'elevenlabs/speech-to-text-v1',
 							input,
+						};
+
+						if (callbackUrl && callbackUrl.trim() !== '') {
+							body.callBackUrl = callbackUrl;
+						}
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'kieAiApi',
+							{
+								method: 'POST',
+								url: 'https://api.kie.ai/api/v1/jobs/createTask',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body,
+								json: true,
+							},
+						);
+
+						returnData.push(response);
+					} else if (operation === 'soundEffects') {
+						const text = this.getNodeParameter('text', i) as string;
+						const loop = this.getNodeParameter('loop', i) as boolean;
+						const duration_seconds = this.getNodeParameter('durationSeconds', i) as number;
+						const prompt_influence = this.getNodeParameter('promptInfluence', i) as number;
+						const output_format = this.getNodeParameter('outputFormat', i) as string;
+						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+
+						const input: IDataObject = {
+							text,
+							loop,
+							prompt_influence,
+							output_format,
+						};
+
+						if (duration_seconds) {
+							input.duration_seconds = duration_seconds;
+						}
+
+						const body: IDataObject = {
+							model: 'elevenlabs/sound-effect-v2',
+							input,
+						};
+
+						if (callbackUrl && callbackUrl.trim() !== '') {
+							body.callBackUrl = callbackUrl;
+						}
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'kieAiApi',
+							{
+								method: 'POST',
+								url: 'https://api.kie.ai/api/v1/jobs/createTask',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body,
+								json: true,
+							},
+						);
+
+						returnData.push(response);
+					} else if (operation === 'audioIsolation') {
+						const audio_url = this.getNodeParameter('audioUrl', i) as string;
+						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+
+						const body: IDataObject = {
+							model: 'elevenlabs/audio-isolation',
+							input: {
+								audio_url,
+							},
 						};
 
 						if (callbackUrl && callbackUrl.trim() !== '') {
