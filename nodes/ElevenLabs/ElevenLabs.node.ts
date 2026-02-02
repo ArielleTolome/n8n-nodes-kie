@@ -838,7 +838,7 @@ export class ElevenLabs implements INodeType {
 						}
 
 						const body: IDataObject = {
-							model: 'elevenlabs/speech-to-text-v1',
+							model: 'elevenlabs/speech-to-text',
 							input,
 						};
 
