@@ -521,6 +521,19 @@ export class ElevenLabs implements INodeType {
 				default: false,
 				description: 'Whether to tag audio events in the transcription',
 			},
+			{
+				displayName: 'Diarize',
+				name: 'diarize',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['speechToText'],
+					},
+				},
+				default: false,
+				description: 'Whether to annotate who is speaking',
+			},
 			// Sound Effects Parameters
 			{
 				displayName: 'Description',
