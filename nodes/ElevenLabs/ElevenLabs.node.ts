@@ -519,7 +519,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: false,
-				description: 'Whether to tag audio events in the transcription',
+				description: 'Detect and tag non-speech audio events like laughter, applause, music, or silence in the transcription',
 			},
 			{
 				displayName: 'Diarize',
