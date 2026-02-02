@@ -8,15 +8,15 @@ import {
 
 export class ElevenlabsV3 implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'ElevenLabs Text-to-Dialogue V3 (Kie.ai)',
+		displayName: 'ElevenLabs (Kie.ai)',
 		name: 'elevenlabsV3',
 		icon: 'file:elevenlabs-bubble.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate dialogue using ElevenLabs Text-to-Dialogue V3 API',
+		description: 'Generate speech and dialogue using ElevenLabs API via Kie.ai',
 		defaults: {
-			name: 'ElevenLabs Text-to-Dialogue V3 (Kie.ai)',
+			name: 'ElevenLabs (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -53,20 +53,318 @@ export class ElevenlabsV3 implements INodeType {
 				},
 				options: [
 					{
+						name: 'Text-to-Speech',
+						value: 'textToSpeech',
+						description: 'Generate speech from text',
+						action: 'Text to speech',
+					},
+					{
 						name: 'Text-to-Dialogue',
 						value: 'textToDialogue',
 						description: 'Generate dialogue from text',
-						action: 'Text-to-Dialogue',
+						action: 'Text to dialogue',
 					},
 					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
-						action: 'Get Task Status',
+						action: 'Get task status',
 					},
 				],
-				default: 'textToDialogue',
+				default: 'textToSpeech',
 				required: true,
+			},
+			// Text-to-Speech Parameters
+			{
+				displayName: 'Text',
+				name: 'text',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				default: 'Unlock powerful API with Kie.ai! Affordable, scalable APl integration, free trial playground, and secure, reliable performance.',
+				description: 'The text to convert to speech',
+			},
+			{
+				displayName: 'Voice Name or ID',
+				name: 'voice',
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				options: [
+					{ name: 'Rachel', value: 'Rachel' },
+					{ name: 'Aria', value: 'Aria' },
+					{ name: 'Roger', value: 'Roger' },
+					{ name: 'Sarah', value: 'Sarah' },
+					{ name: 'Laura', value: 'Laura' },
+					{ name: 'Charlie', value: 'Charlie' },
+					{ name: 'George', value: 'George' },
+					{ name: 'Callum', value: 'Callum' },
+					{ name: 'River', value: 'River' },
+					{ name: 'Liam', value: 'Liam' },
+					{ name: 'Charlotte', value: 'Charlotte' },
+					{ name: 'Alice', value: 'Alice' },
+					{ name: 'Matilda', value: 'Matilda' },
+					{ name: 'Will', value: 'Will' },
+					{ name: 'Jessica', value: 'Jessica' },
+					{ name: 'Eric', value: 'Eric' },
+					{ name: 'Chris', value: 'Chris' },
+					{ name: 'Brian', value: 'Brian' },
+					{ name: 'Daniel', value: 'Daniel' },
+					{ name: 'Lily', value: 'Lily' },
+					{ name: 'Bill', value: 'Bill' },
+					{ name: 'Ellen (Serious, Direct and Confident)', value: 'BIvP0GN1cAtSRTxNHnWS' },
+					{ name: 'Juniper (Grounded and Professional)', value: 'aMSt68OGf4xUZAnLpTU8' },
+					{ name: 'Jane (Professional Audiobook Reader)', value: 'RILOU7YmBhvwJGDGjNmP' },
+					{ name: 'James (Husky, Engaging and Bold)', value: 'EkK5I93UQWFDigLMpZcX' },
+					{ name: 'Arabella (Mysterious and Emotive)', value: 'Z3R5wn05IrDiVCyEkUrK' },
+					{ name: 'Hope (Upbeat and Clear)', value: 'tnSpp4vdxKPjI9w0GnoV' },
+					{ name: 'Bradford (Expressive and Articulate)', value: 'NNl6r8mD7vthiJatiJt1' },
+					{ name: 'Xavier (Dominating, Metalic Announcer)', value: 'YOq2y2Up4RgXP2HyXjE5' },
+					{ name: 'Austin (Deep, Raspy and Authentic)', value: 'Bj9UqZbhQsanLzgalpEG' },
+					{ name: 'Jarnathan (Confident and Versatile)', value: 'c6SfcYrb2t09NHXiT80T' },
+					{ name: 'Kuon (Cheerful, Clear and Steady)', value: 'B8gJV1IhpuegLxdpXFOE' },
+					{ name: 'Blondie (Conversational)', value: 'exsUS4vynmxd379XN4yO' },
+					{ name: 'Priyanka (Calm, Neutral and Relaxed)', value: 'BpjGufoPiobT79j2vtj4' },
+					{ name: 'Monika Sogam (Deep and Natural)', value: '2zRM7PkgwBPiau2jvVXc' },
+					{ name: 'Mark (Casual, Relaxed and Light)', value: '1SM7GgM6IMuvQlz2BwM3' },
+					{ name: 'Grimblewood Thornwhisker (Snarky Gnome & Magical Maintainer)', value: 'ouL9IsyrSnUkCmfnD02u' },
+					{ name: 'Adeline (Feminine and Conversational)', value: '5l5f8iK3YPeGga21rQIX' },
+					{ name: 'Sam (Support Agent)', value: 'scOwDtmlUjD3prqpp97I' },
+					{ name: 'Spuds Oxley (Wise and Approachable)', value: 'NOpBlnGInO9m6vDvFkFC' },
+					{ name: 'Eve (Authentic, Energetic and Happy)', value: 'BZgkqPqms7Kj9ulSkVzn' },
+					{ name: 'Northern Terry', value: 'wo6udizrrtpIxWGp2qJk' },
+					{ name: 'Dr. Von (Quirky, Mad Scientist)', value: 'yjJ45q8TVCrtMhEKurxY' },
+					{ name: 'British Football Announcer', value: 'gU0LNdkMOQCOrPrwtbee' },
+					{ name: 'Brock (Commanding and Loud Sergeant)', value: 'DGzg6RaUqxGRTHSBjfgF' },
+					{ name: 'Célian (Documentary Narrator)', value: 'DGTOOUoGpoP6UZ9uSWfA' },
+					{ name: 'Nathan (Virtual Radio Host)', value: 'x70vRnQBMBu4FAYhjJbO' },
+					{ name: 'Viraj (Rich and Soft)', value: 'P1bg08DkjqiVEzOn76yG' },
+					{ name: 'Taksh (Calm, Serious and Smooth)', value: 'qDuRKMlYmrm8trt5QyBn' },
+					{ name: 'Guadeloupe Merryweather (Emotional)', value: 'kUUTqKQ05NMGulF08DDf' },
+					{ name: 'Horatius (Energetic Character Voice)', value: 'qXpMhyvQqiRxWQs4qSSB' },
+					{ name: 'Liam (Energetic, Social Media Creator)', value: 'TX3LPaxmHKxFdv7VOQHJ' },
+					{ name: 'Chris (Charming, Down-to-Earth)', value: 'iP95p4xoKVk53GoZ742B' },
+					{ name: 'Harry (Fierce Warrior)', value: 'SOYHLrjzK2X1ezoPC6cr' },
+					{ name: 'Callum (Husky Trickster)', value: 'N2lVS1w4EtoT3dr4eOWO' },
+					{ name: 'Laura (Enthusiast, Quirky Attitude)', value: 'FGY2WhTYpPnrIDTdsKH5' },
+					{ name: 'Charlotte', value: 'XB0fDUnXU5powFXDhCwa' },
+					{ name: 'Jessica (Playful, Bright, Warm)', value: 'cgSgspJ2msm6clMCkdW9' },
+					{ name: 'Heather Rey (Rushed and Friendly)', value: 'MnUw1cSnpiLoLhpd3Hqp' },
+					{ name: 'Brittney (Social Media Voice - Fun, Youthful & Informative)', value: 'kPzsL2i3teMYv0FxEYQ6' },
+					{ name: 'Mark (Natural Conversations)', value: 'UgBBYS2sOqTuMpoF3BR0' },
+					{ name: 'Matthew (Casual, Friendly and Smooth)', value: 'IjnA9kwZJHJ20Fp7Vmy6' },
+					{ name: 'Pro Narrator (Convincing story teller)', value: 'KoQQbl9zjAdLgKZjm8Ol' },
+					{ name: 'Bella (Professional, Bright, Warm)', value: 'hpp4J3VqNfWAUOO0d1Us' },
+					{ name: 'Adam (Dominant, Firm)', value: 'pNInz6obpgDQGcFmaJgB' },
+					{ name: 'Brian (Deep, Resonant and Comforting)', value: 'nPczCjzI2devNBz1zQrb' },
+					{ name: 'Archer', value: 'L0Dsvb3SLTyegXwtm47J' },
+					{ name: 'Hope (Bubbly, Gossipy and Girly)', value: 'uYXf8XasLslADfZ2MB4u' },
+					{ name: 'Jeff (Classy, Resonating and Strong)', value: 'gs0tAILXbY5DNrJrsM6F' },
+					{ name: 'Jamahal (Young, Vibrant, and Natural)', value: 'DTKMou8ccj1ZaWGBiotd' },
+					{ name: 'Finn (Youthful, Eager and Energetic)', value: 'vBKc2FfBKJfcZNyEt1n6' },
+					{ name: 'Smith (Mellow, Spontaneous, and Bassy)', value: 'TmNe0cCqkZBMwPWOd3RD' },
+					{ name: 'Tom (Conversations & Books)', value: 'DYkrAHD8iwork3YSUBbs' },
+					{ name: 'Cassidy (Crisp, Direct and Clear)', value: '56AoDkrOh6qfVPDXZ7Pt' },
+					{ name: 'Addison 2.0 (Australian Audiobook & Podcast)', value: 'eR40ATw9ArzDf9h3v7t7' },
+					{ name: 'Jessica Anne Bogart (Chatty and Friendly)', value: 'g6xIsTj2HwM6VR4iXFCw' },
+					{ name: 'Lucy (Fresh & Casual)', value: 'lcMyyd2HUfFzxdCaC4Ta' },
+					{ name: 'Tiffany (Natural and Welcoming)', value: '6aDn1KB0hjpdcocrUkmq' },
+					{ name: 'Felix (Warm, positive & contemporary RP)', value: 'Sq93GQT4X1lKDXsQcixO' },
+					{ name: 'Malyx (Echoey, Menacing and Deep Demon)', value: 'piI8Kku0DcvcL6TTSeQt' },
+					{ name: 'Flicker (Cheerful Fairy & Sparkly Sweetness)', value: 'KTPVrSVAEUSJRClDzBw7' },
+					{ name: 'Bob (Rugged and Warm Cowboy)', value: 'flHkNRp1BlvT73UL6gyz' },
+					{ name: 'Jessica Anne Bogart (Eloquent Villain)', value: '9yzdeviXkFddZ4Oz8Mok' },
+					{ name: 'Lutz (Chuckling, Giggly and Cheerful)', value: 'pPdl9cQBQq4p6mRkZy2Z' },
+					{ name: 'Emma (Adorable and Upbeat)', value: '0SpgpJ4D3MpHCiWdyTg3' },
+					{ name: 'Matthew Schmitz (Elitist, Arrogant, Conniving Tyrant)', value: 'UFO0Yv86wqRxAt1DmXUu' },
+					{ name: 'Sarcastic and Sultry Villain', value: 'oR4uRy4fHDUGGISL0Rev' },
+					{ name: 'Myrrdin (Wise and Magical Narrator)', value: 'zYcjlYFOd3taleS0gkk3' },
+					{ name: 'Edward (Loud, Confident and Cocky)', value: 'nzeAacJi50IvxcyDnMXa' },
+					{ name: 'Marshal (Friendly, Funny Professor)', value: 'ruirxsoakN0GWmGNIo04' },
+					{ name: 'John Morgan (Gritty, Rugged Cowboy)', value: '1KFdM0QCwQn4rmn5nn9C' },
+					{ name: 'Parasyte (Whispers from the Deep Dark)', value: 'TC0Zp7WVFzhA8zpTlRqV' },
+					{ name: 'Aria (Sultry Villain)', value: 'ljo9gAlSqKOvF6D8sOsX' },
+					{ name: 'Viking Bjorn (Epic Medieval Raider)', value: 'PPzYpIqttlTYA83688JI' },
+					{ name: 'Pirate Marshal', value: 'ZF6FPAbjXT4488VcRRnw' },
+					{ name: 'Amelia (Enthusiastic and Expressive)', value: '8JVbfL6oEdmuxKn5DK2C' },
+					{ name: 'Johnny Kid (Serious and Calm Narrator)', value: 'iCrDUkL56s3C8sCRl7wb' },
+					{ name: 'Hope (Poetic, Romantic and Captivating)', value: '1hlpeD1ydbI2ow0Tt3EW' },
+					{ name: 'Olivia (Smooth, Warm and Engaging)', value: 'wJqPPQ618aTW29mptyoc' },
+					{ name: 'Ana Rita (Smooth, Expressive and Bright)', value: 'EiNlNiXeDU1pqqOPrYMO' },
+					{ name: 'John Doe (Deep)', value: 'FUfBrNit0NNZAwb58KWH' },
+					{ name: 'Angela (Conversational and Friendly)', value: '4YYIPFl9wE5c4L2eu2Gb' },
+					{ name: 'Burt Reynolds™ (Deep, Smooth and clear)', value: 'OYWwCdDHouzDwiZJWOOu' },
+					{ name: 'David (Gruff Cowboy)', value: '6F5Zhi321D3Oq7v1oNT4' },
+					{ name: 'Hank (Deep and Engaging Narrator)', value: 'qNkzaJoHLLdpvgh5tISm' },
+					{ name: 'Carter (Rich, Smooth and Rugged)', value: 'YXpFCvM1S3JbWEJhoskW' },
+					{ name: 'Wyatt (Wise Rustic Cowboy)', value: '9PVP7ENhDskL0KYHAKtD' },
+					{ name: 'Jerry B. (Southern/Cowboy)', value: 'LG95yZDEHg6fCZdQjLqj' },
+					{ name: 'Phil (Passionate Announcer)', value: 'CeNX9CMwmxDxUF5Q2Inm' },
+					{ name: 'Johnny Dynamite (Vintage Radio DJ)', value: 'st7NwhTPEzqo2riw7qWC' },
+					{ name: 'Blondie (Radio Host)', value: 'aD6riP1btT197c6dACmy' },
+					{ name: 'Rachel M (Pro British Radio Presenter)', value: 'FF7KdobWPaiR0vkcALHF' },
+					{ name: 'David (Movie Trailer Narrator)', value: 'mtrellq69YZsNwzUSyXh' },
+					{ name: 'Rex Thunder (Deep N Tough)', value: 'dHd5gvgSOzSfduK4CvEg' },
+					{ name: 'Ed (Late Night Announcer)', value: 'cTNP6ZM2mLTKj2BFhxEh' },
+					{ name: 'Paul French (Podcaster)', value: 'eVItLK1UvXctxuaRV2Oq' },
+					{ name: 'Jean (Femme Fatale)', value: 'U1Vk2oyatMdYs096Ety7' },
+					{ name: 'Michael (Deep, Dark and Urban)', value: 'esy0r39YPLQjOczyOib8' },
+					{ name: 'Britney (Calm and Calculative Villain)', value: 'bwCXcoVxWNYMlC6Esa8u' },
+					{ name: 'Matthew Schmitz (Gravel, Deep Anti-Hero)', value: 'D2jw4N9m4xePLTQ3IHjU' },
+					{ name: 'Ian (Strange and Distorted Alien)', value: 'Tsns2HvNFKfGiNjllgqo' },
+					{ name: 'Sven (Emotional and Nice)', value: 'Atp5cNFg1Wj5gyKD7HWV' },
+					{ name: 'Natasha (Gentle Meditation)', value: '1cxc5c3E9K6F1wlqOJGV' },
+					{ name: 'Emily (Gentle, Soft and Meditative)', value: '1U02n4nD6AdIZ9CjF053' },
+					{ name: 'Viraj (Smooth and Gentle)', value: 'HgyIHe81F3nXywNwkraY' },
+					{ name: 'Nate (Sultry, Whispery and Seductive)', value: 'AeRdCCKzvd23BpJoofzx' },
+					{ name: 'Nathaniel (Engaging, British and Calm)', value: 'LruHrtVF6PSyGItzMNHS' },
+					{ name: 'Benjamin (Deep, Warm, Calming)', value: 'Qggl4b0xRMiqOwhPtVWT' },
+					{ name: 'Clara (Relaxing, Calm and Soothing)', value: 'zA6D7RyKdc2EClouEMkP' },
+					{ name: 'AImee (Tranquil ASMR and Meditation)', value: '1wGbFxmAM3Fgw63G1zZJ' },
+					{ name: 'Allison (Calm, Soothing and Meditative)', value: 'hqfrgApggtO1785R4Fsn' },
+					{ name: 'Theodore HQ (Serene and Grounded)', value: 'sH0WdfE5fsKuM2otdQZr' },
+					{ name: 'Koraly (Soft-spoken and Gentle)', value: 'MJ0RnG71ty4LH3dvNfSd' },
+					{ name: 'Leon (Soothing and Grounded)', value: 'pNInz6obpgDQGcFmaJgB' },
+				],
+				default: 'Rachel',
+				description: 'The voice to use for speech generation',
+			},
+			{
+				displayName: 'Stability',
+				name: 'stabilityTTS',
+				type: 'number',
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberStepSize: 0.01,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				default: 0.5,
+				description: 'Voice stability (0-1). Default: 0.5.',
+			},
+			{
+				displayName: 'Similarity Boost',
+				name: 'similarityBoost',
+				type: 'number',
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberStepSize: 0.01,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				default: 0.75,
+				description: 'Similarity boost (0-1). Default: 0.75.',
+			},
+			{
+				displayName: 'Style',
+				name: 'style',
+				type: 'number',
+				typeOptions: {
+					minValue: 0,
+					maxValue: 1,
+					numberStepSize: 0.01,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				default: 0,
+				description: 'Style exaggeration (0-1). Default: 0.',
+			},
+			{
+				displayName: 'Speed',
+				name: 'speed',
+				type: 'number',
+				typeOptions: {
+					minValue: 0.7,
+					maxValue: 1.2,
+					numberStepSize: 0.01,
+				},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				default: 1,
+				description: 'Speech speed (0.7-1.2). Default: 1.',
+			},
+			{
+				displayName: 'Language Code',
+				name: 'languageCodeTTS',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				default: '',
+				description: 'Language code (ISO 639-1) to enforce a language. Currently only Turbo v2.5 and Flash v2.5 support this.',
+				placeholder: 'en',
+			},
+			{
+				displayName: 'Additional Parameters',
+				name: 'additionalParameters',
+				type: 'collection',
+				placeholder: 'Add Parameter',
+				default: {},
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['textToSpeech'],
+					},
+				},
+				options: [
+					{
+						displayName: 'Timestamps',
+						name: 'timestamps',
+						type: 'boolean',
+						default: false,
+						description: 'Whether to return timestamps for each word',
+					},
+					{
+						displayName: 'Previous Text',
+						name: 'previousText',
+						type: 'string',
+						typeOptions: {
+							rows: 2,
+						},
+						default: '',
+						description: 'The text that came before the text of the current request',
+					},
+					{
+						displayName: 'Next Text',
+						name: 'nextText',
+						type: 'string',
+						typeOptions: {
+							rows: 2,
+						},
+						default: '',
+						description: 'The text that comes after the text of the current request',
+					},
+				],
 			},
 			// Text-to-Dialogue Parameters
 			{
@@ -247,7 +545,7 @@ export class ElevenlabsV3 implements INodeType {
 				displayOptions: {
 					show: {
 						resource: ['job'],
-						operation: ['textToDialogue'],
+						operation: ['textToSpeech', 'textToDialogue'],
 					},
 				},
 				default: '',
@@ -294,7 +592,57 @@ export class ElevenlabsV3 implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				if (resource === 'job') {
-					if (operation === 'textToDialogue') {
+					if (operation === 'textToSpeech') {
+						const text = this.getNodeParameter('text', i) as string;
+						const voice = this.getNodeParameter('voice', i) as string;
+						const stability = this.getNodeParameter('stabilityTTS', i) as number;
+						const similarity_boost = this.getNodeParameter('similarityBoost', i) as number;
+						const style = this.getNodeParameter('style', i) as number;
+						const speed = this.getNodeParameter('speed', i) as number;
+						const language_code = this.getNodeParameter('languageCodeTTS', i, '') as string;
+						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const additionalParameters = this.getNodeParameter('additionalParameters', i, {}) as IDataObject;
+
+						const input: IDataObject = {
+							text,
+							voice,
+							stability,
+							similarity_boost,
+							style,
+							speed,
+						};
+
+						if (language_code) {
+							input.language_code = language_code;
+						}
+
+						Object.assign(input, additionalParameters);
+
+						const body: IDataObject = {
+							model: 'elevenlabs/text-to-speech-turbo-2-5',
+							input,
+						};
+
+						if (callbackUrl && callbackUrl.trim() !== '') {
+							body.callBackUrl = callbackUrl;
+						}
+
+						const response = await this.helpers.httpRequestWithAuthentication.call(
+							this,
+							'kieAiApi',
+							{
+								method: 'POST',
+								url: 'https://api.kie.ai/api/v1/jobs/createTask',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body,
+								json: true,
+							},
+						);
+
+						returnData.push(response);
+					} else if (operation === 'textToDialogue') {
 						const stability = this.getNodeParameter('stability', i) as number;
 						const languageCode = this.getNodeParameter('languageCode', i) as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
