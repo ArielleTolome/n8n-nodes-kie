@@ -11,12 +11,12 @@ USER root
 # Создаем чистую папку для узлов (вне .n8n)
 RUN mkdir -p /opt/nodes
 
-# Копируем архив версии 1.0.34
-COPY myspacet_ai-n8n-nodes-ai-hub-1.0.34.tgz /opt/nodes/
+# Копируем архив версии 1.0.40
+COPY myspacet_ai-n8n-nodes-ai-hub-1.0.40.tgz /opt/nodes/
 WORKDIR /opt/nodes
 
 # Устанавливаем пакет
-RUN npm install myspacet_ai-n8n-nodes-ai-hub-1.0.34.tgz
+RUN npm install myspacet_ai-n8n-nodes-ai-hub-1.0.40.tgz
 
 # Возвращаем права пользователю node
 RUN chown -R node:node /opt/nodes
