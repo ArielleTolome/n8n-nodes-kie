@@ -1,21 +1,29 @@
 # AI Hub for n8n (Kie.ai)
 
-Professional nodes collection for working with powerful AI models via single Kie.ai API. Sora 2 Pro (Video), Seedream v4 (Image), and GPT-image-1.5 (Edit) in your n8n workflows.
+Professional nodes collection for working with powerful AI models via single Kie.ai API. Sora 2 Pro (Video), Seedream v4 (Image), GPT-image-1.5, and **ElevenLabs** in your n8n workflows.
 
 ---
 
 ## 🎥 Available Tools
 
-### Sora 2 Pro (Kie.ai)
+### 🎙️ ElevenLabs (Kie.ai)
+Comprehensive audio generation and processing suite:
+*   **Text-to-Speech (Turbo 2.5)**: Ultra-fast speech generation with support for multiple voices and languages.
+*   **Speech-to-Text**: Transcribe audio to text with **Diarization** (speaker identification) support.
+*   **Sound Effects**: Generate custom sound effects from text descriptions.
+*   **Audio Isolation**: Isolate voice from background noise.
+*   **Text-to-Dialogue**: Create multi-voice dialogues seamlessly.
+
+### 🎬 Sora 2 Pro (Kie.ai)
 *   **Text-to-Video**: High-quality video generation (1080p/720p).
 *   **Flexibility**: Up to 15 seconds duration.
 
-### Seedream v4 (Kie.ai)
+### 🎨 Seedream v4 (Kie.ai)
 *   **Text-to-Image**: Detailed art and photo generation.
 *   **Image-Edit**: Professional image modification.
 *   **Settings**: 4K resolution, Seed, and Aspect Ratio support.
 
-### GPT-image-1.5 (Kie.ai)
+### 🖼️ GPT-image-1.5 (Kie.ai)
 *   **Text-to-Image / Image-to-Image**: Smart generation and deep context editing.
 
 ---
@@ -45,7 +53,8 @@ Professional nodes collection for working with powerful AI models via single Kie
 
 ## 🇷🇺 Для русскоговорящих пользователей
 
-Все узлы работают через единый API. Инструкции, примеры и поддержка доступны в нашем Telegram-канале: [https://t.me/myspacet_ai](https://t.me/myspacet_ai)
+Все узлы работают через единый API. Присоединяйтесь и узнавайте новости по новым узла первыми в Telegram-канале: [https://t.me/myspacet_ai](https://t.me/myspacet_ai)
+
 
 ## License
 MIT
