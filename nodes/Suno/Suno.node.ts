@@ -135,6 +135,22 @@ export class Suno implements INodeType {
 				description: 'Timestamp in seconds to continue from',
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -166,7 +182,7 @@ export class Suno implements INodeType {
 				} else {
 					let endpoint = '';
 					const body: IDataObject = {};
-					let pollEndpoint = '/api/v1/generate/record-info';
+					const pollEndpoint = '/api/v1/generate/record-info';
 
 					if (operation === 'generateMusic') {
 						endpoint = '/api/v1/generate';
@@ -211,6 +227,11 @@ export class Suno implements INodeType {
 						endpoint = '/api/v1/mp4/generate';
 						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
 					}
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
 
 					const response = await kieRequest(this, 'POST', endpoint, body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

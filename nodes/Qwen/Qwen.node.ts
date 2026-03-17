@@ -134,6 +134,18 @@ export class Qwen implements INodeType {
 				description: 'The Qwen image model to use',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated image',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -143,6 +155,30 @@ export class Qwen implements INodeType {
 					},
 				},
 				default: 0,
+			},
+			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'imageEdit'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'imageEdit'],
+					},
+				},
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -190,12 +226,16 @@ export class Qwen implements INodeType {
 					if (operation === 'textToImage') {
 						model = this.getNodeParameter('modelT2I', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
+						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negativePrompt) input.negativePrompt = negativePrompt;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					} else if (operation === 'imageToImage') {
 						model = this.getNodeParameter('modelI2I', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
+						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negativePrompt) input.negativePrompt = negativePrompt;
 					} else if (operation === 'imageEdit') {
 						model = this.getNodeParameter('modelEdit', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
@@ -204,6 +244,12 @@ export class Qwen implements INodeType {
 					}
 
 					const body: IDataObject = { model, input };
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

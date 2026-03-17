@@ -110,6 +110,23 @@ export class ElevenLabs implements INodeType {
 				default: 0.75,
 			},
 			{
+				displayName: 'Style Exaggeration',
+				name: 'styleExaggeration',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
+				displayOptions: { show: { operation: ['textToSpeech'] } },
+				default: 0,
+				description: 'Style exaggeration level (0-1). Higher values may increase latency.',
+			},
+			{
+				displayName: 'Speaker Boost',
+				name: 'speakerBoost',
+				type: 'boolean',
+				displayOptions: { show: { operation: ['textToSpeech'] } },
+				default: false,
+				description: 'Whether to boost clarity and target speaker similarity',
+			},
+			{
 				displayName: 'Audio URL',
 				name: 'audioUrl',
 				type: 'string',
@@ -250,6 +267,22 @@ export class ElevenLabs implements INodeType {
 				],
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['textToSpeech', 'speechToText', 'soundEffects', 'audioIsolation', 'textToDialogue'] } },
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: { show: { operation: ['textToSpeech', 'speechToText', 'soundEffects', 'audioIsolation', 'textToDialogue'] } },
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -288,6 +321,10 @@ export class ElevenLabs implements INodeType {
 						input.voice = this.getNodeParameter('voice', i) as string;
 						input.stability = this.getNodeParameter('stability', i) as number;
 						input.similarity_boost = this.getNodeParameter('similarityBoost', i) as number;
+						const styleExaggeration = this.getNodeParameter('styleExaggeration', i, 0) as number;
+						if (styleExaggeration) input.style = styleExaggeration;
+						const speakerBoost = this.getNodeParameter('speakerBoost', i, false) as boolean;
+						if (speakerBoost) input.use_speaker_boost = true;
 					} else if (operation === 'speechToText') {
 						model = 'elevenlabs/speech-to-text';
 						input.audio_url = this.getNodeParameter('audioUrl', i) as string;
@@ -312,6 +349,12 @@ export class ElevenLabs implements INodeType {
 					}
 
 					const body: IDataObject = { model, input };
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

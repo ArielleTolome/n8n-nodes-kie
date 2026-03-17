@@ -224,6 +224,30 @@ export class Flux implements INodeType {
 				description: 'How much to transform the input image (0-1)',
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'kontext'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'kontext'],
+					},
+				},
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -274,6 +298,11 @@ export class Flux implements INodeType {
 					const promptUpsampling = this.getNodeParameter('promptUpsampling', i, false) as boolean;
 					if (promptUpsampling) body.promptUpsampling = true;
 
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/flux/kontext/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
@@ -309,6 +338,12 @@ export class Flux implements INodeType {
 					}
 
 					const body: IDataObject = { model, input };
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

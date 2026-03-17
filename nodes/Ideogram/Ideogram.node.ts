@@ -169,6 +169,55 @@ export class Ideogram implements INodeType {
 				description: 'Optional style hint',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['generate'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated image',
+			},
+			{
+				displayName: 'Style Type',
+				name: 'styleType',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['generate'],
+					},
+				},
+				options: [
+					{ name: 'Auto', value: '' },
+					{ name: 'General', value: 'GENERAL' },
+					{ name: 'Realistic', value: 'REALISTIC' },
+					{ name: 'Design', value: 'DESIGN' },
+					{ name: 'Render 3D', value: 'RENDER_3D' },
+					{ name: 'Anime', value: 'ANIME' },
+				],
+				default: '',
+				description: 'Ideogram style type preset',
+			},
+			{
+				displayName: 'Magic Prompt Option',
+				name: 'magicPromptOption',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['generate'],
+					},
+				},
+				options: [
+					{ name: 'Auto', value: '' },
+					{ name: 'On', value: 'ON' },
+					{ name: 'Off', value: 'OFF' },
+				],
+				default: '',
+				description: 'Whether to use Ideogram Magic Prompt enhancement',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -179,6 +228,30 @@ export class Ideogram implements INodeType {
 				},
 				default: 0,
 				description: 'Random seed (0 for random)',
+			},
+			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['generate', 'reframe', 'character', 'characterEdit', 'characterRemix'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['generate', 'reframe', 'character', 'characterEdit', 'characterRemix'],
+					},
+				},
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -268,11 +341,23 @@ export class Ideogram implements INodeType {
 					if (operation === 'generate') {
 						const style = this.getNodeParameter('style', i, '') as string;
 						if (style) input.style = style;
+						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negativePrompt) input.negativePrompt = negativePrompt;
+						const styleType = this.getNodeParameter('styleType', i, '') as string;
+						if (styleType) input.styleType = styleType;
+						const magicPromptOption = this.getNodeParameter('magicPromptOption', i, '') as string;
+						if (magicPromptOption) input.magicPromptOption = magicPromptOption;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					}
 
 					const body: IDataObject = { model: modelMap[operation], input };
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

@@ -50,6 +50,22 @@ export class Recraft implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['removeBackground', 'crispUpscale'] } },
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: { show: { operation: ['removeBackground', 'crispUpscale'] } },
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -85,6 +101,12 @@ export class Recraft implements INodeType {
 					};
 
 					const body: IDataObject = { model, input };
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
