@@ -1,0 +1,74 @@
+{
+  "name": "KIE - Image Generation with Flux",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "generate",
+        "model": "flux/1-1-ultra",
+        "prompt": "A serene mountain lake at sunset",
+        "ratio": "16:9",
+        "seed": 42,
+        "waitForCompletion": true
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000002",
+      "name": "Flux",
+      "type": "n8n-nodes-kie.kie",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "kieApi": {
+          "id": "1",
+          "name": "KIE API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "a1b2c3d4-0001-0001-0001-000000000003",
+      "name": "NoOp",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Flux",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flux": {
+      "main": [
+        [
+          {
+            "node": "NoOp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {}
+}
