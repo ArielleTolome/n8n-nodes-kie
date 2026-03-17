@@ -94,6 +94,18 @@ export class Runway implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'Quality',
+				name: 'quality',
+				type: 'options',
+				displayOptions: { show: { operation: ['generate'] } },
+				options: [
+					{ name: '720p', value: '720p' },
+					{ name: '1080p', value: '1080p' },
+				],
+				default: '720p',
+				description: 'Video quality (required by Runway API)',
+			},
+			{
 				displayName: 'Aspect Ratio',
 				name: 'ratio',
 				type: 'options',
@@ -190,6 +202,7 @@ export class Runway implements INodeType {
 					const body: IDataObject = {
 						model: this.getNodeParameter('model', i) as string,
 						prompt: this.getNodeParameter('prompt', i) as string,
+						quality: this.getNodeParameter('quality', i) as string,
 						ratio: this.getNodeParameter('ratio', i) as string,
 						duration: this.getNodeParameter('duration', i) as number,
 					};

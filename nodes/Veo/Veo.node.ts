@@ -49,10 +49,10 @@ export class Veo implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['generate'] } },
 				options: [
-					{ name: 'Veo 3.1 Fast', value: 'veo-3.1' },
-					{ name: 'Veo 3.1 Quality', value: 'veo-3.1-quality' },
+					{ name: 'Veo 3.1 (Standard)', value: 'veo3' },
+					{ name: 'Veo 3.1 Fast', value: 'veo3_fast' },
 				],
-				default: 'veo-3.1',
+				default: 'veo3',
 			},
 			{
 				displayName: 'Prompt',

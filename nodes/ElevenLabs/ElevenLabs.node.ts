@@ -50,10 +50,10 @@ export class ElevenLabs implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['textToSpeech'] } },
 				options: [
-					{ name: 'Turbo 2.5', value: 'elevenlabs/text-to-speech-turbo-2.5' },
+					{ name: 'Turbo 2.5', value: 'elevenlabs/text-to-speech-turbo-2-5' },
 					{ name: 'Multilingual v2', value: 'elevenlabs/text-to-speech-multilingual-v2' },
 				],
-				default: 'elevenlabs/text-to-speech-turbo-2.5',
+				default: 'elevenlabs/text-to-speech-turbo-2-5',
 			},
 			{
 				displayName: 'Text',
