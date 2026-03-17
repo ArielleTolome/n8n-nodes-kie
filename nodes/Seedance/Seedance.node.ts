@@ -115,6 +115,7 @@ export class Seedance implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 				description: 'URL of the input image',
 			},
 			{
@@ -127,6 +128,7 @@ export class Seedance implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 				description: 'Optional end frame image URL for image-to-video',
 			},
 			{
@@ -170,7 +172,7 @@ export class Seedance implements INodeType {
 					},
 				},
 				default: 0,
-				description: 'Seed for reproducibility (0 = random)',
+				description: 'Set to 0 for random seed',
 			},
 			{
 				displayName: 'Reply URL',
@@ -182,7 +184,8 @@ export class Seedance implements INodeType {
 					},
 				},
 				default: '',
-				description: 'Webhook URL to call when task completes',
+				placeholder: 'https://...',
+				description: 'Webhook URL called when the task completes',
 			},
 			{
 				displayName: 'Reply Ref',

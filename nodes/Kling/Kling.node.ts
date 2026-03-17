@@ -157,6 +157,7 @@ export class Kling implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 				description: 'URL of the input image',
 			},
 			{
@@ -225,7 +226,7 @@ export class Kling implements INodeType {
 					},
 				},
 				default: 0,
-				description: 'Seed for reproducibility (0 = random)',
+				description: 'Set to 0 for random seed',
 			},
 			{
 				displayName: 'Tail Frame URL',
@@ -237,6 +238,7 @@ export class Kling implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 				description: 'Optional end/tail frame image URL for image-to-video',
 			},
 			{
@@ -249,7 +251,8 @@ export class Kling implements INodeType {
 					},
 				},
 				default: '',
-				description: 'Webhook URL to call when task completes',
+				placeholder: 'https://...',
+				description: 'Webhook URL called when the task completes',
 			},
 			{
 				displayName: 'Reply Ref',
@@ -273,7 +276,7 @@ export class Kling implements INodeType {
 					},
 				},
 				default: '',
-				description: 'reCAPTCHA v3 Enterprise token',
+				description: 'Your reCAPTCHA v3 Enterprise token (leave empty to let kie.ai handle it)',
 			},
 			{
 				displayName: 'Wait for Completion',

@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { kieRequest, kieQueryTask, waitForDedicatedTask } from '../GenericFunctions';
+import { kieRequest, waitForDedicatedTask } from '../GenericFunctions';
 
 export class Veo implements INodeType {
 	description: INodeTypeDescription = {
@@ -68,6 +68,7 @@ export class Veo implements INodeType {
 				type: 'string',
 				displayOptions: { show: { operation: ['generate'] } },
 				default: '',
+				placeholder: 'https://...',
 				description: 'Optional image URL for image-to-video',
 			},
 			{
@@ -131,6 +132,7 @@ export class Veo implements INodeType {
 				type: 'string',
 				displayOptions: { show: { operation: ['generate'] } },
 				default: '',
+				placeholder: 'https://...',
 				description: 'Optional end frame image URL for image-to-video',
 			},
 			{
@@ -139,7 +141,7 @@ export class Veo implements INodeType {
 				type: 'number',
 				displayOptions: { show: { operation: ['generate'] } },
 				default: 0,
-				description: 'Seed for reproducibility (0 = random)',
+				description: 'Set to 0 for random seed',
 			},
 			{
 				displayName: 'Reply URL',
@@ -147,7 +149,8 @@ export class Veo implements INodeType {
 				type: 'string',
 				displayOptions: { show: { operation: ['generate', 'extend'] } },
 				default: '',
-				description: 'Webhook URL to call when task completes',
+				placeholder: 'https://...',
+				description: 'Webhook URL called when the task completes',
 			},
 			{
 				displayName: 'Reply Ref',

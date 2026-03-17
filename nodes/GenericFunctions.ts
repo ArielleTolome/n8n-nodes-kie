@@ -47,7 +47,7 @@ export function parseKieResponse(response: IDataObject): IDataObject {
 	if (typeof data.resultJson === 'string') {
 		try {
 			data.resultJson = JSON.parse(data.resultJson);
-		} catch (_) {}
+		} catch (_) { /* ignore */ }
 	}
 
 	// Parse param string → object
@@ -56,10 +56,10 @@ export function parseKieResponse(response: IDataObject): IDataObject {
 			const parsed = JSON.parse(data.param) as IDataObject;
 			// param.input is often also a nested JSON string
 			if (typeof parsed.input === 'string') {
-				try { parsed.input = JSON.parse(parsed.input); } catch (_) {}
+				try { parsed.input = JSON.parse(parsed.input); } catch (_) { /* ignore */ }
 			}
 			data.param = parsed;
-		} catch (_) {}
+		} catch (_) { /* ignore */ }
 	}
 
 	// Surface resultUrls at top level for easy access

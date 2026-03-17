@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { kieRequest, kieQueryTask, waitForDedicatedTask } from '../GenericFunctions';
+import { kieRequest, waitForDedicatedTask } from '../GenericFunctions';
 
 export class Runway implements INodeType {
 	description: INodeTypeDescription = {

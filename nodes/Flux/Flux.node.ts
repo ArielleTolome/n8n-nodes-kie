@@ -127,6 +127,7 @@ export class Flux implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 			},
 			{
 				displayName: 'Input Image URL',
@@ -138,6 +139,7 @@ export class Flux implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 				description: 'URL of an input image to edit. If provided, the model edits this image based on the prompt. If omitted, generates a new image from text.',
 			},
 			{
@@ -195,7 +197,7 @@ export class Flux implements INodeType {
 					},
 				},
 				default: 0,
-				description: 'Random seed (0 for random)',
+				description: 'Set to 0 for random seed',
 			},
 			{
 				displayName: 'Steps',
@@ -246,7 +248,8 @@ export class Flux implements INodeType {
 					},
 				},
 				default: '',
-				description: 'Webhook URL to call when the task completes',
+				placeholder: 'https://...',
+				description: 'Webhook URL called when the task completes',
 			},
 			{
 				displayName: 'Reply Ref',

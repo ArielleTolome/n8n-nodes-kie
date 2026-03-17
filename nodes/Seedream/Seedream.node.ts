@@ -117,6 +117,7 @@ export class Seedream implements INodeType {
 					},
 				},
 				default: '',
+				placeholder: 'https://...',
 				description: 'URL of the input image',
 			},
 			{
@@ -162,7 +163,7 @@ export class Seedream implements INodeType {
 					},
 				},
 				default: 0,
-				description: 'Random seed (0 for random)',
+				description: 'Set to 0 for random seed',
 			},
 			{
 				displayName: 'Reply URL',
@@ -174,7 +175,8 @@ export class Seedream implements INodeType {
 					},
 				},
 				default: '',
-				description: 'Webhook URL to call when task completes',
+				placeholder: 'https://...',
+				description: 'Webhook URL called when the task completes',
 			},
 			{
 				displayName: 'Reply Ref',
