@@ -91,10 +91,61 @@ export class GptImage15 implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
 				options: [
-					{ name: 'Medium', value: 'medium' },
+					{ name: 'Auto', value: 'auto' },
 					{ name: 'High', value: 'high' },
+					{ name: 'Medium', value: 'medium' },
+					{ name: 'Low', value: 'low' },
 				],
 				default: 'medium',
+			},
+			{
+				displayName: 'Number of Images',
+				name: 'n',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 10 },
+				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				default: 1,
+				description: 'Number of images to generate (1-10)',
+			},
+			{
+				displayName: 'Background',
+				name: 'background',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				options: [
+					{ name: 'Auto', value: 'auto' },
+					{ name: 'Transparent', value: 'transparent' },
+					{ name: 'Opaque', value: 'opaque' },
+				],
+				default: 'auto',
+				description: 'Background transparency setting',
+			},
+			{
+				displayName: 'Output Format',
+				name: 'outputFormat',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				options: [
+					{ name: 'PNG', value: 'png' },
+					{ name: 'WebP', value: 'webp' },
+					{ name: 'JPEG', value: 'jpeg' },
+				],
+				default: 'png',
+				description: 'Output image format',
+			},
+			{
+				displayName: 'Output Compression',
+				name: 'outputCompression',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 100 },
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage'],
+						outputFormat: ['webp', 'jpeg'],
+					},
+				},
+				default: 80,
+				description: 'Compression level (0-100, only for WebP/JPEG)',
 			},
 			{
 				displayName: 'Seed',
@@ -159,6 +210,16 @@ export class GptImage15 implements INodeType {
 						aspect_ratio: this.getNodeParameter('aspectRatio', i) as string,
 						quality: this.getNodeParameter('quality', i) as string,
 					};
+					const n = this.getNodeParameter('n', i, 1) as number;
+					if (n > 1) input.n = n;
+					const background = this.getNodeParameter('background', i, 'auto') as string;
+					if (background !== 'auto') input.background = background;
+					const outputFormat = this.getNodeParameter('outputFormat', i, 'png') as string;
+					if (outputFormat !== 'png') input.output_format = outputFormat;
+					if (outputFormat === 'webp' || outputFormat === 'jpeg') {
+						const outputCompression = this.getNodeParameter('outputCompression', i, 80) as number;
+						input.output_compression = outputCompression;
+					}
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 

@@ -69,6 +69,50 @@ export class Topaz implements INodeType {
 				default: 2,
 			},
 			{
+				displayName: 'Output Quality',
+				name: 'outputQuality',
+				type: 'options',
+				displayOptions: { show: { operation: ['imageUpscale', 'videoUpscale'] } },
+				options: [
+					{ name: 'Low', value: 'Low' },
+					{ name: 'Medium', value: 'Medium' },
+					{ name: 'High', value: 'High' },
+					{ name: 'Very High', value: 'Very High' },
+				],
+				default: 'High',
+				description: 'Output quality level',
+			},
+			{
+				displayName: 'Output Format',
+				name: 'outputFormat',
+				type: 'options',
+				displayOptions: { show: { operation: ['videoUpscale'] } },
+				options: [
+					{ name: 'MP4', value: 'mp4' },
+					{ name: 'MOV', value: 'mov' },
+					{ name: 'MKV', value: 'mkv' },
+				],
+				default: 'mp4',
+				description: 'Output video format',
+			},
+			{
+				displayName: 'Face Recovery',
+				name: 'faceRecovery',
+				type: 'boolean',
+				displayOptions: { show: { operation: ['imageUpscale'] } },
+				default: false,
+				description: 'Whether to enable AI face recovery during upscale',
+			},
+			{
+				displayName: 'Denoise Strength',
+				name: 'denoiseStrength',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
+				displayOptions: { show: { operation: ['imageUpscale', 'videoUpscale'] } },
+				default: 0,
+				description: 'Denoising strength (0-1, 0 = disabled)',
+			},
+			{
 				displayName: 'Reply URL',
 				name: 'replyUrl',
 				type: 'string',
@@ -121,9 +165,18 @@ export class Topaz implements INodeType {
 
 					if (operation === 'imageUpscale') {
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						const faceRecovery = this.getNodeParameter('faceRecovery', i, false) as boolean;
+						if (faceRecovery) input.faceRecovery = true;
 					} else {
 						input.videoUrl = this.getNodeParameter('videoUrl', i) as string;
+						const outputFormat = this.getNodeParameter('outputFormat', i, 'mp4') as string;
+						if (outputFormat !== 'mp4') input.outputFormat = outputFormat;
 					}
+
+					const outputQuality = this.getNodeParameter('outputQuality', i, 'High') as string;
+					if (outputQuality !== 'High') input.outputQuality = outputQuality;
+					const denoiseStrength = this.getNodeParameter('denoiseStrength', i, 0) as number;
+					if (denoiseStrength > 0) input.denoiseStrength = denoiseStrength;
 
 					const body: IDataObject = { model, input };
 

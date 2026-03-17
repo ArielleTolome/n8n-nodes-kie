@@ -116,15 +116,16 @@ export class Ideogram implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['character', 'characterEdit', 'characterRemix'],
+						operation: ['character', 'characterEdit', 'characterRemix', 'generate'],
 					},
 				},
 				options: [
 					{ name: 'Turbo', value: 'TURBO' },
+					{ name: 'Default', value: 'DEFAULT' },
 					{ name: 'Balanced', value: 'BALANCED' },
 					{ name: 'Quality', value: 'QUALITY' },
 				],
-				default: 'BALANCED',
+				default: 'DEFAULT',
 				description: 'Rendering speed vs quality trade-off',
 			},
 			{
@@ -341,9 +342,9 @@ export class Ideogram implements INodeType {
 						if (maskUrl) input.maskUrl = maskUrl;
 					}
 
-					// Rendering speed for character ops
-					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {
-						input.renderingSpeed = this.getNodeParameter('renderingSpeed', i, 'BALANCED') as string;
+					// Rendering speed for character ops and generate
+					if (['character', 'characterEdit', 'characterRemix', 'generate'].includes(operation)) {
+						input.renderingSpeed = this.getNodeParameter('renderingSpeed', i, 'DEFAULT') as string;
 					}
 
 					if (operation === 'generate' || operation === 'reframe') {

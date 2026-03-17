@@ -57,6 +57,33 @@ export class InfineTalk implements INodeType {
 				description: 'Optional target language code',
 			},
 			{
+				displayName: 'Speed',
+				name: 'speed',
+				type: 'number',
+				typeOptions: { minValue: 0.5, maxValue: 2.0, numberStepSize: 0.1 },
+				displayOptions: { show: { operation: ['fromAudio'] } },
+				default: 1.0,
+				description: 'Speech speed multiplier (0.5-2.0, 1.0 = normal)',
+			},
+			{
+				displayName: 'Pitch',
+				name: 'pitch',
+				type: 'number',
+				typeOptions: { minValue: -12, maxValue: 12, numberStepSize: 1 },
+				displayOptions: { show: { operation: ['fromAudio'] } },
+				default: 0,
+				description: 'Voice pitch adjustment in semitones (-12 to 12)',
+			},
+			{
+				displayName: 'Volume',
+				name: 'volume',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 2.0, numberStepSize: 0.1 },
+				displayOptions: { show: { operation: ['fromAudio'] } },
+				default: 1.0,
+				description: 'Output volume multiplier (0-2.0, 1.0 = normal)',
+			},
+			{
 				displayName: 'Reply URL',
 				name: 'replyUrl',
 				type: 'string',
@@ -107,6 +134,12 @@ export class InfineTalk implements INodeType {
 					};
 					const targetLanguage = this.getNodeParameter('targetLanguage', i, '') as string;
 					if (targetLanguage) input.targetLanguage = targetLanguage;
+					const speed = this.getNodeParameter('speed', i, 1.0) as number;
+					if (speed !== 1.0) input.speed = speed;
+					const pitch = this.getNodeParameter('pitch', i, 0) as number;
+					if (pitch !== 0) input.pitch = pitch;
+					const volume = this.getNodeParameter('volume', i, 1.0) as number;
+					if (volume !== 1.0) input.volume = volume;
 
 					const body: IDataObject = { model: 'infinetalk/from-audio', input };
 

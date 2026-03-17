@@ -230,7 +230,7 @@ export class Flux implements INodeType {
 				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
 				displayOptions: {
 					show: {
-						operation: ['imageToImage'],
+						operation: ['imageToImage', 'kontext'],
 					},
 				},
 				default: 0.75,
@@ -310,6 +310,8 @@ export class Flux implements INodeType {
 					if (outputFormat !== 'jpeg') body.outputFormat = outputFormat;
 					const promptUpsampling = this.getNodeParameter('promptUpsampling', i, false) as boolean;
 					if (promptUpsampling) body.promptUpsampling = true;
+					const kontextStrength = this.getNodeParameter('strength', i, 0) as number;
+					if (kontextStrength > 0) body.strength = kontextStrength;
 
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
 					if (replyUrl) body.replyUrl = replyUrl;
