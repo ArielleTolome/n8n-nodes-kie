@@ -1,0 +1,24 @@
+# Source files
+src/
+nodes/**/*.ts
+credentials/**/*.ts
+*.ts
+!dist/
+
+# Config & dev files
+.eslintrc.js
+.eslintignore
+.prettierrc
+tsconfig.json
+gulpfile.js
+.gitignore
+.github/
+
+# Tests
+tests/
+test/
+*.test.js
+*.spec.js
+
+# Misc
+*.map

@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-kie",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "n8n community nodes for kie.ai - 21 AI model nodes covering video, image, audio, and music generation",
   "keywords": [
     "n8n-community-node-package",
@@ -48,6 +48,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ArielleTolome/n8n-nodes-kie.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ArielleTolome/n8n-nodes-kie/issues"
   },
   "main": "dist/index.js",
   "scripts": {
