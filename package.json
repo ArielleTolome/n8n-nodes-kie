@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-kie",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "n8n community nodes for kie.ai - 21 AI model nodes covering video, image, audio, and music generation",
   "keywords": [
     "n8n",
@@ -59,8 +59,8 @@
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
-    "lint": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json",
-    "lintfix": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json --fix",
+    "lint": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts'",
+    "lintfix": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' --fix",
     "prepublishOnly": "npm run build && npm run lint -s",
     "prepare": "npm run build"
   },

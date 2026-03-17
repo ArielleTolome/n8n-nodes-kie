@@ -396,6 +396,12 @@ To run fire-and-forget: disable **Wait for Completion** and use **Query Task Sta
 
 | Version | Changes |
 |---------|---------|
+| v0.4.6 | README changelog update through v0.4.5; lint warning cleanup |
+| v0.4.5 | Snake_case audit — 36 API parameter naming bugs fixed across 11 nodes (camelCase → snake_case field names) |
+| v0.4.4 | Kling `tailImageUrl` snake_case bug fix; ElevenLabs fields verified; GenericFunctions retry logic verified |
+| v0.4.3 | n8n best practices compliance — JSDoc comments, TypeScript type improvements, code quality pass |
+| v0.4.2 | GitHub Actions CI/CD pipeline; CONTRIBUTING.md added |
+| v0.4.1 | Package metadata improvements; .npmignore added to reduce publish size |
 | v0.4.0 | Documentation update — complete changelog backfill (v0.3.5–v0.3.8); Kling node docs updated to mention Kling 3.0 (V3) model support |
 | v0.3.9 | Error handling improvements — 429 rate limit retry (exponential backoff 2/4/8s) in GenericFunctions; enriched error messages include API response body; Kling node adds Kling 3.0 T2V/I2V model + `mode` (std/pro) + `sound` fields |
 | v0.3.8 | Model ID fix — corrected Sora2Pro, Google, ZImage node model IDs |
