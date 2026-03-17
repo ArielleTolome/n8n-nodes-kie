@@ -135,6 +135,69 @@ export class ElevenLabs implements INodeType {
 				default: 10,
 			},
 			{
+				displayName: 'Model',
+				name: 'modelDialogue',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToDialogue'] } },
+				options: [
+					{ name: 'ElevenLabs V3 (Recommended)', value: 'elevenlabs/text-to-dialogue-v3' },
+					{ name: 'ElevenLabs V2', value: 'elevenlabs/text-to-dialogue' },
+				],
+				default: 'elevenlabs/text-to-dialogue-v3',
+				description: 'The ElevenLabs dialogue model to use',
+			},
+			{
+				displayName: 'Language',
+				name: 'languageCode',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToDialogue'] } },
+				options: [
+					{ name: 'Auto', value: 'auto' },
+					{ name: 'Afrikaans', value: 'af' },
+					{ name: 'Arabic', value: 'ar' },
+					{ name: 'Armenian', value: 'hy' },
+					{ name: 'Bengali', value: 'bn' },
+					{ name: 'Bulgarian', value: 'bg' },
+					{ name: 'Catalan', value: 'ca' },
+					{ name: 'Croatian', value: 'hr' },
+					{ name: 'Czech', value: 'cs' },
+					{ name: 'Danish', value: 'da' },
+					{ name: 'Dutch', value: 'nl' },
+					{ name: 'English', value: 'en' },
+					{ name: 'Finnish', value: 'fi' },
+					{ name: 'French', value: 'fr' },
+					{ name: 'German', value: 'de' },
+					{ name: 'Greek', value: 'el' },
+					{ name: 'Hebrew', value: 'he' },
+					{ name: 'Hindi', value: 'hi' },
+					{ name: 'Hungarian', value: 'hu' },
+					{ name: 'Indonesian', value: 'id' },
+					{ name: 'Italian', value: 'it' },
+					{ name: 'Japanese', value: 'ja' },
+					{ name: 'Korean', value: 'ko' },
+					{ name: 'Malay', value: 'ms' },
+					{ name: 'Mandarin Chinese', value: 'zh' },
+					{ name: 'Norwegian', value: 'no' },
+					{ name: 'Persian', value: 'fa' },
+					{ name: 'Polish', value: 'pl' },
+					{ name: 'Portuguese', value: 'pt' },
+					{ name: 'Romanian', value: 'ro' },
+					{ name: 'Russian', value: 'ru' },
+					{ name: 'Serbian', value: 'sr' },
+					{ name: 'Slovak', value: 'sk' },
+					{ name: 'Spanish', value: 'es' },
+					{ name: 'Swedish', value: 'sv' },
+					{ name: 'Tamil', value: 'ta' },
+					{ name: 'Thai', value: 'th' },
+					{ name: 'Turkish', value: 'tr' },
+					{ name: 'Ukrainian', value: 'uk' },
+					{ name: 'Urdu', value: 'ur' },
+					{ name: 'Vietnamese', value: 'vi' },
+				],
+				default: 'auto',
+				description: 'Language for dialogue generation. Auto-detects if not specified.',
+			},
+			{
 				displayName: 'Dialogue',
 				name: 'dialogue',
 				type: 'fixedCollection',
@@ -236,8 +299,10 @@ export class ElevenLabs implements INodeType {
 						model = 'elevenlabs/audio-isolation';
 						input.audio_url = this.getNodeParameter('audioUrl', i) as string;
 					} else if (operation === 'textToDialogue') {
-						model = 'elevenlabs/text-to-dialogue-v3';
+						model = this.getNodeParameter('modelDialogue', i) as string;
+						const languageCode = this.getNodeParameter('languageCode', i, 'auto') as string;
 						input.stability = this.getNodeParameter('stability', i) as number;
+						input.language_code = languageCode;
 						const dialogueItems = this.getNodeParameter('dialogue', i, {}) as IDataObject;
 						const dialogue: IDataObject[] = [];
 						if (dialogueItems.dialogueItems) {
