@@ -110,6 +110,30 @@ export class Qwen implements INodeType {
 				default: '1:1',
 			},
 			{
+				displayName: 'Model',
+				name: 'modelT2I',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToImage'] } },
+				options: [
+					{ name: 'Qwen Image 2.0 (Recommended)', value: 'qwen2/text-to-image' },
+					{ name: 'Qwen Image 1.0', value: 'qwen/text-to-image' },
+				],
+				default: 'qwen2/text-to-image',
+				description: 'The Qwen image generation model to use',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelI2I',
+				type: 'options',
+				displayOptions: { show: { operation: ['imageToImage'] } },
+				options: [
+					{ name: 'Qwen Image 2.0 (Recommended)', value: 'qwen2/image-to-image' },
+					{ name: 'Qwen Image 1.0', value: 'qwen/image-to-image' },
+				],
+				default: 'qwen2/image-to-image',
+				description: 'The Qwen image model to use',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -164,12 +188,12 @@ export class Qwen implements INodeType {
 					};
 
 					if (operation === 'textToImage') {
-						model = 'qwen/text-to-image';
+						model = this.getNodeParameter('modelT2I', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					} else if (operation === 'imageToImage') {
-						model = 'qwen/image-to-image';
+						model = this.getNodeParameter('modelI2I', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 					} else if (operation === 'imageEdit') {
