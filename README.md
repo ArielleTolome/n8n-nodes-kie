@@ -384,6 +384,22 @@ To run fire-and-forget: disable **Wait for Completion** and use **Query Task Sta
 
 ---
 
+## Rate Limits
+
+Kie.ai enforces API rate limits. When a request is throttled, the API returns HTTP **429 (Too Many Requests)**.
+
+This node handles 429 responses automatically with **exponential backoff**:
+
+| Retry | Delay |
+|-------|-------|
+| 1st   | 2 s   |
+| 2nd   | 4 s   |
+| 3rd   | 8 s   |
+
+After 3 retries the error is propagated. To avoid hitting rate limits, use `waitForCompletion: false` for high-volume workflows and manage concurrency at the n8n workflow level.
+
+---
+
 ## Links
 
 - [kie.ai](https://kie.ai)
@@ -396,6 +412,7 @@ To run fire-and-forget: disable **Wait for Completion** and use **Query Task Sta
 
 | Version | Changes |
 |---------|---------|
+| v0.4.7 | Security audit — add `required: true` to API key credential field; add Rate Limits section to README |
 | v0.4.6 | README changelog update through v0.4.5; lint warning cleanup |
 | v0.4.5 | Snake_case audit — 36 API parameter naming bugs fixed across 11 nodes (camelCase → snake_case field names) |
 | v0.4.4 | Kling `tailImageUrl` snake_case bug fix; ElevenLabs fields verified; GenericFunctions retry logic verified |

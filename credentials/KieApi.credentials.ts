@@ -31,6 +31,7 @@ export class KieApi implements ICredentialType {
 				password: true,
 			},
 			default: '',
+			required: true,
 			description: 'Your Kie.ai API key',
 		},
 	];
