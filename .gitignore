@@ -1,5 +1,5 @@
-*.tgz
-BUILD_INSTRUCTIONS.md
-INSTRUCTION_FOR_BUYERS.md
-dist/
 node_modules/
+dist/
+*.js.map
+*.tgz
+.DS_Store

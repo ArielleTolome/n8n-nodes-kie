@@ -1,7 +1,7 @@
 {
-	"name": "@myspacet_ai/n8n-nodes-ai-hub",
-	"version": "1.0.40",
-	"description": "AI Hub for n8n (Kie.ai) - Collection of AI services: Sora 2 Pro, Seedream v4, GPT-image-1.5",
+	"name": "n8n-nodes-kie",
+	"version": "0.1.0",
+	"description": "n8n community nodes for kie.ai - Sora 2 Pro, Seedream, GPT-image-1.5, ElevenLabs TTS/STT/SFX",
 	"keywords": [
 		"n8n-community-node-package",
 		"ai",
@@ -12,20 +12,24 @@
 		"sora-2-pro",
 		"seedream",
 		"gpt-image",
+		"elevenlabs",
 		"text-to-image",
 		"text-to-video",
+		"text-to-speech",
+		"speech-to-text",
+		"sound-effects",
 		"image-editing",
 		"ai-generation"
 	],
 	"license": "MIT",
-	"homepage": "",
+	"homepage": "https://github.com/ArielleTolome/n8n-nodes-kie",
 	"author": {
-		"name": "ipochinili",
-		"email": "ipochinili@gmail.com"
+		"name": "ArielleTolome",
+		"url": "https://github.com/ArielleTolome"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/rumyantsevaT/n8n-nodes-ai-hub-kie.git"
+		"url": "https://github.com/ArielleTolome/n8n-nodes-kie.git"
 	},
 	"main": "dist/index.js",
 	"scripts": {
@@ -48,7 +52,7 @@
 			"dist/nodes/ElevenLabs/ElevenLabs.node.js"
 		],
 		"credentials": [
-			"dist/credentials/KieAiApi.credentials.js"
+			"dist/credentials/KieApi.credentials.js"
 		]
 	},
 	"devDependencies": {

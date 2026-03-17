@@ -5,6 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
+import { kieRequest, waitForTask } from '../GenericFunctions';
 
 export class Sora2Pro implements INodeType {
 	description: INodeTypeDescription = {
@@ -14,7 +15,7 @@ export class Sora2Pro implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate videos using Sora 2 Pro Text To Video API',
+		description: 'Generate videos using Sora 2 Pro via Kie.ai API',
 		defaults: {
 			name: 'Sora 2 Pro (Kie.ai)',
 		},
@@ -22,7 +23,7 @@ export class Sora2Pro implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'kieAiApi',
+				name: 'kieApi',
 				required: true,
 			},
 		],
@@ -70,6 +71,37 @@ export class Sora2Pro implements INodeType {
 			},
 			// Create Task parameters
 			{
+				displayName: 'Model',
+				name: 'model',
+				type: 'options',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['createTask'],
+					},
+				},
+				options: [
+					{
+						name: 'Sora 2 Pro (Text-to-Video)',
+						value: 'sora-2-pro-text-to-video',
+					},
+					{
+						name: 'Sora 2 (Text-to-Video)',
+						value: 'sora-2-text-to-video',
+					},
+					{
+						name: 'Sora 2 Pro (Image-to-Video)',
+						value: 'sora-2-pro-image-to-video',
+					},
+					{
+						name: 'Sora 2 (Image-to-Video)',
+						value: 'sora-2-image-to-video',
+					},
+				],
+				default: 'sora-2-pro-text-to-video',
+				description: 'The Sora model variant to use',
+			},
+			{
 				displayName: 'Prompt',
 				name: 'prompt',
 				type: 'string',
@@ -83,6 +115,21 @@ export class Sora2Pro implements INodeType {
 				default: '',
 				description: 'The text prompt describing the desired video motion (max 10000 characters)',
 				placeholder: 'a happy dog running in the garden',
+			},
+			{
+				displayName: 'Input Image URL',
+				name: 'inputImageUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						resource: ['job'],
+						operation: ['createTask'],
+						model: ['sora-2-pro-image-to-video', 'sora-2-image-to-video'],
+					},
+				},
+				default: '',
+				description: 'URL of the input image for image-to-video generation',
+				placeholder: 'https://example.com/image.png',
 			},
 			{
 				displayName: 'Aspect Ratio',
@@ -128,7 +175,7 @@ export class Sora2Pro implements INodeType {
 					},
 				],
 				default: '10',
-				description: 'The number of seconds/frames to be generated',
+				description: 'Duration of the generated video',
 			},
 			{
 				displayName: 'Quality Size',
@@ -151,7 +198,7 @@ export class Sora2Pro implements INodeType {
 					},
 				],
 				default: 'high',
-				description: 'The quality or size of the generated video',
+				description: 'The quality of the generated video',
 			},
 			{
 				displayName: 'Character IDs',
@@ -164,7 +211,7 @@ export class Sora2Pro implements INodeType {
 					},
 				},
 				default: '',
-				description: 'Optional list of character IDs for consistent character generation (comma-separated)',
+				description: 'Optional character IDs for consistent character generation (comma-separated)',
 				placeholder: 'char_12345, char_67890',
 			},
 			{
@@ -195,16 +242,17 @@ export class Sora2Pro implements INodeType {
 				placeholder: 'https://your-domain.com/api/callback',
 			},
 			{
-				displayName: 'Инструкции по настройке и примеры использования в телеграм канале <a href="https://t.me/myspacet_ai" target="_blank">https://t.me/myspacet_ai</a>',
-				name: 'telegramNotice',
-				type: 'notice',
+				displayName: 'Wait for Completion',
+				name: 'waitForCompletion',
+				type: 'boolean',
 				displayOptions: {
 					show: {
 						resource: ['job'],
 						operation: ['createTask'],
 					},
 				},
-				default: '',
+				default: true,
+				description: 'Whether to wait for the task to complete before returning (polls every 3s, 5min timeout)',
 			},
 			// Query Task Status parameters
 			{
@@ -220,7 +268,6 @@ export class Sora2Pro implements INodeType {
 				},
 				default: '',
 				description: 'The task ID to query',
-				placeholder: '281e5b0*********************f39b9',
 			},
 		],
 	};
@@ -235,6 +282,7 @@ export class Sora2Pro implements INodeType {
 			try {
 				if (resource === 'job') {
 					if (operation === 'createTask') {
+						const model = this.getNodeParameter('model', i) as string;
 						const prompt = this.getNodeParameter('prompt', i) as string;
 						const aspectRatio = this.getNodeParameter('aspectRatio', i) as string;
 						const nFrames = this.getNodeParameter('nFrames', i) as string;
@@ -242,57 +290,50 @@ export class Sora2Pro implements INodeType {
 						const removeWatermark = this.getNodeParameter('removeWatermark', i) as boolean;
 						const characterIds = this.getNodeParameter('characterIds', i, '') as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
-						const body: IDataObject = {
-							model: 'sora-2-pro-text-to-video',
-							input: {
-								prompt,
-								aspect_ratio: aspectRatio,
-								n_frames: nFrames,
-								size: size,
-								remove_watermark: removeWatermark,
-							},
+						const input: IDataObject = {
+							prompt,
+							aspect_ratio: aspectRatio,
+							n_frames: nFrames,
+							size,
+							remove_watermark: removeWatermark,
 						};
 
-						if (characterIds && characterIds.trim() !== '') {
-							(body.input as IDataObject).character_id_list = characterIds.split(',').map((id) => id.trim());
+						if (model.includes('image-to-video')) {
+							const inputImageUrl = this.getNodeParameter('inputImageUrl', i, '') as string;
+							if (inputImageUrl && inputImageUrl.trim() !== '') {
+								input.input_image_url = inputImageUrl;
+							}
 						}
+
+						if (characterIds && characterIds.trim() !== '') {
+							input.character_id_list = characterIds.split(',').map((id) => id.trim());
+						}
+
+						const body: IDataObject = { model, input };
 
 						if (callbackUrl && callbackUrl.trim() !== '') {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'queryTaskStatus') {
 						const taskId = this.getNodeParameter('taskId', i) as string;
-
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'GET',
-								url: `https://api.kie.ai/api/v1/jobs/recordInfo`,
-								qs: {
-									taskId,
-								},
-								json: true,
-							},
-						);
-
+						const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
 						returnData.push(response);
 					}
 				}

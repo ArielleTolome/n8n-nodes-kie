@@ -5,6 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
+import { kieRequest, waitForTask } from '../GenericFunctions';
 
 const languageOptions = [
 	{ name: 'Auto', value: 'auto' },
@@ -100,7 +101,7 @@ export class ElevenLabs implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'kieAiApi',
+				name: 'kieApi',
 				required: true,
 			},
 		],
@@ -182,7 +183,7 @@ export class ElevenLabs implements INodeType {
 						operation: ['textToSpeech'],
 					},
 				},
-				default: 'Unlock powerful API with Kie.ai! Affordable, scalable APl integration, free trial playground, and secure, reliable performance.',
+				default: '',
 				description: 'The text to convert to speech',
 			},
 			{
@@ -217,119 +218,6 @@ export class ElevenLabs implements INodeType {
 					{ name: 'Daniel', value: 'Daniel' },
 					{ name: 'Lily', value: 'Lily' },
 					{ name: 'Bill', value: 'Bill' },
-					{ name: 'Ellen (Serious, Direct and Confident)', value: 'BIvP0GN1cAtSRTxNHnWS' },
-					{ name: 'Juniper (Grounded and Professional)', value: 'aMSt68OGf4xUZAnLpTU8' },
-					{ name: 'Jane (Professional Audiobook Reader)', value: 'RILOU7YmBhvwJGDGjNmP' },
-					{ name: 'James (Husky, Engaging and Bold)', value: 'EkK5I93UQWFDigLMpZcX' },
-					{ name: 'Arabella (Mysterious and Emotive)', value: 'Z3R5wn05IrDiVCyEkUrK' },
-					{ name: 'Hope (Upbeat and Clear)', value: 'tnSpp4vdxKPjI9w0GnoV' },
-					{ name: 'Bradford (Expressive and Articulate)', value: 'NNl6r8mD7vthiJatiJt1' },
-					{ name: 'Xavier (Dominating, Metalic Announcer)', value: 'YOq2y2Up4RgXP2HyXjE5' },
-					{ name: 'Austin (Deep, Raspy and Authentic)', value: 'Bj9UqZbhQsanLzgalpEG' },
-					{ name: 'Jarnathan (Confident and Versatile)', value: 'c6SfcYrb2t09NHXiT80T' },
-					{ name: 'Kuon (Cheerful, Clear and Steady)', value: 'B8gJV1IhpuegLxdpXFOE' },
-					{ name: 'Blondie (Conversational)', value: 'exsUS4vynmxd379XN4yO' },
-					{ name: 'Priyanka (Calm, Neutral and Relaxed)', value: 'BpjGufoPiobT79j2vtj4' },
-					{ name: 'Monika Sogam (Deep and Natural)', value: '2zRM7PkgwBPiau2jvVXc' },
-					{ name: 'Mark (Casual, Relaxed and Light)', value: '1SM7GgM6IMuvQlz2BwM3' },
-					{ name: 'Grimblewood Thornwhisker (Snarky Gnome & Magical Maintainer)', value: 'ouL9IsyrSnUkCmfnD02u' },
-					{ name: 'Adeline (Feminine and Conversational)', value: '5l5f8iK3YPeGga21rQIX' },
-					{ name: 'Sam (Support Agent)', value: 'scOwDtmlUjD3prqpp97I' },
-					{ name: 'Spuds Oxley (Wise and Approachable)', value: 'NOpBlnGInO9m6vDvFkFC' },
-					{ name: 'Eve (Authentic, Energetic and Happy)', value: 'BZgkqPqms7Kj9ulSkVzn' },
-					{ name: 'Northern Terry', value: 'wo6udizrrtpIxWGp2qJk' },
-					{ name: 'Dr. Von (Quirky, Mad Scientist)', value: 'yjJ45q8TVCrtMhEKurxY' },
-					{ name: 'British Football Announcer', value: 'gU0LNdkMOQCOrPrwtbee' },
-					{ name: 'Brock (Commanding and Loud Sergeant)', value: 'DGzg6RaUqxGRTHSBjfgF' },
-					{ name: 'Célian (Documentary Narrator)', value: 'DGTOOUoGpoP6UZ9uSWfA' },
-					{ name: 'Nathan (Virtual Radio Host)', value: 'x70vRnQBMBu4FAYhjJbO' },
-					{ name: 'Viraj (Rich and Soft)', value: 'P1bg08DkjqiVEzOn76yG' },
-					{ name: 'Taksh (Calm, Serious and Smooth)', value: 'qDuRKMlYmrm8trt5QyBn' },
-					{ name: 'Guadeloupe Merryweather (Emotional)', value: 'kUUTqKQ05NMGulF08DDf' },
-					{ name: 'Horatius (Energetic Character Voice)', value: 'qXpMhyvQqiRxWQs4qSSB' },
-					{ name: 'Liam (Energetic, Social Media Creator)', value: 'TX3LPaxmHKxFdv7VOQHJ' },
-					{ name: 'Chris (Charming, Down-to-Earth)', value: 'iP95p4xoKVk53GoZ742B' },
-					{ name: 'Harry (Fierce Warrior)', value: 'SOYHLrjzK2X1ezoPC6cr' },
-					{ name: 'Callum (Husky Trickster)', value: 'N2lVS1w4EtoT3dr4eOWO' },
-					{ name: 'Laura (Enthusiast, Quirky Attitude)', value: 'FGY2WhTYpPnrIDTdsKH5' },
-					{ name: 'Charlotte', value: 'XB0fDUnXU5powFXDhCwa' },
-					{ name: 'Jessica (Playful, Bright, Warm)', value: 'cgSgspJ2msm6clMCkdW9' },
-					{ name: 'Heather Rey (Rushed and Friendly)', value: 'MnUw1cSnpiLoLhpd3Hqp' },
-					{ name: 'Brittney (Social Media Voice - Fun, Youthful & Informative)', value: 'kPzsL2i3teMYv0FxEYQ6' },
-					{ name: 'Mark (Natural Conversations)', value: 'UgBBYS2sOqTuMpoF3BR0' },
-					{ name: 'Matthew (Casual, Friendly and Smooth)', value: 'IjnA9kwZJHJ20Fp7Vmy6' },
-					{ name: 'Pro Narrator (Convincing story teller)', value: 'KoQQbl9zjAdLgKZjm8Ol' },
-					{ name: 'Bella (Professional, Bright, Warm)', value: 'hpp4J3VqNfWAUOO0d1Us' },
-					{ name: 'Adam (Dominant, Firm)', value: 'pNInz6obpgDQGcFmaJgB' },
-					{ name: 'Brian (Deep, Resonant and Comforting)', value: 'nPczCjzI2devNBz1zQrb' },
-					{ name: 'Archer', value: 'L0Dsvb3SLTyegXwtm47J' },
-					{ name: 'Hope (Bubbly, Gossipy and Girly)', value: 'uYXf8XasLslADfZ2MB4u' },
-					{ name: 'Jeff (Classy, Resonating and Strong)', value: 'gs0tAILXbY5DNrJrsM6F' },
-					{ name: 'Jamahal (Young, Vibrant, and Natural)', value: 'DTKMou8ccj1ZaWGBiotd' },
-					{ name: 'Finn (Youthful, Eager and Energetic)', value: 'vBKc2FfBKJfcZNyEt1n6' },
-					{ name: 'Smith (Mellow, Spontaneous, and Bassy)', value: 'TmNe0cCqkZBMwPWOd3RD' },
-					{ name: 'Tom (Conversations & Books)', value: 'DYkrAHD8iwork3YSUBbs' },
-					{ name: 'Cassidy (Crisp, Direct and Clear)', value: '56AoDkrOh6qfVPDXZ7Pt' },
-					{ name: 'Addison 2.0 (Australian Audiobook & Podcast)', value: 'eR40ATw9ArzDf9h3v7t7' },
-					{ name: 'Jessica Anne Bogart (Chatty and Friendly)', value: 'g6xIsTj2HwM6VR4iXFCw' },
-					{ name: 'Lucy (Fresh & Casual)', value: 'lcMyyd2HUfFzxdCaC4Ta' },
-					{ name: 'Tiffany (Natural and Welcoming)', value: '6aDn1KB0hjpdcocrUkmq' },
-					{ name: 'Felix (Warm, positive & contemporary RP)', value: 'Sq93GQT4X1lKDXsQcixO' },
-					{ name: 'Malyx (Echoey, Menacing and Deep Demon)', value: 'piI8Kku0DcvcL6TTSeQt' },
-					{ name: 'Flicker (Cheerful Fairy & Sparkly Sweetness)', value: 'KTPVrSVAEUSJRClDzBw7' },
-					{ name: 'Bob (Rugged and Warm Cowboy)', value: 'flHkNRp1BlvT73UL6gyz' },
-					{ name: 'Jessica Anne Bogart (Eloquent Villain)', value: '9yzdeviXkFddZ4Oz8Mok' },
-					{ name: 'Lutz (Chuckling, Giggly and Cheerful)', value: 'pPdl9cQBQq4p6mRkZy2Z' },
-					{ name: 'Emma (Adorable and Upbeat)', value: '0SpgpJ4D3MpHCiWdyTg3' },
-					{ name: 'Matthew Schmitz (Elitist, Arrogant, Conniving Tyrant)', value: 'UFO0Yv86wqRxAt1DmXUu' },
-					{ name: 'Sarcastic and Sultry Villain', value: 'oR4uRy4fHDUGGISL0Rev' },
-					{ name: 'Myrrdin (Wise and Magical Narrator)', value: 'zYcjlYFOd3taleS0gkk3' },
-					{ name: 'Edward (Loud, Confident and Cocky)', value: 'nzeAacJi50IvxcyDnMXa' },
-					{ name: 'Marshal (Friendly, Funny Professor)', value: 'ruirxsoakN0GWmGNIo04' },
-					{ name: 'John Morgan (Gritty, Rugged Cowboy)', value: '1KFdM0QCwQn4rmn5nn9C' },
-					{ name: 'Parasyte (Whispers from the Deep Dark)', value: 'TC0Zp7WVFzhA8zpTlRqV' },
-					{ name: 'Aria (Sultry Villain)', value: 'ljo9gAlSqKOvF6D8sOsX' },
-					{ name: 'Viking Bjorn (Epic Medieval Raider)', value: 'PPzYpIqttlTYA83688JI' },
-					{ name: 'Pirate Marshal', value: 'ZF6FPAbjXT4488VcRRnw' },
-					{ name: 'Amelia (Enthusiastic and Expressive)', value: '8JVbfL6oEdmuxKn5DK2C' },
-					{ name: 'Johnny Kid (Serious and Calm Narrator)', value: 'iCrDUkL56s3C8sCRl7wb' },
-					{ name: 'Hope (Poetic, Romantic and Captivating)', value: '1hlpeD1ydbI2ow0Tt3EW' },
-					{ name: 'Olivia (Smooth, Warm and Engaging)', value: 'wJqPPQ618aTW29mptyoc' },
-					{ name: 'Ana Rita (Smooth, Expressive and Bright)', value: 'EiNlNiXeDU1pqqOPrYMO' },
-					{ name: 'John Doe (Deep)', value: 'FUfBrNit0NNZAwb58KWH' },
-					{ name: 'Angela (Conversational and Friendly)', value: '4YYIPFl9wE5c4L2eu2Gb' },
-					{ name: 'Burt Reynolds™ (Deep, Smooth and clear)', value: 'OYWwCdDHouzDwiZJWOOu' },
-					{ name: 'David (Gruff Cowboy)', value: '6F5Zhi321D3Oq7v1oNT4' },
-					{ name: 'Hank (Deep and Engaging Narrator)', value: 'qNkzaJoHLLdpvgh5tISm' },
-					{ name: 'Carter (Rich, Smooth and Rugged)', value: 'YXpFCvM1S3JbWEJhoskW' },
-					{ name: 'Wyatt (Wise Rustic Cowboy)', value: '9PVP7ENhDskL0KYHAKtD' },
-					{ name: 'Jerry B. (Southern/Cowboy)', value: 'LG95yZDEHg6fCZdQjLqj' },
-					{ name: 'Phil (Passionate Announcer)', value: 'CeNX9CMwmxDxUF5Q2Inm' },
-					{ name: 'Johnny Dynamite (Vintage Radio DJ)', value: 'st7NwhTPEzqo2riw7qWC' },
-					{ name: 'Blondie (Radio Host)', value: 'aD6riP1btT197c6dACmy' },
-					{ name: 'Rachel M (Pro British Radio Presenter)', value: 'FF7KdobWPaiR0vkcALHF' },
-					{ name: 'David (Movie Trailer Narrator)', value: 'mtrellq69YZsNwzUSyXh' },
-					{ name: 'Rex Thunder (Deep N Tough)', value: 'dHd5gvgSOzSfduK4CvEg' },
-					{ name: 'Ed (Late Night Announcer)', value: 'cTNP6ZM2mLTKj2BFhxEh' },
-					{ name: 'Paul French (Podcaster)', value: 'eVItLK1UvXctxuaRV2Oq' },
-					{ name: 'Jean (Femme Fatale)', value: 'U1Vk2oyatMdYs096Ety7' },
-					{ name: 'Michael (Deep, Dark and Urban)', value: 'esy0r39YPLQjOczyOib8' },
-					{ name: 'Britney (Calm and Calculative Villain)', value: 'bwCXcoVxWNYMlC6Esa8u' },
-					{ name: 'Matthew Schmitz (Gravel, Deep Anti-Hero)', value: 'D2jw4N9m4xePLTQ3IHjU' },
-					{ name: 'Ian (Strange and Distorted Alien)', value: 'Tsns2HvNFKfGiNjllgqo' },
-					{ name: 'Sven (Emotional and Nice)', value: 'Atp5cNFg1Wj5gyKD7HWV' },
-					{ name: 'Natasha (Gentle Meditation)', value: '1cxc5c3E9K6F1wlqOJGV' },
-					{ name: 'Emily (Gentle, Soft and Meditative)', value: '1U02n4nD6AdIZ9CjF053' },
-					{ name: 'Viraj (Smooth and Gentle)', value: 'HgyIHe81F3nXywNwkraY' },
-					{ name: 'Nate (Sultry, Whispery and Seductive)', value: 'AeRdCCKzvd23BpJoofzx' },
-					{ name: 'Nathaniel (Engaging, British and Calm)', value: 'LruHrtVF6PSyGItzMNHS' },
-					{ name: 'Benjamin (Deep, Warm, Calming)', value: 'Qggl4b0xRMiqOwhPtVWT' },
-					{ name: 'Clara (Relaxing, Calm and Soothing)', value: 'zA6D7RyKdc2EClouEMkP' },
-					{ name: 'AImee (Tranquil ASMR and Meditation)', value: '1wGbFxmAM3Fgw63G1zZJ' },
-					{ name: 'Allison (Calm, Soothing and Meditative)', value: 'hqfrgApggtO1785R4Fsn' },
-					{ name: 'Theodore HQ (Serene and Grounded)', value: 'sH0WdfE5fsKuM2otdQZr' },
-					{ name: 'Koraly (Soft-spoken and Gentle)', value: 'MJ0RnG71ty4LH3dvNfSd' },
-					{ name: 'Leon (Soothing and Grounded)', value: 'pNInz6obpgDQGcFmaJgB' },
 				],
 				default: 'Rachel',
 				description: 'The voice to use for speech generation',
@@ -350,7 +238,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 0.5,
-				description: 'Voice stability (0-1). Default: 0.5.',
+				description: 'Voice stability (0-1)',
 			},
 			{
 				displayName: 'Similarity Boost',
@@ -368,7 +256,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 0.75,
-				description: 'Similarity boost (0-1). Default: 0.75.',
+				description: 'Similarity boost (0-1)',
 			},
 			{
 				displayName: 'Style',
@@ -386,7 +274,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 0,
-				description: 'Style exaggeration (0-1). Default: 0.',
+				description: 'Style exaggeration (0-1)',
 			},
 			{
 				displayName: 'Speed',
@@ -404,7 +292,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 1,
-				description: 'Speech speed (0.7-1.2). Default: 1.',
+				description: 'Speech speed (0.7-1.2)',
 			},
 			{
 				displayName: 'Language Code',
@@ -418,7 +306,7 @@ export class ElevenLabs implements INodeType {
 				},
 				options: languageOptions,
 				default: 'auto',
-				description: 'Language code (ISO 639-1) to enforce a language',
+				description: 'Language code (ISO 639-1)',
 			},
 			{
 				displayName: 'Additional Parameters',
@@ -444,21 +332,17 @@ export class ElevenLabs implements INodeType {
 						displayName: 'Previous Text',
 						name: 'previousText',
 						type: 'string',
-						typeOptions: {
-							rows: 2,
-						},
+						typeOptions: { rows: 2 },
 						default: '',
-						description: 'The text that came before the text of the current request',
+						description: 'The text that came before the current request',
 					},
 					{
 						displayName: 'Next Text',
 						name: 'nextText',
 						type: 'string',
-						typeOptions: {
-							rows: 2,
-						},
+						typeOptions: { rows: 2 },
 						default: '',
-						description: 'The text that comes after the text of the current request',
+						description: 'The text that comes after the current request',
 					},
 				],
 			},
@@ -492,7 +376,7 @@ export class ElevenLabs implements INodeType {
 					{ name: 'Scribble V1', value: 'scribble-v1' },
 				],
 				default: 'scribble-v1',
-				description: 'The ID of the model to use for transcription',
+				description: 'The model to use for transcription',
 			},
 			{
 				displayName: 'Language Code',
@@ -519,7 +403,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: false,
-				description: 'Detect and tag non-speech audio events like laughter, applause, music, or silence in the transcription',
+				description: 'Detect and tag non-speech audio events in the transcription',
 			},
 			{
 				displayName: 'Diarize',
@@ -566,7 +450,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 10,
-				description: 'Duration in seconds (0.5-22). If not set, optimal duration will be determined from prompt.',
+				description: 'Duration in seconds (0.5-22)',
 			},
 			{
 				displayName: 'Prompt Influence',
@@ -584,7 +468,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 0.3,
-				description: 'How closely to follow the prompt (0-1). Higher values mean less variation.',
+				description: 'How closely to follow the prompt (0-1)',
 			},
 			{
 				displayName: 'Loop',
@@ -635,7 +519,7 @@ export class ElevenLabs implements INodeType {
 					},
 				},
 				default: 0.5,
-				description: 'Determines how stable the voice is and the randomness between each generation. Range: 0 - 1.',
+				description: 'Voice stability and randomness (0-1)',
 			},
 			{
 				displayName: 'Language Code',
@@ -704,9 +588,7 @@ export class ElevenLabs implements INodeType {
 								displayName: 'Text',
 								name: 'text',
 								type: 'string',
-								typeOptions: {
-									rows: 4,
-								},
+								typeOptions: { rows: 4 },
 								default: '',
 								description: 'Text to speak. Can include emotions like [excitedly] or pauses [two second pause].',
 							},
@@ -714,6 +596,7 @@ export class ElevenLabs implements INodeType {
 					},
 				],
 			},
+			// Common: Callback URL for create operations
 			{
 				displayName: 'Callback URL',
 				name: 'callbackUrl',
@@ -729,16 +612,17 @@ export class ElevenLabs implements INodeType {
 				placeholder: 'https://your-domain.com/api/callback',
 			},
 			{
-				displayName: 'Инструкции по настройке и примеры использования в телеграм канале <a href="https://t.me/myspacet_ai" target="_blank">https://t.me/myspacet_ai</a>',
-				name: 'telegramNotice',
-				type: 'notice',
+				displayName: 'Wait for Completion',
+				name: 'waitForCompletion',
+				type: 'boolean',
 				displayOptions: {
 					show: {
 						resource: ['job'],
 						operation: ['textToSpeech', 'speechToText', 'textToDialogue', 'soundEffects', 'audioIsolation'],
 					},
 				},
-				default: '',
+				default: true,
+				description: 'Whether to wait for the task to complete before returning (polls every 3s, 5min timeout)',
 			},
 			// Query Task Status parameters
 			{
@@ -754,7 +638,6 @@ export class ElevenLabs implements INodeType {
 				},
 				default: '',
 				description: 'The task ID to query',
-				placeholder: '281e5b0*********************f39b9',
 			},
 		],
 	};
@@ -777,6 +660,7 @@ export class ElevenLabs implements INodeType {
 						const speed = this.getNodeParameter('speed', i) as number;
 						const language_code = this.getNodeParameter('languageCodeTTS', i, '') as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 						const additionalParameters = this.getNodeParameter('additionalParameters', i, {}) as IDataObject;
 
 						const input: IDataObject = {
@@ -803,21 +687,20 @@ export class ElevenLabs implements INodeType {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'speechToText') {
 						const audioUrl = this.getNodeParameter('audioUrl', i) as string;
 						const model_id = this.getNodeParameter('modelIdSTT', i) as string;
@@ -825,6 +708,7 @@ export class ElevenLabs implements INodeType {
 						const tag_audio_events = this.getNodeParameter('tagAudioEvents', i) as boolean;
 						const diarize = this.getNodeParameter('diarize', i) as boolean;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
 						const input: IDataObject = {
 							audio_url: audioUrl,
@@ -846,21 +730,20 @@ export class ElevenLabs implements INodeType {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'soundEffects') {
 						const text = this.getNodeParameter('text', i) as string;
 						const loop = this.getNodeParameter('loop', i) as boolean;
@@ -868,6 +751,7 @@ export class ElevenLabs implements INodeType {
 						const prompt_influence = this.getNodeParameter('promptInfluence', i) as number;
 						const output_format = this.getNodeParameter('outputFormat', i) as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
 						const input: IDataObject = {
 							text,
@@ -889,61 +773,58 @@ export class ElevenLabs implements INodeType {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'audioIsolation') {
 						const audio_url = this.getNodeParameter('audioUrl', i) as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
 						const body: IDataObject = {
 							model: 'elevenlabs/audio-isolation',
-							input: {
-								audio_url,
-							},
+							input: { audio_url },
 						};
 
 						if (callbackUrl && callbackUrl.trim() !== '') {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'textToDialogue') {
 						const stability = this.getNodeParameter('stability', i) as number;
 						const languageCode = this.getNodeParameter('languageCode', i) as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 						const dialogueItems = this.getNodeParameter('dialogue', i, {}) as IDataObject;
 
-						const dialogue = [];
+						const dialogue: IDataObject[] = [];
 						if (dialogueItems.dialogueItems) {
-							// @ts-ignore
-							dialogue.push(...dialogueItems.dialogueItems);
+							dialogue.push(...(dialogueItems.dialogueItems as IDataObject[]));
 						}
 
 						const body: IDataObject = {
@@ -959,37 +840,23 @@ export class ElevenLabs implements INodeType {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'queryTaskStatus') {
 						const taskId = this.getNodeParameter('taskId', i) as string;
-
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'GET',
-								url: `https://api.kie.ai/api/v1/jobs/recordInfo`,
-								qs: {
-									taskId,
-								},
-								json: true,
-							},
-						);
-
+						const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
 						returnData.push(response);
 					}
 				}

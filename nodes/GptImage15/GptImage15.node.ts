@@ -5,6 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
+import { kieRequest, waitForTask } from '../GenericFunctions';
 
 export class GptImage15 implements INodeType {
 	description: INodeTypeDescription = {
@@ -14,7 +15,7 @@ export class GptImage15 implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using GPT-image-1.5 Image To Image API',
+		description: 'Generate images using GPT-image-1.5 via Kie.ai API',
 		defaults: {
 			name: 'GPT-image-1.5 (Kie.ai)',
 		},
@@ -22,7 +23,7 @@ export class GptImage15 implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'kieAiApi',
+				name: 'kieApi',
 				required: true,
 			},
 		],
@@ -74,7 +75,6 @@ export class GptImage15 implements INodeType {
 				default: 'textToImage',
 				required: true,
 			},
-			// Common Parameters (Prompt)
 			{
 				displayName: 'Prompt',
 				name: 'prompt',
@@ -90,7 +90,6 @@ export class GptImage15 implements INodeType {
 				description: 'A text description of the image you want to generate (max 1000 characters)',
 				placeholder: 'A photorealistic candid photograph of an elderly sailor...',
 			},
-			// Image-to-Image Parameters
 			{
 				displayName: 'Input Images',
 				name: 'inputImages',
@@ -124,7 +123,6 @@ export class GptImage15 implements INodeType {
 				],
 				description: 'URLs of the input images',
 			},
-			// Common Parameters (Aspect Ratio, Quality)
 			{
 				displayName: 'Aspect Ratio',
 				name: 'aspectRatio',
@@ -136,18 +134,9 @@ export class GptImage15 implements INodeType {
 					},
 				},
 				options: [
-					{
-						name: '1:1',
-						value: '1:1',
-					},
-					{
-						name: '2:3',
-						value: '2:3',
-					},
-					{
-						name: '3:2',
-						value: '3:2',
-					},
+					{ name: '1:1', value: '1:1' },
+					{ name: '2:3', value: '2:3' },
+					{ name: '3:2', value: '3:2' },
 				],
 				default: '3:2',
 				description: 'Width-height ratio of the image',
@@ -163,14 +152,8 @@ export class GptImage15 implements INodeType {
 					},
 				},
 				options: [
-					{
-						name: 'Medium (Balanced)',
-						value: 'medium',
-					},
-					{
-						name: 'High (Slow/Detailed)',
-						value: 'high',
-					},
+					{ name: 'Medium (Balanced)', value: 'medium' },
+					{ name: 'High (Slow/Detailed)', value: 'high' },
 				],
 				default: 'medium',
 				description: 'Quality of the generated image',
@@ -190,16 +173,17 @@ export class GptImage15 implements INodeType {
 				placeholder: 'https://your-domain.com/api/callback',
 			},
 			{
-				displayName: 'Инструкции по настройке и примеры использования в телеграм канале <a href="https://t.me/myspacet_ai" target="_blank">https://t.me/myspacet_ai</a>',
-				name: 'telegramNotice',
-				type: 'notice',
+				displayName: 'Wait for Completion',
+				name: 'waitForCompletion',
+				type: 'boolean',
 				displayOptions: {
 					show: {
 						resource: ['job'],
 						operation: ['textToImage', 'imageToImage'],
 					},
 				},
-				default: '',
+				default: true,
+				description: 'Whether to wait for the task to complete before returning (polls every 3s, 5min timeout)',
 			},
 			// Query Task Status parameters
 			{
@@ -215,7 +199,6 @@ export class GptImage15 implements INodeType {
 				},
 				default: '',
 				description: 'The task ID to query',
-				placeholder: '281e5b0*********************f39b9',
 			},
 		],
 	};
@@ -234,63 +217,48 @@ export class GptImage15 implements INodeType {
 						const aspectRatio = this.getNodeParameter('aspectRatio', i) as string;
 						const quality = this.getNodeParameter('quality', i) as string;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
-						const model = operation === 'imageToImage' 
-							? 'gpt-image/1.5-image-to-image' 
+						const model = operation === 'imageToImage'
+							? 'gpt-image/1.5-image-to-image'
 							: 'gpt-image/1.5-text-to-image';
 
-						const body: IDataObject = {
-							model,
-							input: {
-								prompt,
-								aspect_ratio: aspectRatio,
-								quality,
-							},
+						const input: IDataObject = {
+							prompt,
+							aspect_ratio: aspectRatio,
+							quality,
 						};
 
 						if (operation === 'imageToImage') {
-							// @ts-ignore
 							const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
 							const images = (inputImages?.image as IDataObject[]) || [];
 							const inputUrls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
-							(body.input as IDataObject).input_urls = inputUrls;
+							input.input_urls = inputUrls;
 						}
+
+						const body: IDataObject = { model, input };
 
 						if (callbackUrl && callbackUrl.trim() !== '') {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'queryTaskStatus') {
 						const taskId = this.getNodeParameter('taskId', i) as string;
-
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'GET',
-								url: `https://api.kie.ai/api/v1/jobs/recordInfo`,
-								qs: {
-									taskId,
-								},
-								json: true,
-							},
-						);
-
+						const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
 						returnData.push(response);
 					}
 				}

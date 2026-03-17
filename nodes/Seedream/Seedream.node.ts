@@ -5,6 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
+import { kieRequest, waitForTask } from '../GenericFunctions';
 
 export class Seedream implements INodeType {
 	description: INodeTypeDescription = {
@@ -14,7 +15,7 @@ export class Seedream implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using Seedream V4 Text To Image API',
+		description: 'Generate images using Seedream V4 via Kie.ai API',
 		defaults: {
 			name: 'Seedream v4 (Kie.ai)',
 		},
@@ -22,7 +23,7 @@ export class Seedream implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'kieAiApi',
+				name: 'kieApi',
 				required: true,
 			},
 		],
@@ -74,7 +75,6 @@ export class Seedream implements INodeType {
 				default: 'textToImage',
 				required: true,
 			},
-			// Common Parameters (Prompt)
 			{
 				displayName: 'Prompt',
 				name: 'prompt',
@@ -88,9 +88,8 @@ export class Seedream implements INodeType {
 				},
 				default: '',
 				description: 'The text prompt used to generate or edit the image (max 5000 characters)',
-				placeholder: 'Draw the following system of binary linear equations...',
+				placeholder: 'A serene mountain landscape at sunset',
 			},
-			// Image Edit Specific Parameter
 			{
 				displayName: 'Input Images',
 				name: 'inputImages',
@@ -123,7 +122,6 @@ export class Seedream implements INodeType {
 				],
 				description: 'URLs of the input images to edit',
 			},
-			// Common Parameters (Size, etc.)
 			{
 				displayName: 'Image Size',
 				name: 'imageSize',
@@ -135,42 +133,15 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{
-						name: 'Landscape 16:9',
-						value: 'landscape_16_9',
-					},
-					{
-						name: 'Landscape 21:9',
-						value: 'landscape_21_9',
-					},
-					{
-						name: 'Landscape 3:2',
-						value: 'landscape_3_2',
-					},
-					{
-						name: 'Landscape 4:3',
-						value: 'landscape_4_3',
-					},
-					{
-						name: 'Portrait 2:3',
-						value: 'portrait_3_2',
-					},
-					{
-						name: 'Portrait 3:4',
-						value: 'portrait_4_3',
-					},
-					{
-						name: 'Portrait 9:16',
-						value: 'portrait_16_9',
-					},
-					{
-						name: 'Square',
-						value: 'square',
-					},
-					{
-						name: 'Square HD',
-						value: 'square_hd',
-					},
+					{ name: 'Landscape 16:9', value: 'landscape_16_9' },
+					{ name: 'Landscape 21:9', value: 'landscape_21_9' },
+					{ name: 'Landscape 3:2', value: 'landscape_3_2' },
+					{ name: 'Landscape 4:3', value: 'landscape_4_3' },
+					{ name: 'Portrait 2:3', value: 'portrait_3_2' },
+					{ name: 'Portrait 3:4', value: 'portrait_4_3' },
+					{ name: 'Portrait 9:16', value: 'portrait_16_9' },
+					{ name: 'Square', value: 'square' },
+					{ name: 'Square HD', value: 'square_hd' },
 				],
 				default: 'square_hd',
 				description: 'The size/aspect ratio of the generated image',
@@ -186,21 +157,12 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{
-						name: '1K',
-						value: '1K',
-					},
-					{
-						name: '2K',
-						value: '2K',
-					},
-					{
-						name: '4K',
-						value: '4K',
-					},
+					{ name: '1K', value: '1K' },
+					{ name: '2K', value: '2K' },
+					{ name: '4K', value: '4K' },
 				],
 				default: '1K',
-				description: 'Final image resolution (combined with image size determines pixel dimensions)',
+				description: 'Final image resolution',
 			},
 			{
 				displayName: 'Max Images',
@@ -237,7 +199,7 @@ export class Seedream implements INodeType {
 					},
 				},
 				default: 0,
-				description: 'Random seed to control the stochasticity of image generation (leave 0 for random)',
+				description: 'Random seed to control generation (leave 0 for random)',
 			},
 			{
 				displayName: 'Callback URL',
@@ -254,16 +216,17 @@ export class Seedream implements INodeType {
 				placeholder: 'https://your-domain.com/api/callback',
 			},
 			{
-				displayName: 'Инструкции по настройке и примеры использования в телеграм канале <a href="https://t.me/myspacet_ai" target="_blank">https://t.me/myspacet_ai</a>',
-				name: 'telegramNotice',
-				type: 'notice',
+				displayName: 'Wait for Completion',
+				name: 'waitForCompletion',
+				type: 'boolean',
 				displayOptions: {
 					show: {
 						resource: ['job'],
 						operation: ['textToImage', 'imageEdit'],
 					},
 				},
-				default: '',
+				default: true,
+				description: 'Whether to wait for the task to complete before returning (polls every 3s, 5min timeout)',
 			},
 			// Query Task Status parameters
 			{
@@ -279,7 +242,6 @@ export class Seedream implements INodeType {
 				},
 				default: '',
 				description: 'The task ID to query',
-				placeholder: '281e5b0*********************f39b9',
 			},
 		],
 	};
@@ -294,78 +256,61 @@ export class Seedream implements INodeType {
 			try {
 				if (resource === 'job') {
 					if (operation === 'textToImage' || operation === 'imageEdit') {
-						// Determine model based on operation
-						const model = operation === 'imageEdit' 
-							? 'bytedance/seedream-v4-edit' 
+						const model = operation === 'imageEdit'
+							? 'bytedance/seedream-v4-edit'
 							: 'bytedance/seedream-v4-text-to-image';
-							
+
 						const prompt = this.getNodeParameter('prompt', i) as string;
 						const imageSize = this.getNodeParameter('imageSize', i) as string;
 						const imageResolution = this.getNodeParameter('imageResolution', i) as string;
 						const maxImages = this.getNodeParameter('maxImages', i) as number;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
+						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
-						const body: IDataObject = {
-							model,
-							input: {
-								prompt,
-								image_size: imageSize,
-								image_resolution: imageResolution,
-								max_images: maxImages,
-							},
+						const input: IDataObject = {
+							prompt,
+							image_size: imageSize,
+							image_resolution: imageResolution,
+							max_images: maxImages,
 						};
 
 						if (operation === 'imageEdit') {
-							// @ts-ignore
 							const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
 							const images = (inputImages?.image as IDataObject[]) || [];
 							const imageUrls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
-							
 							if (imageUrls.length > 0) {
-								(body.input as IDataObject).image_urls = imageUrls;
+								input.image_urls = imageUrls;
 							}
 						}
 
 						if (seed && seed !== 0) {
-							(body.input as IDataObject).seed = seed;
+							input.seed = seed;
 						}
+
+						const body: IDataObject = { model, input };
 
 						if (callbackUrl && callbackUrl.trim() !== '') {
 							body.callBackUrl = callbackUrl;
 						}
 
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'POST',
-								url: 'https://api.kie.ai/api/v1/jobs/createTask',
-								headers: {
-									'Content-Type': 'application/json',
-								},
-								body,
-								json: true,
-							},
-						);
+						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
-						returnData.push(response);
+						if (waitForCompletionFlag) {
+							const data = response.data as IDataObject | undefined;
+							const taskId = data?.taskId as string | undefined;
+							if (taskId) {
+								const result = await waitForTask(this, taskId);
+								returnData.push(result);
+							} else {
+								returnData.push(response);
+							}
+						} else {
+							returnData.push(response);
+						}
 					} else if (operation === 'queryTaskStatus') {
 						const taskId = this.getNodeParameter('taskId', i) as string;
-
-						const response = await this.helpers.httpRequestWithAuthentication.call(
-							this,
-							'kieAiApi',
-							{
-								method: 'GET',
-								url: `https://api.kie.ai/api/v1/jobs/recordInfo`,
-								qs: {
-									taskId,
-								},
-								json: true,
-							},
-						);
-
+						const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
 						returnData.push(response);
 					}
 				}
