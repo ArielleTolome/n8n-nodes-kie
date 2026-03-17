@@ -69,17 +69,33 @@ export class Ideogram implements INodeType {
 				default: '',
 			},
 			{
-				displayName: 'Reference Image URLs',
+				displayName: 'Reference Images',
 				name: 'referenceImageUrls',
-				type: 'string',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
 				displayOptions: {
 					show: {
 						operation: ['character', 'characterEdit', 'characterRemix'],
 					},
 				},
-				default: '',
-				description: 'Comma-separated URLs of reference images for character consistency (up to 5, currently only 1 is used). Required for Character and Character Edit operations.',
-				placeholder: 'https://example.com/ref1.jpg,https://example.com/ref2.jpg',
+				default: {},
+				placeholder: 'Add Reference Image',
+				description: 'Reference images for character consistency. Required for Character and Character Edit operations (up to 5, currently only 1 is used by the API).',
+				options: [
+					{
+						displayName: 'Image',
+						name: 'image',
+						values: [
+							{
+								displayName: 'Image URL',
+								name: 'url',
+								type: 'string',
+								default: '',
+								description: 'URL of the reference image',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Mask URL',
@@ -225,9 +241,12 @@ export class Ideogram implements INodeType {
 
 					// Reference images (required for character/characterEdit, optional for remix)
 					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {
-						const refUrls = this.getNodeParameter('referenceImageUrls', i, '') as string;
-						if (refUrls) {
-							input.referenceImageUrls = refUrls.split(',').map((u: string) => u.trim()).filter(Boolean);
+						const refCollection = this.getNodeParameter('referenceImageUrls', i, {}) as IDataObject;
+						const refUrls = ((refCollection.image as IDataObject[]) || [])
+							.map((img) => img.url as string)
+							.filter((url) => url && url.trim() !== '');
+						if (refUrls.length > 0) {
+							input.referenceImageUrls = refUrls;
 						}
 					}
 

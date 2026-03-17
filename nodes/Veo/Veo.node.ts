@@ -71,12 +71,29 @@ export class Veo implements INodeType {
 				description: 'Optional image URL for image-to-video',
 			},
 			{
-				displayName: 'Reference Image URLs',
+				displayName: 'Reference Images',
 				name: 'referenceUrls',
-				type: 'string',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
 				displayOptions: { show: { operation: ['generate'] } },
-				default: '',
-				description: 'Comma-separated image URLs for Veo 3.1 Reference to Video. Overrides Image URL if set.',
+				default: {},
+				placeholder: 'Add Reference Image',
+				description: 'Reference images for Veo 3.1 Reference-to-Video. When set, overrides the Image URL field.',
+				options: [
+					{
+						displayName: 'Image',
+						name: 'image',
+						values: [
+							{
+								displayName: 'Image URL',
+								name: 'url',
+								type: 'string',
+								default: '',
+								description: 'URL of the reference image',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Aspect Ratio',
@@ -184,9 +201,12 @@ export class Veo implements INodeType {
 						duration: this.getNodeParameter('duration', i) as number,
 						enableTranslation: this.getNodeParameter('enableTranslation', i) as boolean,
 					};
-					const referenceUrls = this.getNodeParameter('referenceUrls', i, '') as string;
-					if (referenceUrls) {
-						body.referenceUrls = referenceUrls.split(',').map((u: string) => u.trim()).filter(Boolean);
+					const referenceCollection = this.getNodeParameter('referenceUrls', i, {}) as IDataObject;
+					const referenceUrls = ((referenceCollection.image as IDataObject[]) || [])
+						.map((img) => img.url as string)
+						.filter((url) => url && url.trim() !== '');
+					if (referenceUrls.length > 0) {
+						body.referenceUrls = referenceUrls;
 					} else {
 						const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
 						if (imageUrl) body.imageUrl = imageUrl;
