@@ -66,10 +66,10 @@ export class Hailuo implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Hailuo 02 Pro', value: 'hailuo-02/text-to-video-pro' },
-					{ name: 'Hailuo 02 Standard', value: 'hailuo-02/text-to-video-standard' },
+					{ name: 'Hailuo 02 Pro', value: 'hailuo/02-text-to-video-pro' },
+					{ name: 'Hailuo 02 Standard', value: 'hailuo/02-text-to-video-standard' },
 				],
-				default: 'hailuo-02/text-to-video-pro',
+				default: 'hailuo/02-text-to-video-pro',
 			},
 			{
 				displayName: 'Model',
@@ -81,12 +81,12 @@ export class Hailuo implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Hailuo 2.3 Pro', value: 'hailuo-2.3/image-to-video-pro' },
-					{ name: 'Hailuo 2.3 Standard', value: 'hailuo-2.3/image-to-video-standard' },
-					{ name: 'Hailuo 02 Pro', value: 'hailuo-02/image-to-video-pro' },
-					{ name: 'Hailuo 02 Standard', value: 'hailuo-02/image-to-video-standard' },
+					{ name: 'Hailuo 2.3 Pro', value: 'hailuo/2-3-image-to-video-pro' },
+					{ name: 'Hailuo 2.3 Standard', value: 'hailuo/2-3-image-to-video-standard' },
+					{ name: 'Hailuo 02 Pro', value: 'hailuo/02-image-to-video-pro' },
+					{ name: 'Hailuo 02 Standard', value: 'hailuo/02-image-to-video-standard' },
 				],
-				default: 'hailuo-2.3/image-to-video-pro',
+				default: 'hailuo/2-3-image-to-video-pro',
 			},
 			{
 				displayName: 'Prompt',

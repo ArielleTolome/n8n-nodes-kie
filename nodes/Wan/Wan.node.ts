@@ -84,11 +84,10 @@ export class Wan implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Wan 2.6', value: 'wan-2.6/text-to-video' },
-					{ name: 'Wan 2.5', value: 'wan-2.5/text-to-video' },
-					{ name: 'Wan 2.2 Turbo', value: 'wan-2.2/text-to-video-turbo' },
+					{ name: 'Wan 2.6', value: 'wan/2-6-text-to-video' },
+					{ name: 'Wan 2.2 Turbo', value: 'wan/2-2-a14b-text-to-video-turbo' },
 				],
-				default: 'wan-2.6/text-to-video',
+				default: 'wan/2-6-text-to-video',
 			},
 			{
 				displayName: 'Model',
@@ -100,12 +99,11 @@ export class Wan implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Wan 2.6', value: 'wan-2.6/image-to-video' },
-					{ name: 'Wan 2.6 Flash', value: 'wan-2.6/flash-image-to-video' },
-					{ name: 'Wan 2.5', value: 'wan-2.5/image-to-video' },
-					{ name: 'Wan 2.2 Turbo', value: 'wan-2.2/image-to-video-turbo' },
+					{ name: 'Wan 2.6', value: 'wan/2-6-image-to-video' },
+					{ name: 'Wan 2.6 Flash', value: 'wan/2-6-flash-image-to-video' },
+					{ name: 'Wan 2.2 Turbo', value: 'wan/2-2-a14b-image-to-video-turbo' },
 				],
-				default: 'wan-2.6/image-to-video',
+				default: 'wan/2-6-image-to-video',
 			},
 			{
 				displayName: 'Model',
@@ -117,10 +115,10 @@ export class Wan implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Wan 2.6', value: 'wan-2.6/video-to-video' },
-					{ name: 'Wan 2.6 Flash', value: 'wan-2.6/flash-video-to-video' },
+					{ name: 'Wan 2.6', value: 'wan/2-6-video-to-video' },
+					{ name: 'Wan 2.6 Flash', value: 'wan/2-6-flash-video-to-video' },
 				],
-				default: 'wan-2.6/video-to-video',
+				default: 'wan/2-6-video-to-video',
 			},
 			{
 				displayName: 'Animate Type',
@@ -132,10 +130,10 @@ export class Wan implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Animate Move', value: 'wan-2.2/animate-move' },
-					{ name: 'Animate Replace', value: 'wan-2.2/animate-replace' },
+					{ name: 'Animate Move', value: 'wan/2-2-animate-move' },
+					{ name: 'Animate Replace', value: 'wan/2-2-animate-replace' },
 				],
-				default: 'wan-2.2/animate-move',
+				default: 'wan/2-2-animate-move',
 			},
 			{
 				displayName: 'Prompt',
@@ -370,14 +368,14 @@ export class Wan implements INodeType {
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					} else if (operation === 'speechToVideo') {
-						model = 'wan-2.2/speech-to-video-turbo';
+						model = 'wan/2-2-a14b-speech-to-video-turbo';
 						input.audioUrl = this.getNodeParameter('audioUrl', i) as string;
 					} else if (operation === 'animate') {
 						model = this.getNodeParameter('animateType', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
-						if (model === 'wan-2.2/animate-replace') {
+						if (model === 'wan/2-2-animate-replace') {
 							const mask = this.getNodeParameter('maskUrl', i, '') as string;
 							if (mask) input.maskUrl = mask;
 						}

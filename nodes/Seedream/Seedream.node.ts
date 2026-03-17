@@ -72,11 +72,11 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream 5 Lite', value: 'seedream-5-lite/text-to-image' },
-					{ name: 'Seedream 4.5', value: 'seedream-4.5/text-to-image' },
-					{ name: 'Seedream v4', value: 'seedream-v4/text-to-image' },
+					{ name: 'Seedream 5 Lite', value: 'seedream/5-lite-text-to-image' },
+					{ name: 'Seedream 4.5', value: 'seedream/4.5-text-to-image' },
+					{ name: 'Seedream v4', value: 'bytedance/seedream-v4-text-to-image' },
 				],
-				default: 'seedream-5-lite/text-to-image',
+				default: 'seedream/5-lite-text-to-image',
 			},
 			{
 				displayName: 'Model',
@@ -88,10 +88,10 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream 4.5 Edit', value: 'seedream-4.5/edit' },
-					{ name: 'Seedream v4 Edit', value: 'seedream-v4/edit' },
+					{ name: 'Seedream 4.5 Edit', value: 'seedream/4.5-edit' },
+					{ name: 'Seedream v4 Edit', value: 'bytedance/seedream-v4-edit' },
 				],
-				default: 'seedream-4.5/edit',
+				default: 'seedream/4.5-edit',
 			},
 			{
 				displayName: 'Prompt',
@@ -239,7 +239,7 @@ export class Seedream implements INodeType {
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
 						if (maskUrl) input.maskUrl = maskUrl;
 					} else if (operation === 'imageToImage') {
-						model = 'seedream-5-lite/image-to-image';
+						model = 'seedream/5-lite-image-to-image';
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 					}
 
