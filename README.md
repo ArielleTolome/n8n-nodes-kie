@@ -396,8 +396,12 @@ To run fire-and-forget: disable **Wait for Completion** and use **Query Task Sta
 
 | Version | Changes |
 |---------|---------|
+| v0.4.0 | Documentation update — complete changelog backfill (v0.3.5–v0.3.8); Kling node docs updated to mention Kling 3.0 (V3) model support |
 | v0.3.9 | Error handling improvements — 429 rate limit retry (exponential backoff 2/4/8s) in GenericFunctions; enriched error messages include API response body; Kling node adds Kling 3.0 T2V/I2V model + `mode` (std/pro) + `sound` fields |
-| v0.3.8 | Model ID verification pass — corrected Sora2Pro, Google, ZImage, Seedream, Seedance, Hailuo, Wan, Kling model IDs; added placeholder text and improved field descriptions |
+| v0.3.8 | Model ID fix — corrected Sora2Pro, Google, ZImage node model IDs |
+| v0.3.7 | Model ID fix — corrected Seedream, Seedance, Hailuo, Wan, Kling node model IDs |
+| v0.3.6 | UX polish — placeholder text and improved field descriptions across all nodes |
+| v0.3.5 | Bug fix — corrected stale model IDs and required fields based on kie.ai API verification (Wan, Runway) |
 | v0.3.4 | Fix Veo model names (`veo3`, `veo3_fast`); fix ElevenLabs TTS model ID (dot→hyphen); add `quality` field to Runway generate (now required by API); update README |
 | v0.3.3 | Final targeted gap-fill — seed for Flux/Ideogram/Recraft, steps for Flux; verify execute logic across all nodes |
 | v0.3.2 | Model-specific optional params — steps, strength, quality, background, outputFormat, seed gaps filled |
