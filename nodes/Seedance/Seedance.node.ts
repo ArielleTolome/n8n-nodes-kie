@@ -66,6 +66,7 @@ export class Seedance implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Seedance 2.0', value: 'seedance-2.0/text-to-video' },
 					{ name: 'Seedance 1.5 Pro', value: 'seedance-1.5-pro/text-to-video' },
 					{ name: 'Seedance v1 Pro', value: 'seedance-v1/pro-text-to-video' },
 					{ name: 'Seedance v1 Lite', value: 'seedance-v1/lite-text-to-video' },
@@ -82,6 +83,7 @@ export class Seedance implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Seedance 2.0', value: 'seedance-2.0/image-to-video' },
 					{ name: 'Seedance 1.5 Pro', value: 'seedance-1.5-pro/image-to-video' },
 					{ name: 'Seedance v1 Pro', value: 'seedance-v1/pro-image-to-video' },
 					{ name: 'Seedance v1 Pro Fast', value: 'seedance-v1/pro-fast-image-to-video' },

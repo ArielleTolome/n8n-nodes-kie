@@ -9,15 +9,15 @@ import { kieRequest, kieQueryTask, waitForDedicatedTask } from '../GenericFuncti
 
 export class Veo implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Veo 3 (Kie.ai)',
+		displayName: 'Veo 3.1 (Kie.ai)',
 		name: 'veo',
 		icon: 'file:veo.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate and extend videos using Veo 3 via Kie.ai API',
+		description: 'Generate and extend videos using Veo 3.1 via Kie.ai API',
 		defaults: {
-			name: 'Veo 3 (Kie.ai)',
+			name: 'Veo 3.1 (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -37,6 +37,7 @@ export class Veo implements INodeType {
 					{ name: 'Generate', value: 'generate', action: 'Generate video' },
 					{ name: 'Extend', value: 'extend', action: 'Extend video' },
 					{ name: 'Get 1080p Video', value: 'get1080p', action: 'Get 1080p video' },
+					{ name: 'Get 4K Video', value: 'get4k', action: 'Get 4K video' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
 				default: 'generate',
@@ -48,10 +49,10 @@ export class Veo implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['generate'] } },
 				options: [
-					{ name: 'Veo 3', value: 'veo-3' },
-					{ name: 'Veo 3 Fast', value: 'veo-3-fast' },
+					{ name: 'Veo 3.1 Fast', value: 'veo-3.1' },
+					{ name: 'Veo 3.1 Quality', value: 'veo-3.1-quality' },
 				],
-				default: 'veo-3',
+				default: 'veo-3.1',
 			},
 			{
 				displayName: 'Prompt',
@@ -68,6 +69,14 @@ export class Veo implements INodeType {
 				displayOptions: { show: { operation: ['generate'] } },
 				default: '',
 				description: 'Optional image URL for image-to-video',
+			},
+			{
+				displayName: 'Reference Image URLs',
+				name: 'referenceUrls',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: '',
+				description: 'Comma-separated image URLs for Veo 3.1 Reference to Video. Overrides Image URL if set.',
 			},
 			{
 				displayName: 'Aspect Ratio',
@@ -125,6 +134,14 @@ export class Veo implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'Task ID',
+				name: 'fourKTaskId',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { operation: ['get4k'] } },
+				default: '',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -156,6 +173,9 @@ export class Veo implements INodeType {
 				} else if (operation === 'get1080p') {
 					const taskId = this.getNodeParameter('hdTaskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/veo/get-1080p-video', undefined, { taskId }));
+				} else if (operation === 'get4k') {
+					const taskId = this.getNodeParameter('fourKTaskId', i) as string;
+					returnData.push(await kieRequest(this, 'GET', '/api/v1/veo/get-4k-video', undefined, { taskId }));
 				} else if (operation === 'generate') {
 					const body: IDataObject = {
 						model: this.getNodeParameter('model', i) as string,
@@ -164,8 +184,13 @@ export class Veo implements INodeType {
 						duration: this.getNodeParameter('duration', i) as number,
 						enableTranslation: this.getNodeParameter('enableTranslation', i) as boolean,
 					};
-					const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
-					if (imageUrl) body.imageUrl = imageUrl;
+					const referenceUrls = this.getNodeParameter('referenceUrls', i, '') as string;
+					if (referenceUrls) {
+						body.referenceUrls = referenceUrls.split(',').map((u: string) => u.trim()).filter(Boolean);
+					} else {
+						const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
+						if (imageUrl) body.imageUrl = imageUrl;
+					}
 
 					const response = await kieRequest(this, 'POST', '/api/v1/veo/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

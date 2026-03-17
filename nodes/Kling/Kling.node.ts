@@ -91,6 +91,7 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Kling 3.0', value: 'kling-3.0/image-to-video' },
 					{ name: 'Kling 2.6', value: 'kling-2.6/image-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling-2.5/turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling-2.1/master-image-to-video' },

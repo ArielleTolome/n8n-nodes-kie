@@ -80,6 +80,20 @@ export class Suno implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'Model Version',
+				name: 'modelVersion',
+				type: 'options',
+				displayOptions: { show: { operation: ['generateMusic'] } },
+				options: [
+					{ name: 'V4.5 Plus', value: 'v4.5_plus' },
+					{ name: 'V4.5', value: 'v4.5' },
+					{ name: 'V4', value: 'v4' },
+					{ name: 'V3.5', value: 'v3.5' },
+				],
+				default: 'v4.5',
+				description: 'Suno model version to use',
+			},
+			{
 				displayName: 'Instrumental',
 				name: 'instrumental',
 				type: 'boolean',
@@ -161,11 +175,13 @@ export class Suno implements INodeType {
 						const style = this.getNodeParameter('style', i, '') as string;
 						const title = this.getNodeParameter('title', i, '') as string;
 						const instrumental = this.getNodeParameter('instrumental', i) as boolean;
+						const modelVersion = this.getNodeParameter('modelVersion', i, 'v4.5') as string;
 						if (prompt) body.prompt = prompt;
 						if (lyrics) body.lyrics = lyrics;
 						if (style) body.style = style;
 						if (title) body.title = title;
 						body.instrumental = instrumental;
+						body.model = modelVersion;
 					} else if (operation === 'extendMusic') {
 						endpoint = '/api/v1/generate/extend';
 						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
