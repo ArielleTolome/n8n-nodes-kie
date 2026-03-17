@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 Format: [Semantic Versioning](https://semver.org/)
 
+## [0.5.1] - 2026-03-17
+### Fixed
+- Example workflow type strings corrected: `image-generation-flux.json` → `n8n-nodes-kie.flux`, `image-generation-ideogram.json` → `n8n-nodes-kie.ideogram`, `text-to-speech-elevenlabs.json` → `n8n-nodes-kie.elevenLabs`, `video-to-video-topaz.json` → `n8n-nodes-kie.topaz` (all were using non-existent `n8n-nodes-kie.kie` type)
+### Added
+- SUMMARY.md — comprehensive package documentation for first-time discovery
+
 ## [0.4.9] - 2026-03-17
 ### Added
 - 4 additional importable n8n workflow example templates: Flux image generation, Topaz video upscale, ElevenLabs TTS, Ideogram image generation

@@ -17,6 +17,8 @@ gulpfile.js
 # Tests
 tests/
 test/
+__tests__/
+jest.config.*
 *.test.js
 *.spec.js
 

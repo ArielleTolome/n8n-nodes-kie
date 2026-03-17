@@ -19,7 +19,7 @@
       },
       "id": "d4e5f6a7-0004-0004-0004-000000000002",
       "name": "Ideogram",
-      "type": "n8n-nodes-kie.kie",
+      "type": "n8n-nodes-kie.ideogram",
       "typeVersion": 1,
       "position": [460, 300],
       "credentials": {
