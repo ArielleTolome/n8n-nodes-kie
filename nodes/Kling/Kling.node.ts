@@ -511,7 +511,7 @@ export class Kling implements INodeType {
 							const seed = this.getNodeParameter('seed', i, 0) as number;
 							if (seed) input.seed = seed;
 							const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
-							if (tailImageUrl) input.tailImageUrl = tailImageUrl;
+							if (tailImageUrl) input.tail_image_url = tailImageUrl;
 						}
 					} else if (operation === 'aiAvatar') {
 						model = this.getNodeParameter('modelAvatar', i) as string;
