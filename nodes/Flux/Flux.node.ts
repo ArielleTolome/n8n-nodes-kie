@@ -7,17 +7,17 @@ import {
 } from 'n8n-workflow';
 import { kieRequest, waitForTask } from '../GenericFunctions';
 
-export class Seedream implements INodeType {
+export class Flux implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Seedream (Kie.ai)',
-		name: 'seedream',
-		icon: 'file:seedream-v4-bubble.svg',
+		displayName: 'Flux (Kie.ai)',
+		name: 'flux',
+		icon: 'file:flux.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using Seedream via Kie.ai API',
+		description: 'Generate images using Flux and Flux Kontext via Kie.ai API',
 		defaults: {
-			name: 'Seedream (Kie.ai)',
+			name: 'Flux (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -37,25 +37,22 @@ export class Seedream implements INodeType {
 					{
 						name: 'Text-to-Image',
 						value: 'textToImage',
-						description: 'Generate image from text prompt',
 						action: 'Text to image',
-					},
-					{
-						name: 'Image Edit',
-						value: 'imageEdit',
-						description: 'Edit existing image with prompt',
-						action: 'Image edit',
 					},
 					{
 						name: 'Image-to-Image',
 						value: 'imageToImage',
-						description: 'Transform image with prompt',
 						action: 'Image to image',
+					},
+					{
+						name: 'Kontext',
+						value: 'kontext',
+						description: 'Use Flux Kontext for advanced image generation',
+						action: 'Kontext generate',
 					},
 					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
-						description: 'Check the status of a generation task',
 						action: 'Get task status',
 					},
 				],
@@ -72,26 +69,40 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream 5 Lite', value: 'seedream-5-lite/text-to-image' },
-					{ name: 'Seedream 4.5', value: 'seedream-4.5/text-to-image' },
-					{ name: 'Seedream v4', value: 'seedream-v4/text-to-image' },
+					{ name: 'Flux 2 Pro', value: 'flux2/pro-text-to-image' },
+					{ name: 'Flux 2 Flex', value: 'flux2/flex-text-to-image' },
 				],
-				default: 'seedream-5-lite/text-to-image',
+				default: 'flux2/pro-text-to-image',
 			},
 			{
 				displayName: 'Model',
-				name: 'modelEdit',
+				name: 'modelI2I',
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['imageEdit'],
+						operation: ['imageToImage'],
 					},
 				},
 				options: [
-					{ name: 'Seedream 4.5 Edit', value: 'seedream-4.5/edit' },
-					{ name: 'Seedream v4 Edit', value: 'seedream-v4/edit' },
+					{ name: 'Flux 2 Pro', value: 'flux2/pro-image-to-image' },
+					{ name: 'Flux 2 Flex', value: 'flux2/flex-image-to-image' },
 				],
-				default: 'seedream-4.5/edit',
+				default: 'flux2/pro-image-to-image',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelKontext',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['kontext'],
+					},
+				},
+				options: [
+					{ name: 'Flux Kontext Max', value: 'flux-kontext-max' },
+					{ name: 'Flux Kontext Pro', value: 'flux-kontext-pro' },
+				],
+				default: 'flux-kontext-pro',
 			},
 			{
 				displayName: 'Prompt',
@@ -100,11 +111,10 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageToImage', 'kontext'],
 					},
 				},
 				default: '',
-				description: 'The text prompt for generation',
 			},
 			{
 				displayName: 'Image URL',
@@ -113,44 +123,40 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['imageEdit', 'imageToImage'],
+						operation: ['imageToImage'],
 					},
 				},
 				default: '',
-				description: 'URL of the input image',
 			},
 			{
-				displayName: 'Mask URL',
-				name: 'maskUrl',
+				displayName: 'Image URL',
+				name: 'imageUrlKontext',
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['imageEdit'],
+						operation: ['kontext'],
 					},
 				},
 				default: '',
-				description: 'Optional mask URL for targeted editing',
+				description: 'Optional image URL for Kontext',
 			},
 			{
 				displayName: 'Aspect Ratio',
-				name: 'imageSize',
+				name: 'ratio',
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageToImage', 'kontext'],
 					},
 				},
 				options: [
-					{ name: 'Square', value: 'square' },
-					{ name: 'Square HD', value: 'square_hd' },
-					{ name: 'Landscape 16:9', value: 'landscape_16_9' },
-					{ name: 'Landscape 4:3', value: 'landscape_4_3' },
-					{ name: 'Landscape 3:2', value: 'landscape_3_2' },
-					{ name: 'Portrait 9:16', value: 'portrait_16_9' },
-					{ name: 'Portrait 3:4', value: 'portrait_4_3' },
-					{ name: 'Portrait 2:3', value: 'portrait_3_2' },
+					{ name: '1:1', value: '1:1' },
+					{ name: '16:9', value: '16:9' },
+					{ name: '9:16', value: '9:16' },
+					{ name: '4:3', value: '4:3' },
+					{ name: '3:4', value: '3:4' },
 				],
-				default: 'square_hd',
+				default: '1:1',
 			},
 			{
 				displayName: 'Seed',
@@ -158,11 +164,37 @@ export class Seedream implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageToImage'],
 					},
 				},
 				default: 0,
 				description: 'Random seed (0 for random)',
+			},
+			{
+				displayName: 'Steps',
+				name: 'steps',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 50 },
+				displayOptions: {
+					show: {
+						operation: ['textToImage'],
+					},
+				},
+				default: 25,
+				description: 'Number of generation steps',
+			},
+			{
+				displayName: 'Strength',
+				name: 'strength',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
+				displayOptions: {
+					show: {
+						operation: ['imageToImage'],
+					},
+				},
+				default: 0.75,
+				description: 'How much to transform the input image (0-1)',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -170,7 +202,7 @@ export class Seedream implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageToImage', 'kontext'],
 					},
 				},
 				default: true,
@@ -201,26 +233,48 @@ export class Seedream implements INodeType {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
+				} else if (operation === 'kontext') {
+					const model = this.getNodeParameter('modelKontext', i) as string;
+					const prompt = this.getNodeParameter('prompt', i) as string;
+					const ratio = this.getNodeParameter('ratio', i) as string;
+					const imageUrl = this.getNodeParameter('imageUrlKontext', i, '') as string;
+
+					const body: IDataObject = { model, prompt, ratio };
+					if (imageUrl) body.imageUrl = imageUrl;
+
+					const response = await kieRequest(this, 'POST', '/api/v1/flux/kontext/generate', body);
+					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
+
+					if (waitFlag) {
+						const taskId = (response.data as IDataObject)?.taskId ?? response.taskId;
+						if (taskId) {
+							returnData.push(await waitForTask(this, taskId as string));
+						} else {
+							returnData.push(response);
+						}
+					} else {
+						returnData.push(response);
+					}
 				} else {
 					let model = '';
 					const input: IDataObject = {};
 
 					if (operation === 'textToImage') {
 						model = this.getNodeParameter('model', i) as string;
-					} else if (operation === 'imageEdit') {
-						model = this.getNodeParameter('modelEdit', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
-						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
-						if (maskUrl) input.maskUrl = maskUrl;
+						input.prompt = this.getNodeParameter('prompt', i) as string;
+						input.ratio = this.getNodeParameter('ratio', i) as string;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
+						input.steps = this.getNodeParameter('steps', i) as number;
 					} else if (operation === 'imageToImage') {
-						model = 'seedream-5-lite/image-to-image';
+						model = this.getNodeParameter('modelI2I', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.prompt = this.getNodeParameter('prompt', i) as string;
+						input.strength = this.getNodeParameter('strength', i) as number;
+						input.ratio = this.getNodeParameter('ratio', i) as string;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
 					}
-
-					input.prompt = this.getNodeParameter('prompt', i) as string;
-					input.image_size = this.getNodeParameter('imageSize', i) as string;
-					const seed = this.getNodeParameter('seed', i, 0) as number;
-					if (seed) input.seed = seed;
 
 					const body: IDataObject = { model, input };
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);

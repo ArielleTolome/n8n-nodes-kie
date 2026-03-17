@@ -7,17 +7,17 @@ import {
 } from 'n8n-workflow';
 import { kieRequest, waitForTask } from '../GenericFunctions';
 
-export class Seedream implements INodeType {
+export class Google implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Seedream (Kie.ai)',
-		name: 'seedream',
-		icon: 'file:seedream-v4-bubble.svg',
+		displayName: 'Google AI Images (Kie.ai)',
+		name: 'googleAiImages',
+		icon: 'file:google-ai.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using Seedream via Kie.ai API',
+		description: 'Generate images using Nano Banana and Imagen 4 via Kie.ai API',
 		defaults: {
-			name: 'Seedream (Kie.ai)',
+			name: 'Google AI Images (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -35,16 +35,16 @@ export class Seedream implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Text-to-Image',
-						value: 'textToImage',
+						name: 'Generate',
+						value: 'generate',
 						description: 'Generate image from text prompt',
-						action: 'Text to image',
+						action: 'Generate image',
 					},
 					{
-						name: 'Image Edit',
-						value: 'imageEdit',
+						name: 'Edit',
+						value: 'edit',
 						description: 'Edit existing image with prompt',
-						action: 'Image edit',
+						action: 'Edit image',
 					},
 					{
 						name: 'Image-to-Image',
@@ -55,11 +55,10 @@ export class Seedream implements INodeType {
 					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
-						description: 'Check the status of a generation task',
 						action: 'Get task status',
 					},
 				],
-				default: 'textToImage',
+				default: 'generate',
 				required: true,
 			},
 			{
@@ -68,15 +67,18 @@ export class Seedream implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToImage'],
+						operation: ['generate'],
 					},
 				},
 				options: [
-					{ name: 'Seedream 5 Lite', value: 'seedream-5-lite/text-to-image' },
-					{ name: 'Seedream 4.5', value: 'seedream-4.5/text-to-image' },
-					{ name: 'Seedream v4', value: 'seedream-v4/text-to-image' },
+					{ name: 'Imagen 4 Ultra', value: 'imagen4-ultra/generate' },
+					{ name: 'Imagen 4', value: 'imagen4/generate' },
+					{ name: 'Imagen 4 Fast', value: 'imagen4-fast/generate' },
+					{ name: 'Nano Banana Pro', value: 'nano-banana-pro/generate' },
+					{ name: 'Nano Banana 2', value: 'nano-banana-2/generate' },
+					{ name: 'Nano Banana', value: 'nano-banana/generate' },
 				],
-				default: 'seedream-5-lite/text-to-image',
+				default: 'imagen4/generate',
 			},
 			{
 				displayName: 'Model',
@@ -84,14 +86,13 @@ export class Seedream implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['imageEdit'],
+						operation: ['edit'],
 					},
 				},
 				options: [
-					{ name: 'Seedream 4.5 Edit', value: 'seedream-4.5/edit' },
-					{ name: 'Seedream v4 Edit', value: 'seedream-v4/edit' },
+					{ name: 'Nano Banana Edit', value: 'nano-banana/edit' },
 				],
-				default: 'seedream-4.5/edit',
+				default: 'nano-banana/edit',
 			},
 			{
 				displayName: 'Prompt',
@@ -100,11 +101,10 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['generate', 'edit', 'imageToImage'],
 					},
 				},
 				default: '',
-				description: 'The text prompt for generation',
 			},
 			{
 				displayName: 'Image URL',
@@ -113,11 +113,10 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['imageEdit', 'imageToImage'],
+						operation: ['edit', 'imageToImage'],
 					},
 				},
 				default: '',
-				description: 'URL of the input image',
 			},
 			{
 				displayName: 'Mask URL',
@@ -125,7 +124,7 @@ export class Seedream implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['imageEdit'],
+						operation: ['edit'],
 					},
 				},
 				default: '',
@@ -133,24 +132,21 @@ export class Seedream implements INodeType {
 			},
 			{
 				displayName: 'Aspect Ratio',
-				name: 'imageSize',
+				name: 'ratio',
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['generate', 'edit', 'imageToImage'],
 					},
 				},
 				options: [
-					{ name: 'Square', value: 'square' },
-					{ name: 'Square HD', value: 'square_hd' },
-					{ name: 'Landscape 16:9', value: 'landscape_16_9' },
-					{ name: 'Landscape 4:3', value: 'landscape_4_3' },
-					{ name: 'Landscape 3:2', value: 'landscape_3_2' },
-					{ name: 'Portrait 9:16', value: 'portrait_16_9' },
-					{ name: 'Portrait 3:4', value: 'portrait_4_3' },
-					{ name: 'Portrait 2:3', value: 'portrait_3_2' },
+					{ name: '1:1', value: '1:1' },
+					{ name: '16:9', value: '16:9' },
+					{ name: '9:16', value: '9:16' },
+					{ name: '4:3', value: '4:3' },
+					{ name: '3:4', value: '3:4' },
 				],
-				default: 'square_hd',
+				default: '1:1',
 			},
 			{
 				displayName: 'Seed',
@@ -158,7 +154,7 @@ export class Seedream implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['generate', 'edit'],
 					},
 				},
 				default: 0,
@@ -170,7 +166,7 @@ export class Seedream implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['generate', 'edit', 'imageToImage'],
 					},
 				},
 				default: true,
@@ -205,20 +201,20 @@ export class Seedream implements INodeType {
 					let model = '';
 					const input: IDataObject = {};
 
-					if (operation === 'textToImage') {
+					if (operation === 'generate') {
 						model = this.getNodeParameter('model', i) as string;
-					} else if (operation === 'imageEdit') {
+					} else if (operation === 'edit') {
 						model = this.getNodeParameter('modelEdit', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
 						if (maskUrl) input.maskUrl = maskUrl;
 					} else if (operation === 'imageToImage') {
-						model = 'seedream-5-lite/image-to-image';
+						model = 'google/pro-image-to-image';
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 					}
 
 					input.prompt = this.getNodeParameter('prompt', i) as string;
-					input.image_size = this.getNodeParameter('imageSize', i) as string;
+					input.ratio = this.getNodeParameter('ratio', i) as string;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 

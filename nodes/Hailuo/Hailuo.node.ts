@@ -7,17 +7,17 @@ import {
 } from 'n8n-workflow';
 import { kieRequest, waitForTask } from '../GenericFunctions';
 
-export class GptImage15 implements INodeType {
+export class Hailuo implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'GPT-image-1.5 (Kie.ai)',
-		name: 'gptImage15',
-		icon: 'file:gpt-image-1_5-bubble.svg',
+		displayName: 'Hailuo (Kie.ai)',
+		name: 'hailuo',
+		icon: 'file:hailuo.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using GPT-image-1.5 via Kie.ai API',
+		description: 'Generate videos using Hailuo via Kie.ai API',
 		defaults: {
-			name: 'GPT-image-1.5 (Kie.ai)',
+			name: 'Hailuo (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -34,73 +34,93 @@ export class GptImage15 implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Text-to-Image', value: 'textToImage', action: 'Text to image' },
-					{ name: 'Image-to-Image', value: 'imageToImage', action: 'Image to image' },
-					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
+					{
+						name: 'Text-to-Video',
+						value: 'textToVideo',
+						description: 'Generate video from text prompt',
+						action: 'Text to video',
+					},
+					{
+						name: 'Image-to-Video',
+						value: 'imageToVideo',
+						description: 'Generate video from image',
+						action: 'Image to video',
+					},
+					{
+						name: 'Query Task Status',
+						value: 'queryTaskStatus',
+						description: 'Check the status of a generation task',
+						action: 'Get task status',
+					},
 				],
-				default: 'textToImage',
+				default: 'textToVideo',
 				required: true,
+			},
+			{
+				displayName: 'Model',
+				name: 'model',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Hailuo 02 Pro', value: 'hailuo-02/text-to-video-pro' },
+					{ name: 'Hailuo 02 Standard', value: 'hailuo-02/text-to-video-standard' },
+				],
+				default: 'hailuo-02/text-to-video-pro',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelI2V',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Hailuo 2.3 Pro', value: 'hailuo-2.3/image-to-video-pro' },
+					{ name: 'Hailuo 2.3 Standard', value: 'hailuo-2.3/image-to-video-standard' },
+					{ name: 'Hailuo 02 Pro', value: 'hailuo-02/image-to-video-pro' },
+					{ name: 'Hailuo 02 Standard', value: 'hailuo-02/image-to-video-standard' },
+				],
+				default: 'hailuo-2.3/image-to-video-pro',
 			},
 			{
 				displayName: 'Prompt',
 				name: 'prompt',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
 				default: '',
 			},
 			{
-				displayName: 'Input Images',
-				name: 'inputImages',
-				type: 'fixedCollection',
-				typeOptions: { multipleValues: true },
-				displayOptions: { show: { operation: ['imageToImage'] } },
-				default: {},
+				displayName: 'Image URL',
+				name: 'imageUrl',
+				type: 'string',
 				required: true,
-				placeholder: 'Add Image',
-				options: [
-					{
-						displayName: 'Image',
-						name: 'image',
-						values: [
-							{
-								displayName: 'Image URL',
-								name: 'url',
-								type: 'string',
-								default: '',
-							},
-						],
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
 					},
-				],
-			},
-			{
-				displayName: 'Aspect Ratio',
-				name: 'aspectRatio',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: '1:1', value: '1:1' },
-					{ name: '2:3', value: '2:3' },
-					{ name: '3:2', value: '3:2' },
-				],
-				default: '3:2',
-			},
-			{
-				displayName: 'Quality',
-				name: 'quality',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: 'Medium', value: 'medium' },
-					{ name: 'High', value: 'high' },
-				],
-				default: 'medium',
+				},
+				default: '',
 			},
 			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -109,7 +129,11 @@ export class GptImage15 implements INodeType {
 				name: 'taskId',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['queryTaskStatus'] } },
+				displayOptions: {
+					show: {
+						operation: ['queryTaskStatus'],
+					},
+				},
 				default: '',
 			},
 		],
@@ -126,20 +150,16 @@ export class GptImage15 implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
 				} else {
-					const model = operation === 'imageToImage'
-						? 'gpt-image/1.5-image-to-image'
-						: 'gpt-image/1.5-text-to-image';
+					const model = operation === 'textToVideo'
+						? this.getNodeParameter('model', i) as string
+						: this.getNodeParameter('modelI2V', i) as string;
 
 					const input: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
-						aspect_ratio: this.getNodeParameter('aspectRatio', i) as string,
-						quality: this.getNodeParameter('quality', i) as string,
 					};
 
-					if (operation === 'imageToImage') {
-						const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
-						const images = (inputImages?.image as IDataObject[]) || [];
-						input.input_urls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
+					if (operation === 'imageToVideo') {
+						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 					}
 
 					const body: IDataObject = { model, input };

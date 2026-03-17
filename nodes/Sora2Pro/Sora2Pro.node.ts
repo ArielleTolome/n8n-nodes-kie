@@ -9,15 +9,15 @@ import { kieRequest, waitForTask } from '../GenericFunctions';
 
 export class Sora2Pro implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Sora 2 Pro (Kie.ai)',
+		displayName: 'Sora 2 (Kie.ai)',
 		name: 'sora2Pro',
 		icon: 'file:sora2-pro-bubble.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate videos using Sora 2 Pro via Kie.ai API',
+		description: 'Generate videos using Sora 2 via Kie.ai API',
 		defaults: {
-			name: 'Sora 2 Pro (Kie.ai)',
+			name: 'Sora 2 (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -29,77 +29,98 @@ export class Sora2Pro implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Resource',
-				name: 'resource',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'Job',
-						value: 'job',
-					},
-				],
-				default: 'job',
-				required: true,
-			},
-			{
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['job'],
-					},
-				},
 				options: [
 					{
 						name: 'Text-to-Video',
-						value: 'createTask',
+						value: 'textToVideo',
 						description: 'Generate video from text prompt',
-						action: 'Text-to-Video',
+						action: 'Text to video',
+					},
+					{
+						name: 'Image-to-Video',
+						value: 'imageToVideo',
+						description: 'Generate video from image',
+						action: 'Image to video',
+					},
+					{
+						name: 'Characters',
+						value: 'characters',
+						description: 'Generate video with consistent characters',
+						action: 'Characters video',
+					},
+					{
+						name: 'Storyboard',
+						value: 'storyboard',
+						description: 'Generate storyboard video',
+						action: 'Storyboard video',
+					},
+					{
+						name: 'Remove Watermark',
+						value: 'removeWatermark',
+						description: 'Remove watermark from video',
+						action: 'Remove watermark',
 					},
 					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
-						action: 'Get Task Status',
+						action: 'Get task status',
 					},
 				],
-				default: 'createTask',
+				default: 'textToVideo',
 				required: true,
 			},
-			// Create Task parameters
 			{
 				displayName: 'Model',
 				name: 'model',
 				type: 'options',
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToVideo'],
 					},
 				},
 				options: [
-					{
-						name: 'Sora 2 Pro (Text-to-Video)',
-						value: 'sora-2-pro-text-to-video',
-					},
-					{
-						name: 'Sora 2 (Text-to-Video)',
-						value: 'sora-2-text-to-video',
-					},
-					{
-						name: 'Sora 2 Pro (Image-to-Video)',
-						value: 'sora-2-pro-image-to-video',
-					},
-					{
-						name: 'Sora 2 (Image-to-Video)',
-						value: 'sora-2-image-to-video',
-					},
+					{ name: 'Sora 2 Pro', value: 'sora-2-pro-text-to-video' },
+					{ name: 'Sora 2', value: 'sora-2-text-to-video' },
 				],
 				default: 'sora-2-pro-text-to-video',
 				description: 'The Sora model variant to use',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelI2V',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Sora 2 Pro', value: 'sora-2-pro-image-to-video' },
+					{ name: 'Sora 2', value: 'sora-2-image-to-video' },
+				],
+				default: 'sora-2-pro-image-to-video',
+				description: 'The Sora model variant to use',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelChar',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['characters'],
+					},
+				},
+				options: [
+					{ name: 'Sora 2 Characters Pro', value: 'sora-2-characters-pro' },
+					{ name: 'Sora 2 Characters', value: 'sora-2-characters' },
+				],
+				default: 'sora-2-characters-pro',
+				description: 'The Sora characters model variant',
 			},
 			{
 				displayName: 'Prompt',
@@ -108,97 +129,37 @@ export class Sora2Pro implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard'],
 					},
 				},
 				default: '',
-				description: 'The text prompt describing the desired video motion (max 10000 characters)',
-				placeholder: 'a happy dog running in the garden',
+				description: 'The text prompt describing the desired video',
 			},
 			{
-				displayName: 'Input Image URL',
-				name: 'inputImageUrl',
+				displayName: 'Image URL',
+				name: 'imageUrl',
 				type: 'string',
+				required: true,
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
-						model: ['sora-2-pro-image-to-video', 'sora-2-image-to-video'],
+						operation: ['imageToVideo'],
 					},
 				},
 				default: '',
-				description: 'URL of the input image for image-to-video generation',
-				placeholder: 'https://example.com/image.png',
+				description: 'URL of the input image',
 			},
 			{
-				displayName: 'Aspect Ratio',
-				name: 'aspectRatio',
-				type: 'options',
+				displayName: 'Video URL',
+				name: 'videoUrl',
+				type: 'string',
+				required: true,
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['removeWatermark'],
 					},
 				},
-				options: [
-					{
-						name: 'Landscape (16:9)',
-						value: 'landscape',
-					},
-					{
-						name: 'Portrait (9:16)',
-						value: 'portrait',
-					},
-				],
-				default: 'landscape',
-				description: 'The aspect ratio of the generated video',
-			},
-			{
-				displayName: 'Video Duration',
-				name: 'nFrames',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['job'],
-						operation: ['createTask'],
-					},
-				},
-				options: [
-					{
-						name: '10 Seconds',
-						value: '10',
-					},
-					{
-						name: '15 Seconds',
-						value: '15',
-					},
-				],
-				default: '10',
-				description: 'Duration of the generated video',
-			},
-			{
-				displayName: 'Quality Size',
-				name: 'size',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['job'],
-						operation: ['createTask'],
-					},
-				},
-				options: [
-					{
-						name: 'High (1080p)',
-						value: 'high',
-					},
-					{
-						name: 'Standard (720p)',
-						value: 'standard',
-					},
-				],
-				default: 'high',
-				description: 'The quality of the generated video',
+				default: '',
+				description: 'URL of the video to remove watermark from',
 			},
 			{
 				displayName: 'Character IDs',
@@ -206,40 +167,56 @@ export class Sora2Pro implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['characters'],
 					},
 				},
 				default: '',
-				description: 'Optional character IDs for consistent character generation (comma-separated)',
-				placeholder: 'char_12345, char_67890',
+				description: 'Comma-separated character IDs for consistent characters',
 			},
 			{
-				displayName: 'Remove Watermark',
-				name: 'removeWatermark',
-				type: 'boolean',
+				displayName: 'Aspect Ratio',
+				name: 'aspectRatio',
+				type: 'options',
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard'],
 					},
 				},
-				default: false,
-				description: 'Whether to remove watermarks from the generated video',
+				options: [
+					{ name: 'Landscape (16:9)', value: 'landscape' },
+					{ name: 'Portrait (9:16)', value: 'portrait' },
+				],
+				default: 'landscape',
 			},
 			{
-				displayName: 'Callback URL',
-				name: 'callbackUrl',
-				type: 'string',
+				displayName: 'Duration',
+				name: 'nFrames',
+				type: 'options',
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard'],
 					},
 				},
-				default: '',
-				description: 'Optional callback URL for task completion notifications',
-				placeholder: 'https://your-domain.com/api/callback',
+				options: [
+					{ name: '10 Seconds', value: '10' },
+					{ name: '15 Seconds', value: '15' },
+				],
+				default: '10',
+			},
+			{
+				displayName: 'Quality',
+				name: 'size',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard'],
+					},
+				},
+				options: [
+					{ name: 'High (1080p)', value: 'high' },
+					{ name: 'Standard (720p)', value: 'standard' },
+				],
+				default: 'high',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -247,14 +224,12 @@ export class Sora2Pro implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						resource: ['job'],
-						operation: ['createTask'],
+						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard', 'removeWatermark'],
 					},
 				},
 				default: true,
-				description: 'Whether to wait for the task to complete before returning (polls every 3s, 5min timeout)',
+				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
-			// Query Task Status parameters
 			{
 				displayName: 'Task ID',
 				name: 'taskId',
@@ -262,7 +237,6 @@ export class Sora2Pro implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						resource: ['job'],
 						operation: ['queryTaskStatus'],
 					},
 				},
@@ -275,72 +249,85 @@ export class Sora2Pro implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: IDataObject[] = [];
-		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				if (resource === 'job') {
-					if (operation === 'createTask') {
-						const model = this.getNodeParameter('model', i) as string;
-						const prompt = this.getNodeParameter('prompt', i) as string;
-						const aspectRatio = this.getNodeParameter('aspectRatio', i) as string;
-						const nFrames = this.getNodeParameter('nFrames', i) as string;
-						const size = this.getNodeParameter('size', i) as string;
-						const removeWatermark = this.getNodeParameter('removeWatermark', i) as boolean;
-						const characterIds = this.getNodeParameter('characterIds', i, '') as string;
-						const callbackUrl = this.getNodeParameter('callbackUrl', i, '') as string;
-						const waitForCompletionFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
-
-						const input: IDataObject = {
-							prompt,
-							aspect_ratio: aspectRatio,
-							n_frames: nFrames,
-							size,
-							remove_watermark: removeWatermark,
-						};
-
-						if (model.includes('image-to-video')) {
-							const inputImageUrl = this.getNodeParameter('inputImageUrl', i, '') as string;
-							if (inputImageUrl && inputImageUrl.trim() !== '') {
-								input.input_image_url = inputImageUrl;
-							}
-						}
-
-						if (characterIds && characterIds.trim() !== '') {
-							input.character_id_list = characterIds.split(',').map((id) => id.trim());
-						}
-
-						const body: IDataObject = { model, input };
-
-						if (callbackUrl && callbackUrl.trim() !== '') {
-							body.callBackUrl = callbackUrl;
-						}
-
-						const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
-
-						if (waitForCompletionFlag) {
-							const data = response.data as IDataObject | undefined;
-							const taskId = data?.taskId as string | undefined;
-							if (taskId) {
-								const result = await waitForTask(this, taskId);
-								returnData.push(result);
-							} else {
-								returnData.push(response);
-							}
+				if (operation === 'queryTaskStatus') {
+					const taskId = this.getNodeParameter('taskId', i) as string;
+					const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
+					returnData.push(response);
+				} else if (operation === 'removeWatermark') {
+					const videoUrl = this.getNodeParameter('videoUrl', i) as string;
+					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
+					const body: IDataObject = {
+						model: 'sora-2-watermark-remover',
+						input: { videoUrl },
+					};
+					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
+					if (waitFlag) {
+						const taskId = (response.data as IDataObject)?.taskId as string;
+						if (taskId) {
+							returnData.push(await waitForTask(this, taskId));
 						} else {
 							returnData.push(response);
 						}
-					} else if (operation === 'queryTaskStatus') {
-						const taskId = this.getNodeParameter('taskId', i) as string;
-						const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
+					} else {
+						returnData.push(response);
+					}
+				} else {
+					let model = '';
+					if (operation === 'textToVideo') {
+						model = this.getNodeParameter('model', i) as string;
+					} else if (operation === 'imageToVideo') {
+						model = this.getNodeParameter('modelI2V', i) as string;
+					} else if (operation === 'characters') {
+						model = this.getNodeParameter('modelChar', i) as string;
+					} else if (operation === 'storyboard') {
+						model = 'sora-2-storyboard';
+					}
+
+					const prompt = this.getNodeParameter('prompt', i) as string;
+					const aspectRatio = this.getNodeParameter('aspectRatio', i) as string;
+					const nFrames = this.getNodeParameter('nFrames', i) as string;
+					const size = this.getNodeParameter('size', i) as string;
+					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
+
+					const input: IDataObject = {
+						prompt,
+						aspect_ratio: aspectRatio,
+						n_frames: nFrames,
+						size,
+					};
+
+					if (operation === 'imageToVideo') {
+						input.input_image_url = this.getNodeParameter('imageUrl', i) as string;
+					}
+
+					if (operation === 'characters') {
+						const charIds = this.getNodeParameter('characterIds', i, '') as string;
+						if (charIds.trim()) {
+							input.character_id_list = charIds.split(',').map((id) => id.trim());
+						}
+					}
+
+					const body: IDataObject = { model, input };
+					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
+
+					if (waitFlag) {
+						const taskId = (response.data as IDataObject)?.taskId as string;
+						if (taskId) {
+							returnData.push(await waitForTask(this, taskId));
+						} else {
+							returnData.push(response);
+						}
+					} else {
 						returnData.push(response);
 					}
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					const errorMessage = error instanceof Error ? error.message : String(error);
-					returnData.push({ error: errorMessage, json: {} });
+					returnData.push({ error: error instanceof Error ? error.message : String(error) });
 					continue;
 				}
 				throw error;

@@ -7,17 +7,17 @@ import {
 } from 'n8n-workflow';
 import { kieRequest, waitForTask } from '../GenericFunctions';
 
-export class GptImage15 implements INodeType {
+export class Recraft implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'GPT-image-1.5 (Kie.ai)',
-		name: 'gptImage15',
-		icon: 'file:gpt-image-1_5-bubble.svg',
+		displayName: 'Recraft (Kie.ai)',
+		name: 'recraft',
+		icon: 'file:recraft.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using GPT-image-1.5 via Kie.ai API',
+		description: 'Remove backgrounds and upscale images using Recraft via Kie.ai API',
 		defaults: {
-			name: 'GPT-image-1.5 (Kie.ai)',
+			name: 'Recraft (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -34,73 +34,26 @@ export class GptImage15 implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Text-to-Image', value: 'textToImage', action: 'Text to image' },
-					{ name: 'Image-to-Image', value: 'imageToImage', action: 'Image to image' },
+					{ name: 'Remove Background', value: 'removeBackground', action: 'Remove background' },
+					{ name: 'Crisp Upscale', value: 'crispUpscale', action: 'Crisp upscale' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
-				default: 'textToImage',
+				default: 'removeBackground',
 				required: true,
 			},
 			{
-				displayName: 'Prompt',
-				name: 'prompt',
+				displayName: 'Image URL',
+				name: 'imageUrl',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: { show: { operation: ['removeBackground', 'crispUpscale'] } },
 				default: '',
-			},
-			{
-				displayName: 'Input Images',
-				name: 'inputImages',
-				type: 'fixedCollection',
-				typeOptions: { multipleValues: true },
-				displayOptions: { show: { operation: ['imageToImage'] } },
-				default: {},
-				required: true,
-				placeholder: 'Add Image',
-				options: [
-					{
-						displayName: 'Image',
-						name: 'image',
-						values: [
-							{
-								displayName: 'Image URL',
-								name: 'url',
-								type: 'string',
-								default: '',
-							},
-						],
-					},
-				],
-			},
-			{
-				displayName: 'Aspect Ratio',
-				name: 'aspectRatio',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: '1:1', value: '1:1' },
-					{ name: '2:3', value: '2:3' },
-					{ name: '3:2', value: '3:2' },
-				],
-				default: '3:2',
-			},
-			{
-				displayName: 'Quality',
-				name: 'quality',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: 'Medium', value: 'medium' },
-					{ name: 'High', value: 'high' },
-				],
-				default: 'medium',
 			},
 			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: { show: { operation: ['removeBackground', 'crispUpscale'] } },
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -126,21 +79,10 @@ export class GptImage15 implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
 				} else {
-					const model = operation === 'imageToImage'
-						? 'gpt-image/1.5-image-to-image'
-						: 'gpt-image/1.5-text-to-image';
-
+					const model = operation === 'removeBackground' ? 'recraft/remove-background' : 'recraft/crisp-upscale';
 					const input: IDataObject = {
-						prompt: this.getNodeParameter('prompt', i) as string,
-						aspect_ratio: this.getNodeParameter('aspectRatio', i) as string,
-						quality: this.getNodeParameter('quality', i) as string,
+						imageUrl: this.getNodeParameter('imageUrl', i) as string,
 					};
-
-					if (operation === 'imageToImage') {
-						const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
-						const images = (inputImages?.image as IDataObject[]) || [];
-						input.input_urls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
-					}
 
 					const body: IDataObject = { model, input };
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);

@@ -68,3 +68,66 @@ export async function waitForTask(
 		await delay(intervalMs);
 	}
 }
+
+export async function waitForDedicatedTask(
+	context: IExecuteFunctions,
+	taskId: string,
+	pollEndpoint: string,
+	intervalMs = 3000,
+	timeoutMs = 300000,
+): Promise<IDataObject> {
+	const startTime = Date.now();
+
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		if (Date.now() - startTime >= timeoutMs) {
+			throw new NodeApiError(context.getNode(), {}, {
+				message: `Task ${taskId} timed out after ${timeoutMs / 1000} seconds`,
+			});
+		}
+
+		const response = await kieRequest(context, 'GET', pollEndpoint, undefined, {
+			taskId,
+		});
+
+		const data = response.data as IDataObject | undefined;
+		const status = (data?.status ?? data?.state ?? response.status ?? response.state) as string | undefined;
+
+		if (status === 'success' || status === 'fail' || status === 'failed') {
+			return response;
+		}
+
+		await delay(intervalMs);
+	}
+}
+
+export function createTaskAndMaybeWait(
+	context: IExecuteFunctions,
+	response: IDataObject,
+	waitForCompletionFlag: boolean,
+): Promise<IDataObject> {
+	if (waitForCompletionFlag) {
+		const data = response.data as IDataObject | undefined;
+		const taskId = data?.taskId as string | undefined;
+		if (taskId) {
+			return waitForTask(context, taskId);
+		}
+	}
+	return Promise.resolve(response);
+}
+
+export function dedicatedTaskAndMaybeWait(
+	context: IExecuteFunctions,
+	response: IDataObject,
+	waitForCompletionFlag: boolean,
+	pollEndpoint: string,
+): Promise<IDataObject> {
+	if (waitForCompletionFlag) {
+		const data = response.data as IDataObject | undefined;
+		const taskId = (data?.taskId ?? response.taskId) as string | undefined;
+		if (taskId) {
+			return waitForDedicatedTask(context, taskId, pollEndpoint);
+		}
+	}
+	return Promise.resolve(response);
+}

@@ -7,17 +7,17 @@ import {
 } from 'n8n-workflow';
 import { kieRequest, waitForTask } from '../GenericFunctions';
 
-export class GptImage15 implements INodeType {
+export class InfineTalk implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'GPT-image-1.5 (Kie.ai)',
-		name: 'gptImage15',
-		icon: 'file:gpt-image-1_5-bubble.svg',
+		displayName: 'InfineTalk (Kie.ai)',
+		name: 'infineTalk',
+		icon: 'file:infinetalk.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using GPT-image-1.5 via Kie.ai API',
+		description: 'Audio dubbing using InfineTalk via Kie.ai API',
 		defaults: {
-			name: 'GPT-image-1.5 (Kie.ai)',
+			name: 'InfineTalk (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -34,73 +34,33 @@ export class GptImage15 implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Text-to-Image', value: 'textToImage', action: 'Text to image' },
-					{ name: 'Image-to-Image', value: 'imageToImage', action: 'Image to image' },
+					{ name: 'Dub from Audio', value: 'fromAudio', action: 'Dub from audio' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
-				default: 'textToImage',
+				default: 'fromAudio',
 				required: true,
 			},
 			{
-				displayName: 'Prompt',
-				name: 'prompt',
+				displayName: 'Audio URL',
+				name: 'audioUrl',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: { show: { operation: ['fromAudio'] } },
 				default: '',
 			},
 			{
-				displayName: 'Input Images',
-				name: 'inputImages',
-				type: 'fixedCollection',
-				typeOptions: { multipleValues: true },
-				displayOptions: { show: { operation: ['imageToImage'] } },
-				default: {},
-				required: true,
-				placeholder: 'Add Image',
-				options: [
-					{
-						displayName: 'Image',
-						name: 'image',
-						values: [
-							{
-								displayName: 'Image URL',
-								name: 'url',
-								type: 'string',
-								default: '',
-							},
-						],
-					},
-				],
-			},
-			{
-				displayName: 'Aspect Ratio',
-				name: 'aspectRatio',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: '1:1', value: '1:1' },
-					{ name: '2:3', value: '2:3' },
-					{ name: '3:2', value: '3:2' },
-				],
-				default: '3:2',
-			},
-			{
-				displayName: 'Quality',
-				name: 'quality',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: 'Medium', value: 'medium' },
-					{ name: 'High', value: 'high' },
-				],
-				default: 'medium',
+				displayName: 'Target Language',
+				name: 'targetLanguage',
+				type: 'string',
+				displayOptions: { show: { operation: ['fromAudio'] } },
+				default: '',
+				description: 'Optional target language code',
 			},
 			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: { show: { operation: ['fromAudio'] } },
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -126,23 +86,13 @@ export class GptImage15 implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
 				} else {
-					const model = operation === 'imageToImage'
-						? 'gpt-image/1.5-image-to-image'
-						: 'gpt-image/1.5-text-to-image';
-
 					const input: IDataObject = {
-						prompt: this.getNodeParameter('prompt', i) as string,
-						aspect_ratio: this.getNodeParameter('aspectRatio', i) as string,
-						quality: this.getNodeParameter('quality', i) as string,
+						audioUrl: this.getNodeParameter('audioUrl', i) as string,
 					};
+					const targetLanguage = this.getNodeParameter('targetLanguage', i, '') as string;
+					if (targetLanguage) input.targetLanguage = targetLanguage;
 
-					if (operation === 'imageToImage') {
-						const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
-						const images = (inputImages?.image as IDataObject[]) || [];
-						input.input_urls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
-					}
-
-					const body: IDataObject = { model, input };
+					const body: IDataObject = { model: 'infinetalk/from-audio', input };
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

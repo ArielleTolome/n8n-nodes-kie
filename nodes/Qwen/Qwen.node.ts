@@ -7,17 +7,17 @@ import {
 } from 'n8n-workflow';
 import { kieRequest, waitForTask } from '../GenericFunctions';
 
-export class GptImage15 implements INodeType {
+export class Qwen implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'GPT-image-1.5 (Kie.ai)',
-		name: 'gptImage15',
-		icon: 'file:gpt-image-1_5-bubble.svg',
+		displayName: 'Qwen (Kie.ai)',
+		name: 'qwen',
+		icon: 'file:qwen.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Generate images using GPT-image-1.5 via Kie.ai API',
+		description: 'Generate images using Qwen via Kie.ai API',
 		defaults: {
-			name: 'GPT-image-1.5 (Kie.ai)',
+			name: 'Qwen (Kie.ai)',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -36,71 +36,99 @@ export class GptImage15 implements INodeType {
 				options: [
 					{ name: 'Text-to-Image', value: 'textToImage', action: 'Text to image' },
 					{ name: 'Image-to-Image', value: 'imageToImage', action: 'Image to image' },
+					{ name: 'Image Edit', value: 'imageEdit', action: 'Image edit' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
 				default: 'textToImage',
 				required: true,
 			},
 			{
+				displayName: 'Model',
+				name: 'modelEdit',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['imageEdit'],
+					},
+				},
+				options: [
+					{ name: 'Qwen Image Edit', value: 'qwen/image-edit' },
+					{ name: 'Qwen 2 Image Edit', value: 'qwen2/image-edit' },
+				],
+				default: 'qwen/image-edit',
+			},
+			{
 				displayName: 'Prompt',
 				name: 'prompt',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'imageEdit'],
+					},
+				},
 				default: '',
 			},
 			{
-				displayName: 'Input Images',
-				name: 'inputImages',
-				type: 'fixedCollection',
-				typeOptions: { multipleValues: true },
-				displayOptions: { show: { operation: ['imageToImage'] } },
-				default: {},
+				displayName: 'Image URL',
+				name: 'imageUrl',
+				type: 'string',
 				required: true,
-				placeholder: 'Add Image',
-				options: [
-					{
-						displayName: 'Image',
-						name: 'image',
-						values: [
-							{
-								displayName: 'Image URL',
-								name: 'url',
-								type: 'string',
-								default: '',
-							},
-						],
+				displayOptions: {
+					show: {
+						operation: ['imageToImage', 'imageEdit'],
 					},
-				],
+				},
+				default: '',
+			},
+			{
+				displayName: 'Mask URL',
+				name: 'maskUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageEdit'],
+					},
+				},
+				default: '',
+				description: 'Optional mask URL for targeted editing',
 			},
 			{
 				displayName: 'Aspect Ratio',
-				name: 'aspectRatio',
+				name: 'ratio',
 				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage'],
+					},
+				},
 				options: [
 					{ name: '1:1', value: '1:1' },
-					{ name: '2:3', value: '2:3' },
-					{ name: '3:2', value: '3:2' },
+					{ name: '16:9', value: '16:9' },
+					{ name: '9:16', value: '9:16' },
 				],
-				default: '3:2',
+				default: '1:1',
 			},
 			{
-				displayName: 'Quality',
-				name: 'quality',
-				type: 'options',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
-				options: [
-					{ name: 'Medium', value: 'medium' },
-					{ name: 'High', value: 'high' },
-				],
-				default: 'medium',
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToImage'],
+					},
+				},
+				default: 0,
 			},
 			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'imageEdit'],
+					},
+				},
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -109,7 +137,11 @@ export class GptImage15 implements INodeType {
 				name: 'taskId',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['queryTaskStatus'] } },
+				displayOptions: {
+					show: {
+						operation: ['queryTaskStatus'],
+					},
+				},
 				default: '',
 			},
 		],
@@ -126,20 +158,25 @@ export class GptImage15 implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
 				} else {
-					const model = operation === 'imageToImage'
-						? 'gpt-image/1.5-image-to-image'
-						: 'gpt-image/1.5-text-to-image';
-
+					let model = '';
 					const input: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
-						aspect_ratio: this.getNodeParameter('aspectRatio', i) as string,
-						quality: this.getNodeParameter('quality', i) as string,
 					};
 
-					if (operation === 'imageToImage') {
-						const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;
-						const images = (inputImages?.image as IDataObject[]) || [];
-						input.input_urls = images.map((img) => img.url as string).filter((url) => url && url.trim() !== '');
+					if (operation === 'textToImage') {
+						model = 'qwen/text-to-image';
+						input.ratio = this.getNodeParameter('ratio', i) as string;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
+					} else if (operation === 'imageToImage') {
+						model = 'qwen/image-to-image';
+						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.ratio = this.getNodeParameter('ratio', i) as string;
+					} else if (operation === 'imageEdit') {
+						model = this.getNodeParameter('modelEdit', i) as string;
+						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
+						if (maskUrl) input.maskUrl = maskUrl;
 					}
 
 					const body: IDataObject = { model, input };
