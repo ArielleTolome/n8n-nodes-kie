@@ -18,6 +18,7 @@ gulpfile.js
 tests/
 test/
 __tests__/
+__tests__/integration/
 jest.config.*
 *.test.js
 *.spec.js
