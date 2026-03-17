@@ -113,6 +113,18 @@ export class Hailuo implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -161,6 +173,8 @@ export class Hailuo implements INodeType {
 					if (operation === 'imageToVideo') {
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 					}
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) input.seed = seed;
 
 					const body: IDataObject = { model, input };
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);

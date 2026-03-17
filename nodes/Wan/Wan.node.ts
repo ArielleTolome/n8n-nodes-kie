@@ -175,6 +175,18 @@ export class Wan implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'End Frame URL',
+				name: 'endImageUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Optional end frame image URL for image-to-video',
+			},
+			{
 				displayName: 'Video URL',
 				name: 'videoUrl',
 				type: 'string',
@@ -243,6 +255,18 @@ export class Wan implements INodeType {
 				default: 5,
 			},
 			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo'],
+					},
+				},
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -288,6 +312,8 @@ export class Wan implements INodeType {
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						input.duration = this.getNodeParameter('duration', i) as number;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
@@ -295,6 +321,10 @@ export class Wan implements INodeType {
 						if (p) input.prompt = p;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						input.duration = this.getNodeParameter('duration', i) as number;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
+						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
+						if (endImageUrl) input.endImageUrl = endImageUrl;
 					} else if (operation === 'videoToVideo') {
 						model = this.getNodeParameter('modelV2V', i) as string;
 						input.videoUrl = this.getNodeParameter('videoUrl', i) as string;
@@ -302,6 +332,8 @@ export class Wan implements INodeType {
 						if (p) input.prompt = p;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						input.duration = this.getNodeParameter('duration', i) as number;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
 					} else if (operation === 'speechToVideo') {
 						model = 'wan-2.2/speech-to-video-turbo';
 						input.audioUrl = this.getNodeParameter('audioUrl', i) as string;

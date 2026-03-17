@@ -216,6 +216,66 @@ export class Kling implements INodeType {
 				description: 'Creativity vs prompt adherence (0-1)',
 			},
 			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
+				displayName: 'Tail Frame URL',
+				name: 'tailImageUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Optional end/tail frame image URL for image-to-video',
+			},
+			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo', 'aiAvatar'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo', 'aiAvatar'],
+					},
+				},
+				default: '',
+				description: 'Custom reference passed in webhook callback',
+			},
+			{
+				displayName: 'Captcha Token',
+				name: 'captchaToken',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo', 'aiAvatar'],
+					},
+				},
+				default: '',
+				description: 'reCAPTCHA v3 Enterprise token',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -352,6 +412,12 @@ export class Kling implements INodeType {
 					if (promptV2V) input.prompt = promptV2V;
 
 					const body: IDataObject = { model: 'kling-3.0/motion-control', input };
+					const v2vReplyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (v2vReplyUrl) body.replyUrl = v2vReplyUrl;
+					const v2vReplyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (v2vReplyRef) body.replyRef = v2vReplyRef;
+					const v2vCaptchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (v2vCaptchaToken) body.captchaToken = v2vCaptchaToken;
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 
 					if (waitForCompletionV2V) {
@@ -374,6 +440,8 @@ export class Kling implements INodeType {
 						input.duration = this.getNodeParameter('duration', i) as number;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
@@ -382,6 +450,10 @@ export class Kling implements INodeType {
 						input.duration = this.getNodeParameter('duration', i) as number;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
+						const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
+						if (tailImageUrl) input.tailImageUrl = tailImageUrl;
 					} else if (operation === 'aiAvatar') {
 						model = this.getNodeParameter('modelAvatar', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
@@ -390,6 +462,12 @@ export class Kling implements INodeType {
 					}
 
 					const body: IDataObject = { model, input };
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+					const captchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (captchaToken) body.captchaToken = captchaToken;
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

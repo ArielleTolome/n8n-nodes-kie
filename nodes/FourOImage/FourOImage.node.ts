@@ -104,6 +104,14 @@ export class FourOImage implements INodeType {
 				default: 'vivid',
 			},
 			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -142,6 +150,8 @@ export class FourOImage implements INodeType {
 					};
 					const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
 					if (imageUrl) body.imageUrl = imageUrl;
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) body.seed = seed;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/gpt4o-image/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

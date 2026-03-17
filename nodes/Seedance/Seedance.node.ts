@@ -118,6 +118,18 @@ export class Seedance implements INodeType {
 				description: 'URL of the input image',
 			},
 			{
+				displayName: 'End Frame URL',
+				name: 'endImageUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Optional end frame image URL for image-to-video',
+			},
+			{
 				displayName: 'Duration',
 				name: 'duration',
 				type: 'options',
@@ -147,6 +159,42 @@ export class Seedance implements INodeType {
 					{ name: '1:1', value: '1:1' },
 				],
 				default: '16:9',
+			},
+			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Custom reference passed in webhook callback',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -198,9 +246,17 @@ export class Seedance implements INodeType {
 
 					if (operation === 'imageToVideo') {
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
+						if (endImageUrl) input.endImageUrl = endImageUrl;
 					}
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) input.seed = seed;
 
 					const body: IDataObject = { model, input };
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

@@ -126,6 +126,38 @@ export class Veo implements INodeType {
 				default: false,
 			},
 			{
+				displayName: 'End Frame URL',
+				name: 'endImageUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: '',
+				description: 'Optional end frame image URL for image-to-video',
+			},
+			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate', 'extend'] } },
+				default: '',
+				description: 'Webhook URL to call when task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate', 'extend'] } },
+				default: '',
+				description: 'Custom reference passed in webhook callback',
+			},
+			{
 				displayName: 'Task ID',
 				name: 'extendTaskId',
 				type: 'string',
@@ -211,6 +243,14 @@ export class Veo implements INodeType {
 						const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
 						if (imageUrl) body.imageUrl = imageUrl;
 					}
+					const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
+					if (endImageUrl) body.endImageUrl = endImageUrl;
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) body.seed = seed;
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/veo/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
@@ -231,6 +271,10 @@ export class Veo implements INodeType {
 					};
 					const prompt = this.getNodeParameter('extendPrompt', i, '') as string;
 					if (prompt) body.prompt = prompt;
+					const extReplyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (extReplyUrl) body.replyUrl = extReplyUrl;
+					const extReplyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (extReplyRef) body.replyRef = extReplyRef;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/veo/extend', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

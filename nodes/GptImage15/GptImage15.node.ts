@@ -97,6 +97,14 @@ export class GptImage15 implements INodeType {
 				default: 'medium',
 			},
 			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: { show: { operation: ['textToImage', 'imageToImage'] } },
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -135,6 +143,8 @@ export class GptImage15 implements INodeType {
 						aspect_ratio: this.getNodeParameter('aspectRatio', i) as string,
 						quality: this.getNodeParameter('quality', i) as string,
 					};
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) input.seed = seed;
 
 					if (operation === 'imageToImage') {
 						const inputImages = this.getNodeParameter('inputImages', i) as IDataObject;

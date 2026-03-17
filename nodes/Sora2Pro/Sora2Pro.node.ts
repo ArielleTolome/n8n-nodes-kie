@@ -219,6 +219,30 @@ export class Sora2Pro implements INodeType {
 				default: 'high',
 			},
 			{
+				displayName: 'End Frame URL',
+				name: 'endImageUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Optional end/tail frame image URL for image-to-video',
+			},
+			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard'],
+					},
+				},
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -292,15 +316,19 @@ export class Sora2Pro implements INodeType {
 					const size = this.getNodeParameter('size', i) as string;
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
+					const seed = this.getNodeParameter('seed', i, 0) as number;
 					const input: IDataObject = {
 						prompt,
 						aspect_ratio: aspectRatio,
 						n_frames: nFrames,
 						size,
 					};
+					if (seed) input.seed = seed;
 
 					if (operation === 'imageToVideo') {
 						input.input_image_url = this.getNodeParameter('imageUrl', i) as string;
+						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
+						if (endImageUrl) input.tail_image_url = endImageUrl;
 					}
 
 					if (operation === 'characters') {

@@ -69,6 +69,14 @@ export class ZImage implements INodeType {
 				description: 'Optional style hint',
 			},
 			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -104,6 +112,8 @@ export class ZImage implements INodeType {
 					};
 					const style = this.getNodeParameter('style', i, '') as string;
 					if (style) input.style = style;
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) input.seed = seed;
 
 					const body: IDataObject = { model: 'z-image/generate', input };
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);

@@ -70,6 +70,22 @@ export class Runway implements INodeType {
 				description: 'Optional image URL for image-to-video',
 			},
 			{
+				displayName: 'End Frame URL',
+				name: 'endImageUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: '',
+				description: 'Optional end/last frame image URL for image-to-video',
+			},
+			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
 				displayName: 'Video URL',
 				name: 'videoUrl',
 				type: 'string',
@@ -155,6 +171,10 @@ export class Runway implements INodeType {
 					};
 					const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
 					if (imageUrl) body.imageUrl = imageUrl;
+					const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
+					if (endImageUrl) body.endImageUrl = endImageUrl;
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) body.seed = seed;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/runway/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
