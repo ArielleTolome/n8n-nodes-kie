@@ -47,6 +47,12 @@ export class Kling implements INodeType {
 						action: 'Image to video',
 					},
 					{
+						name: 'Video to Video (Motion Control)',
+						value: 'videoToVideo',
+						description: 'Generate video using character image and reference video motion',
+						action: 'Video to video',
+					},
+					{
 						name: 'AI Avatar',
 						value: 'aiAvatar',
 						description: 'Generate AI avatar video',
@@ -75,6 +81,7 @@ export class Kling implements INodeType {
 					{ name: 'Kling 3.0', value: 'kling-3.0/text-to-video' },
 					{ name: 'Kling 2.6', value: 'kling-2.6/text-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling-2.5/turbo-text-to-video-pro' },
+					{ name: 'Kling 2.5 Turbo', value: 'kling-2.5/turbo-text-to-video' },
 					{ name: 'Kling 2.1 Master', value: 'kling-2.1/master-text-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling-2.1/pro' },
 					{ name: 'Kling 2.1 Standard', value: 'kling-2.1/standard' },
@@ -96,7 +103,6 @@ export class Kling implements INodeType {
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling-2.5/turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling-2.1/master-image-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling-2.1/pro' },
-					{ name: 'Kling Motion Control', value: 'kling/motion-control' },
 				],
 				default: 'kling-2.6/image-to-video',
 			},
@@ -221,6 +227,89 @@ export class Kling implements INodeType {
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
+			// videoToVideo (Motion Control) fields
+			{
+				displayName: 'Character Image URL',
+				name: 'characterImageUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['videoToVideo'],
+					},
+				},
+				default: '',
+				description: 'Reference character image URL. The characters in the generated video are based on this image. Supports jpg/jpeg/png, max 10MB, min 300px, aspect ratio 2:5 to 5:2.',
+			},
+			{
+				displayName: 'Reference Video URL',
+				name: 'referenceVideoUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['videoToVideo'],
+					},
+				},
+				default: '',
+				description: 'Reference video URL. Character actions in the generated video will match this video. Supports mp4/mov, max 100MB, 3–30 seconds.',
+			},
+			{
+				displayName: 'Prompt',
+				name: 'promptV2V',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['videoToVideo'],
+					},
+				},
+				default: '',
+				description: 'Optional text prompt to guide the generation. Max 2500 characters.',
+			},
+			{
+				displayName: 'Character Orientation',
+				name: 'characterOrientation',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['videoToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Match Video Orientation', value: 'video' },
+					{ name: 'Match Image Orientation', value: 'image' },
+				],
+				default: 'video',
+				description: 'Whether to use the character orientation from the reference video or image. "image" limits output to max 10s.',
+			},
+			{
+				displayName: 'Resolution',
+				name: 'resolutionV2V',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['videoToVideo'],
+					},
+				},
+				options: [
+					{ name: '720p', value: '720p' },
+					{ name: '1080p', value: '1080p' },
+				],
+				default: '720p',
+				description: 'Output resolution.',
+			},
+			{
+				displayName: 'Wait for Completion',
+				name: 'waitForCompletionV2V',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['videoToVideo'],
+					},
+				},
+				default: true,
+				description: 'Whether to wait for the video generation to complete before returning.',
+			},
 			{
 				displayName: 'Task ID',
 				name: 'taskId',
@@ -246,6 +335,35 @@ export class Kling implements INodeType {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieQueryTask(this, taskId));
+				} else if (operation === 'videoToVideo') {
+					const characterImageUrl = this.getNodeParameter('characterImageUrl', i) as string;
+					const referenceVideoUrl = this.getNodeParameter('referenceVideoUrl', i) as string;
+					const promptV2V = this.getNodeParameter('promptV2V', i, '') as string;
+					const characterOrientation = this.getNodeParameter('characterOrientation', i) as string;
+					const resolutionV2V = this.getNodeParameter('resolutionV2V', i) as string;
+					const waitForCompletionV2V = this.getNodeParameter('waitForCompletionV2V', i) as boolean;
+
+					const input: IDataObject = {
+						input_urls: [characterImageUrl],
+						video_urls: [referenceVideoUrl],
+						character_orientation: characterOrientation,
+						mode: resolutionV2V,
+					};
+					if (promptV2V) input.prompt = promptV2V;
+
+					const body: IDataObject = { model: 'kling-3.0/motion-control', input };
+					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
+
+					if (waitForCompletionV2V) {
+						const taskId = (response.data as IDataObject)?.taskId as string;
+						if (taskId) {
+							returnData.push(await waitForTask(this, taskId));
+						} else {
+							returnData.push(response);
+						}
+					} else {
+						returnData.push(response);
+					}
 				} else {
 					let model = '';
 					const input: IDataObject = {};
