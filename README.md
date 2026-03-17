@@ -8,6 +8,12 @@ All nodes use a single Kie.ai API key. Every create operation supports `waitForC
 
 ---
 
+## Examples
+
+Import ready-to-use workflow templates from the [`examples/`](./examples/) directory directly into n8n.
+
+---
+
 ## Installation
 
 ### GitHub Install (Recommended)

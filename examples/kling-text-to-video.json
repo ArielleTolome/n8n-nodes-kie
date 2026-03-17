@@ -1,0 +1,76 @@
+{
+  "name": "Kling Text-to-Video Example",
+  "nodes": [
+    {
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {}
+    },
+    {
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Kling (Kie.ai)",
+      "type": "n8n-nodes-kie.kling",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "parameters": {
+        "operation": "textToVideo",
+        "model": "kling-3.0/video",
+        "prompt": "A cat playing piano",
+        "ratio": "16:9",
+        "duration": 5,
+        "generationMode": "std",
+        "waitForCompletion": true
+      },
+      "credentials": {
+        "kieApi": {
+          "id": "1",
+          "name": "Kie.ai API"
+        }
+      }
+    },
+    {
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Extract Result",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [750, 300],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Kling (Kie.ai)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling (Kie.ai)": {
+      "main": [
+        [
+          {
+            "node": "Extract Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a1b2c3d4-0000-4000-8000-000000000000",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
