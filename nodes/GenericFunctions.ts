@@ -15,6 +15,7 @@ export async function kieRequest(
 	endpoint: string,
 	body?: IDataObject,
 	qs?: IDataObject,
+	_retryCount = 0,
 ): Promise<IDataObject> {
 	const options: IHttpRequestOptions = {
 		method,
@@ -31,11 +32,48 @@ export async function kieRequest(
 		options.qs = qs as Record<string, string>;
 	}
 
-	return context.helpers.httpRequestWithAuthentication.call(
-		context,
-		'kieApi',
-		options,
-	) as Promise<IDataObject>;
+	try {
+		return await context.helpers.httpRequestWithAuthentication.call(
+			context,
+			'kieApi',
+			options,
+		) as Promise<IDataObject>;
+	} catch (error: unknown) {
+		// Extract HTTP status code from n8n error object
+		const nodeErr = error as {
+			httpCode?: string;
+			cause?: { response?: { status?: number; data?: unknown } };
+			response?: { status?: number; data?: unknown };
+		};
+		const statusCode =
+			(nodeErr.httpCode ? parseInt(nodeErr.httpCode, 10) : undefined) ??
+			nodeErr.cause?.response?.status ??
+			nodeErr.response?.status;
+
+		// Retry on 429 (rate limit) with exponential backoff — max 3 retries (2s, 4s, 8s)
+		if (statusCode === 429 && _retryCount < 3) {
+			const backoffMs = Math.pow(2, _retryCount + 1) * 1000;
+			await delay(backoffMs);
+			return kieRequest(context, method, endpoint, body, qs, _retryCount + 1);
+		}
+
+		// Enhance error message: include API response body when available
+		const responseData = nodeErr.cause?.response?.data ?? nodeErr.response?.data;
+		if (responseData) {
+			const dataStr =
+				typeof responseData === 'string' ? responseData : JSON.stringify(responseData);
+			const msg = `Kie.ai API error (${statusCode ?? 'unknown'}): ${dataStr}`;
+			if (error instanceof NodeApiError) {
+				(error as NodeApiError).message = msg;
+				throw error;
+			}
+			throw new NodeApiError(context.getNode(), { message: msg } as unknown as import('n8n-workflow').JsonObject, {
+				message: msg,
+			});
+		}
+
+		throw error;
+	}
 }
 
 /** Parse double-encoded JSON strings in Kie.ai responses and surface resultUrls at top level */
@@ -100,7 +138,7 @@ export async function waitForTask(
 	while (true) {
 		if (Date.now() - startTime >= timeoutMs) {
 			throw new NodeApiError(context.getNode(), {}, {
-				message: `Task ${taskId} timed out after ${timeoutMs / 1000} seconds`,
+				message: `Task ${taskId} timed out after ${timeoutMs / 1000} seconds. Use Query Task Status to check later.`,
 			});
 		}
 
@@ -132,7 +170,7 @@ export async function waitForDedicatedTask(
 	while (true) {
 		if (Date.now() - startTime >= timeoutMs) {
 			throw new NodeApiError(context.getNode(), {}, {
-				message: `Task ${taskId} timed out after ${timeoutMs / 1000} seconds`,
+				message: `Task ${taskId} timed out after ${timeoutMs / 1000} seconds. Use Query Task Status to check later.`,
 			});
 		}
 
@@ -162,6 +200,7 @@ export function createTaskAndMaybeWait(
 		if (taskId) {
 			return waitForTask(context, taskId);
 		}
+		// No taskId in response — return as-is rather than crashing
 	}
 	return Promise.resolve(response);
 }
@@ -178,6 +217,7 @@ export function dedicatedTaskAndMaybeWait(
 		if (taskId) {
 			return waitForDedicatedTask(context, taskId, pollEndpoint);
 		}
+		// No taskId in response — return as-is rather than crashing
 	}
 	return Promise.resolve(response);
 }

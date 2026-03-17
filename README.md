@@ -62,19 +62,20 @@ Key parameters:
 ---
 
 #### Kling
-Operations: Text-to-Video, Image-to-Video, AI Avatar, Query Task Status
+Operations: Text-to-Video, Image-to-Video, Video-to-Video (Motion Control), AI Avatar, Query Task Status
 
-Models (T2V): `kling-3.0/text-to-video`, `kling-2.6/text-to-video`, `kling-2.5-master/text-to-video`, `kling-2.5-pro/text-to-video`, `kling-2.5-turbo/text-to-video`, `kling-2.1/text-to-video` (master/pro/standard)
+Models (T2V): `kling-3.0/video` *(new — up to 15s, native audio)*, `kling-2.6/text-to-video`, `kling/v2-5-turbo-text-to-video-pro`, `kling/v2-1-master-text-to-video`, `kling/v2-1-pro`, `kling/v2-1-standard`
 
-Models (I2V): matching `/image-to-video` variants
+Models (I2V): `kling-3.0/video` *(new)*, `kling-2.6/image-to-video`, `kling/v2-5-turbo-image-to-video-pro`, `kling/v2-1-master-image-to-video`, `kling/v2-1-pro`
 
 Key parameters:
 - `prompt`, `imageUrl`
-- `model` — model variant (including 3.0, 2.6, 2.5, 2.1 series)
+- `model` / `modelI2V` — model variant
 - `ratio` — aspect ratio (16:9, 9:16, 1:1)
-- `duration` — 5 or 10 seconds
-- `seed` — reproducibility seed
-- `endImageUrl` — end frame for I2V
+- `duration` — 5 or 10 seconds (Kling 3.0 supports 3–15s via duration field)
+- `generationMode` — `std` or `pro` (Kling 3.0 only)
+- `enableSound` — boolean, enables native audio (Kling 3.0 only)
+- `cfgScale` / `seed` — for older models
 - `replyUrl` / `replyRef` — webhook
 - `captchaToken` — reCAPTCHA token if required
 - `waitForCompletion`
@@ -395,6 +396,8 @@ To run fire-and-forget: disable **Wait for Completion** and use **Query Task Sta
 
 | Version | Changes |
 |---------|---------|
+| v0.3.9 | Error handling improvements — 429 rate limit retry (exponential backoff 2/4/8s) in GenericFunctions; enriched error messages include API response body; Kling node adds Kling 3.0 T2V/I2V model + `mode` (std/pro) + `sound` fields |
+| v0.3.8 | Model ID verification pass — corrected Sora2Pro, Google, ZImage, Seedream, Seedance, Hailuo, Wan, Kling model IDs; added placeholder text and improved field descriptions |
 | v0.3.4 | Fix Veo model names (`veo3`, `veo3_fast`); fix ElevenLabs TTS model ID (dot→hyphen); add `quality` field to Runway generate (now required by API); update README |
 | v0.3.3 | Final targeted gap-fill — seed for Flux/Ideogram/Recraft, steps for Flux; verify execute logic across all nodes |
 | v0.3.2 | Model-specific optional params — steps, strength, quality, background, outputFormat, seed gaps filled |

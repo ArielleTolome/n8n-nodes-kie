@@ -78,13 +78,14 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Kling 3.0', value: 'kling-3.0/video' },
 					{ name: 'Kling 2.6', value: 'kling-2.6/text-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-text-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-text-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
 					{ name: 'Kling 2.1 Standard', value: 'kling/v2-1-standard' },
 				],
-				default: 'kling-2.6/text-to-video',
+				default: 'kling-3.0/video',
 			},
 			{
 				displayName: 'Model',
@@ -96,12 +97,13 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Kling 3.0', value: 'kling-3.0/video' },
 					{ name: 'Kling 2.6', value: 'kling-2.6/image-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-image-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
 				],
-				default: 'kling-2.6/image-to-video',
+				default: 'kling-3.0/video',
 			},
 			{
 				displayName: 'Model',
@@ -199,6 +201,34 @@ export class Kling implements INodeType {
 					{ name: '1:1', value: '1:1' },
 				],
 				default: '16:9',
+			},
+			{
+				displayName: 'Generation Mode',
+				name: 'generationMode',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Standard (std)', value: 'std' },
+					{ name: 'Pro (higher resolution)', value: 'pro' },
+				],
+				default: 'std',
+				description: 'Generation mode for Kling 3.0 — Standard or Pro (higher resolution). Ignored for older Kling models.',
+			},
+			{
+				displayName: 'Enable Sound Effects',
+				name: 'enableSound',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: false,
+				description: 'Whether to enable native audio/sound effects (Kling 3.0 only). Adds cost but produces richer output.',
 			},
 			{
 				displayName: 'CFG Scale',
@@ -456,9 +486,15 @@ export class Kling implements INodeType {
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.duration = this.getNodeParameter('duration', i) as number;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
-						const seed = this.getNodeParameter('seed', i, 0) as number;
-						if (seed) input.seed = seed;
+						if (model === 'kling-3.0/video') {
+							// Kling 3.0 uses mode + sound instead of cfg_scale
+							input.mode = this.getNodeParameter('generationMode', i, 'std') as string;
+							input.sound = this.getNodeParameter('enableSound', i, false) as boolean;
+						} else {
+							input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
+							const seed = this.getNodeParameter('seed', i, 0) as number;
+							if (seed) input.seed = seed;
+						}
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
@@ -466,11 +502,17 @@ export class Kling implements INodeType {
 						if (prompt) input.prompt = prompt;
 						input.duration = this.getNodeParameter('duration', i) as number;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
-						const seed = this.getNodeParameter('seed', i, 0) as number;
-						if (seed) input.seed = seed;
-						const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
-						if (tailImageUrl) input.tailImageUrl = tailImageUrl;
+						if (model === 'kling-3.0/video') {
+							// Kling 3.0 uses mode + sound instead of cfg_scale
+							input.mode = this.getNodeParameter('generationMode', i, 'std') as string;
+							input.sound = this.getNodeParameter('enableSound', i, false) as boolean;
+						} else {
+							input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
+							const seed = this.getNodeParameter('seed', i, 0) as number;
+							if (seed) input.seed = seed;
+							const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
+							if (tailImageUrl) input.tailImageUrl = tailImageUrl;
+						}
 					} else if (operation === 'aiAvatar') {
 						model = this.getNodeParameter('modelAvatar', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
