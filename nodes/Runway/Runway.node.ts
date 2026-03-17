@@ -97,6 +97,7 @@ export class Runway implements INodeType {
 				displayName: 'Quality',
 				name: 'quality',
 				type: 'options',
+				required: true,
 				displayOptions: { show: { operation: ['generate'] } },
 				options: [
 					{ name: '720p', value: '720p' },
