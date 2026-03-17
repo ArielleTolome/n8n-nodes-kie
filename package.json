@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-kie",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "n8n community nodes for kie.ai - 21 AI model nodes covering video, image, audio, and music generation",
   "keywords": [
     "n8n",
@@ -130,7 +130,14 @@
       "^n8n-workflow$": "<rootDir>/node_modules/n8n-workflow"
     },
     "transform": {
-      "^.+\\.tsx?$": ["ts-jest", { "tsconfig": { "strict": false } }]
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "strict": false
+          }
+        }
+      ]
     }
   },
   "publishConfig": {
