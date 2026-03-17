@@ -129,7 +129,7 @@ export class Flux implements INodeType {
 				default: '',
 			},
 			{
-				displayName: 'Image URL',
+				displayName: 'Input Image URL',
 				name: 'imageUrlKontext',
 				type: 'string',
 				displayOptions: {
@@ -138,7 +138,34 @@ export class Flux implements INodeType {
 					},
 				},
 				default: '',
-				description: 'Optional image URL for Kontext',
+				description: 'URL of an input image to edit. If provided, the model edits this image based on the prompt. If omitted, generates a new image from text.',
+			},
+			{
+				displayName: 'Output Format',
+				name: 'outputFormat',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['kontext'],
+					},
+				},
+				options: [
+					{ name: 'JPEG', value: 'jpeg' },
+					{ name: 'PNG', value: 'png' },
+				],
+				default: 'jpeg',
+			},
+			{
+				displayName: 'Prompt Upsampling',
+				name: 'promptUpsampling',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['kontext'],
+					},
+				},
+				default: false,
+				description: 'If enabled, upsamples the prompt for richer detail (may increase processing time)',
 			},
 			{
 				displayName: 'Aspect Ratio',
@@ -240,7 +267,12 @@ export class Flux implements INodeType {
 					const imageUrl = this.getNodeParameter('imageUrlKontext', i, '') as string;
 
 					const body: IDataObject = { model, prompt, ratio };
-					if (imageUrl) body.imageUrl = imageUrl;
+					if (imageUrl) body.inputImage = imageUrl;
+
+					const outputFormat = this.getNodeParameter('outputFormat', i, 'jpeg') as string;
+					if (outputFormat !== 'jpeg') body.outputFormat = outputFormat;
+					const promptUpsampling = this.getNodeParameter('promptUpsampling', i, false) as boolean;
+					if (promptUpsampling) body.promptUpsampling = true;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/flux/kontext/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

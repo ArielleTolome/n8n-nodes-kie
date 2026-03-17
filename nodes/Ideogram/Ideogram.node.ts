@@ -69,6 +69,49 @@ export class Ideogram implements INodeType {
 				default: '',
 			},
 			{
+				displayName: 'Reference Image URLs',
+				name: 'referenceImageUrls',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['character', 'characterEdit', 'characterRemix'],
+					},
+				},
+				default: '',
+				description: 'Comma-separated URLs of reference images for character consistency (up to 5, currently only 1 is used). Required for Character and Character Edit operations.',
+				placeholder: 'https://example.com/ref1.jpg,https://example.com/ref2.jpg',
+			},
+			{
+				displayName: 'Mask URL',
+				name: 'maskUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['characterEdit'],
+					},
+				},
+				default: '',
+				description: 'URL of the mask image for inpainting. Must match the dimensions of the Image URL.',
+			},
+			{
+				displayName: 'Rendering Speed',
+				name: 'renderingSpeed',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['character', 'characterEdit', 'characterRemix'],
+					},
+				},
+				options: [
+					{ name: 'Turbo', value: 'TURBO' },
+					{ name: 'Balanced', value: 'BALANCED' },
+					{ name: 'Quality', value: 'QUALITY' },
+				],
+				default: 'BALANCED',
+				description: 'Rendering speed vs quality trade-off',
+			},
+			{
 				displayName: 'Character ID',
 				name: 'characterId',
 				type: 'string',
@@ -178,6 +221,25 @@ export class Ideogram implements INodeType {
 					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {
 						const charId = this.getNodeParameter('characterId', i, '') as string;
 						if (charId) input.characterId = charId;
+					}
+
+					// Reference images (required for character/characterEdit, optional for remix)
+					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {
+						const refUrls = this.getNodeParameter('referenceImageUrls', i, '') as string;
+						if (refUrls) {
+							input.referenceImageUrls = refUrls.split(',').map((u: string) => u.trim()).filter(Boolean);
+						}
+					}
+
+					// Mask URL (required for characterEdit)
+					if (operation === 'characterEdit') {
+						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
+						if (maskUrl) input.maskUrl = maskUrl;
+					}
+
+					// Rendering speed for character ops
+					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {
+						input.renderingSpeed = this.getNodeParameter('renderingSpeed', i, 'BALANCED') as string;
 					}
 
 					if (operation === 'generate' || operation === 'reframe') {
