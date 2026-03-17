@@ -149,6 +149,18 @@ export class Google implements INodeType {
 				default: '1:1',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['generate', 'edit'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated image',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -253,6 +265,10 @@ export class Google implements INodeType {
 					input.ratio = this.getNodeParameter('ratio', i) as string;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
+					if (operation === 'generate' || operation === 'edit') {
+						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negativePrompt) input.negativePrompt = negativePrompt;
+					}
 
 					const body: IDataObject = { model, input };
 

@@ -127,12 +127,28 @@ export class Suno implements INodeType {
 				description: 'Task ID (alternative to audio URL)',
 			},
 			{
+				displayName: 'Continue Clip ID',
+				name: 'continueClipId',
+				type: 'string',
+				displayOptions: { show: { operation: ['extendMusic'] } },
+				default: '',
+				description: 'Specific clip ID to continue from (alternative to task ID)',
+			},
+			{
 				displayName: 'Continue At (Seconds)',
 				name: 'continueAt',
 				type: 'number',
 				displayOptions: { show: { operation: ['extendMusic'] } },
 				default: 0,
 				description: 'Timestamp in seconds to continue from',
+			},
+			{
+				displayName: 'Tags',
+				name: 'tags',
+				type: 'string',
+				displayOptions: { show: { operation: ['generateMusic'] } },
+				default: '',
+				description: 'Musical style tags (e.g. "rock, guitar, upbeat"). Alternative to style for model v4+.',
 			},
 			{
 				displayName: 'Reply URL',
@@ -190,12 +206,14 @@ export class Suno implements INodeType {
 						const lyrics = this.getNodeParameter('lyrics', i, '') as string;
 						const style = this.getNodeParameter('style', i, '') as string;
 						const title = this.getNodeParameter('title', i, '') as string;
+						const tags = this.getNodeParameter('tags', i, '') as string;
 						const instrumental = this.getNodeParameter('instrumental', i) as boolean;
 						const modelVersion = this.getNodeParameter('modelVersion', i, 'v4.5') as string;
 						if (prompt) body.prompt = prompt;
 						if (lyrics) body.lyrics = lyrics;
 						if (style) body.style = style;
 						if (title) body.title = title;
+						if (tags) body.tags = tags;
 						body.instrumental = instrumental;
 						body.model = modelVersion;
 					} else if (operation === 'extendMusic') {
@@ -203,6 +221,8 @@ export class Suno implements INodeType {
 						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
 						const continueAt = this.getNodeParameter('continueAt', i, 0) as number;
 						if (continueAt) body.continueAt = continueAt;
+						const continueClipId = this.getNodeParameter('continueClipId', i, '') as string;
+						if (continueClipId) body.continueClipId = continueClipId;
 					} else if (operation === 'generateLyrics') {
 						endpoint = '/api/v1/lyrics';
 						body.prompt = this.getNodeParameter('prompt', i, '') as string;

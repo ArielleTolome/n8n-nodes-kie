@@ -267,6 +267,42 @@ export class Wan implements INodeType {
 				description: 'Seed for reproducibility (0 = random)',
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo', 'speechToVideo', 'animate'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo', 'speechToVideo', 'animate'],
+					},
+				},
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
+				displayName: 'Captcha Token',
+				name: 'captchaToken',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo', 'speechToVideo', 'animate'],
+					},
+				},
+				default: '',
+				description: 'reCAPTCHA token if required by the API',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -349,6 +385,14 @@ export class Wan implements INodeType {
 					}
 
 					const body: IDataObject = { model, input };
+
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+					const captchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (captchaToken) body.captchaToken = captchaToken;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

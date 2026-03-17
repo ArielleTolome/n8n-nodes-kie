@@ -127,6 +127,33 @@ export class ElevenLabs implements INodeType {
 				description: 'Whether to boost clarity and target speaker similarity',
 			},
 			{
+				displayName: 'Language Code',
+				name: 'ttsLanguageCode',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToSpeech'] } },
+				options: [
+					{ name: 'Auto', value: '' },
+					{ name: 'English', value: 'en' },
+					{ name: 'Spanish', value: 'es' },
+					{ name: 'French', value: 'fr' },
+					{ name: 'German', value: 'de' },
+					{ name: 'Italian', value: 'it' },
+					{ name: 'Portuguese', value: 'pt' },
+					{ name: 'Polish', value: 'pl' },
+					{ name: 'Hindi', value: 'hi' },
+					{ name: 'Japanese', value: 'ja' },
+					{ name: 'Korean', value: 'ko' },
+					{ name: 'Chinese (Mandarin)', value: 'zh' },
+					{ name: 'Arabic', value: 'ar' },
+					{ name: 'Russian', value: 'ru' },
+					{ name: 'Dutch', value: 'nl' },
+					{ name: 'Swedish', value: 'sv' },
+					{ name: 'Turkish', value: 'tr' },
+				],
+				default: '',
+				description: 'Language for TTS. Leave blank for auto-detection.',
+			},
+			{
 				displayName: 'Audio URL',
 				name: 'audioUrl',
 				type: 'string',
@@ -325,6 +352,8 @@ export class ElevenLabs implements INodeType {
 						if (styleExaggeration) input.style = styleExaggeration;
 						const speakerBoost = this.getNodeParameter('speakerBoost', i, false) as boolean;
 						if (speakerBoost) input.use_speaker_boost = true;
+						const ttsLanguageCode = this.getNodeParameter('ttsLanguageCode', i, '') as string;
+						if (ttsLanguageCode) input.language_code = ttsLanguageCode;
 					} else if (operation === 'speechToText') {
 						model = 'elevenlabs/speech-to-text';
 						input.audio_url = this.getNodeParameter('audioUrl', i) as string;

@@ -134,6 +134,30 @@ export class Runway implements INodeType {
 				description: 'Number of seconds to extend',
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
+				displayName: 'Captcha Token',
+				name: 'captchaToken',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				default: '',
+				description: 'reCAPTCHA token if required by the API',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -175,6 +199,12 @@ export class Runway implements INodeType {
 					if (endImageUrl) body.endImageUrl = endImageUrl;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) body.seed = seed;
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+					const captchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (captchaToken) body.captchaToken = captchaToken;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/runway/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
@@ -194,6 +224,12 @@ export class Runway implements INodeType {
 						taskId: this.getNodeParameter('extendTaskId', i) as string,
 						seconds: this.getNodeParameter('seconds', i) as number,
 					};
+					const extReplyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (extReplyUrl) body.replyUrl = extReplyUrl;
+					const extReplyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (extReplyRef) body.replyRef = extReplyRef;
+					const extCaptchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (extCaptchaToken) body.captchaToken = extCaptchaToken;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/runway/extend', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
@@ -214,6 +250,12 @@ export class Runway implements INodeType {
 						videoUrl: this.getNodeParameter('videoUrl', i) as string,
 						prompt: this.getNodeParameter('prompt', i) as string,
 					};
+					const alephReplyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (alephReplyUrl) body.replyUrl = alephReplyUrl;
+					const alephReplyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (alephReplyRef) body.replyRef = alephReplyRef;
+					const alephCaptchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (alephCaptchaToken) body.captchaToken = alephCaptchaToken;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/aleph/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

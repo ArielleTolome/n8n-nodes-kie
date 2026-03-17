@@ -218,6 +218,18 @@ export class Ideogram implements INodeType {
 				description: 'Whether to use Ideogram Magic Prompt enhancement',
 			},
 			{
+				displayName: 'Color Palette',
+				name: 'colorPalette',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['generate'],
+					},
+				},
+				default: '',
+				description: 'Optional color palette preset name or hex colors (e.g. "pastel", "#FF5733,#00FF00")',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -347,6 +359,8 @@ export class Ideogram implements INodeType {
 						if (styleType) input.styleType = styleType;
 						const magicPromptOption = this.getNodeParameter('magicPromptOption', i, '') as string;
 						if (magicPromptOption) input.magicPromptOption = magicPromptOption;
+						const colorPalette = this.getNodeParameter('colorPalette', i, '') as string;
+						if (colorPalette) input.colorPalette = colorPalette;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					}

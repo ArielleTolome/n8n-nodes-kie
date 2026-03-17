@@ -112,6 +112,22 @@ export class FourOImage implements INodeType {
 				description: 'Seed for reproducibility (0 = random)',
 			},
 			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: { show: { operation: ['generate'] } },
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -152,6 +168,10 @@ export class FourOImage implements INodeType {
 					if (imageUrl) body.imageUrl = imageUrl;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) body.seed = seed;
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
 
 					const response = await kieRequest(this, 'POST', '/api/v1/gpt4o-image/generate', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

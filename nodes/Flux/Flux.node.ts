@@ -211,6 +211,19 @@ export class Flux implements INodeType {
 				description: 'Number of generation steps',
 			},
 			{
+				displayName: 'Guidance Scale',
+				name: 'guidance',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 20, numberStepSize: 0.1 },
+				displayOptions: {
+					show: {
+						operation: ['textToImage'],
+					},
+				},
+				default: 3.5,
+				description: 'Guidance scale for prompt adherence (1-20)',
+			},
+			{
 				displayName: 'Strength',
 				name: 'strength',
 				type: 'number',
@@ -327,6 +340,8 @@ export class Flux implements INodeType {
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 						input.steps = this.getNodeParameter('steps', i) as number;
+						const guidance = this.getNodeParameter('guidance', i, 3.5) as number;
+						if (guidance !== 3.5) input.guidance = guidance;
 					} else if (operation === 'imageToImage') {
 						model = this.getNodeParameter('modelI2I', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;

@@ -151,10 +151,11 @@ export class Qwen implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToImage'],
+						operation: ['textToImage', 'imageToImage'],
 					},
 				},
 				default: 0,
+				description: 'Random seed (0 for random)',
 			},
 			{
 				displayName: 'Reply URL',
@@ -236,6 +237,8 @@ export class Qwen implements INodeType {
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
 						if (negativePrompt) input.negativePrompt = negativePrompt;
+						const i2iSeed = this.getNodeParameter('seed', i, 0) as number;
+						if (i2iSeed) input.seed = i2iSeed;
 					} else if (operation === 'imageEdit') {
 						model = this.getNodeParameter('modelEdit', i) as string;
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
