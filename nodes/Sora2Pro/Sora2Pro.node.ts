@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { kieRequest, waitForTask } from '../GenericFunctions';
+import { kieRequest, kieQueryTask, waitForTask } from '../GenericFunctions';
 
 export class Sora2Pro implements INodeType {
 	description: INodeTypeDescription = {
@@ -255,8 +255,7 @@ export class Sora2Pro implements INodeType {
 			try {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
-					const response = await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
-					returnData.push(response);
+					returnData.push(await kieQueryTask(this, taskId));
 				} else if (operation === 'removeWatermark') {
 					const videoUrl = this.getNodeParameter('videoUrl', i) as string;
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;

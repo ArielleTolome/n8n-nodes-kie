@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { kieRequest, waitForDedicatedTask } from '../GenericFunctions';
+import { kieRequest, kieQueryTask, waitForDedicatedTask } from '../GenericFunctions';
 
 export class Suno implements INodeType {
 	description: INodeTypeDescription = {

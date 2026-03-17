@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { kieRequest, waitForTask } from '../GenericFunctions';
+import { kieRequest, kieQueryTask, waitForTask } from '../GenericFunctions';
 
 export class Flux implements INodeType {
 	description: INodeTypeDescription = {
@@ -232,7 +232,7 @@ export class Flux implements INodeType {
 			try {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
-					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
+					returnData.push(await kieQueryTask(this, taskId));
 				} else if (operation === 'kontext') {
 					const model = this.getNodeParameter('modelKontext', i) as string;
 					const prompt = this.getNodeParameter('prompt', i) as string;

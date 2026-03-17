@@ -5,7 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { kieRequest, waitForTask } from '../GenericFunctions';
+import { kieRequest, kieQueryTask, waitForTask } from '../GenericFunctions';
 
 export class Recraft implements INodeType {
 	description: INodeTypeDescription = {
@@ -77,7 +77,7 @@ export class Recraft implements INodeType {
 			try {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
-					returnData.push(await kieRequest(this, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId }));
+					returnData.push(await kieQueryTask(this, taskId));
 				} else {
 					const model = operation === 'removeBackground' ? 'recraft/remove-background' : 'recraft/crisp-upscale';
 					const input: IDataObject = {

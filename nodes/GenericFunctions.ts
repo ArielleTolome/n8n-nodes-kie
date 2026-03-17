@@ -38,6 +38,56 @@ export async function kieRequest(
 	) as Promise<IDataObject>;
 }
 
+/** Parse double-encoded JSON strings in Kie.ai responses and surface resultUrls at top level */
+export function parseKieResponse(response: IDataObject): IDataObject {
+	const data = response.data as IDataObject | undefined;
+	if (!data) return response;
+
+	// Parse resultJson string → object
+	if (typeof data.resultJson === 'string') {
+		try {
+			data.resultJson = JSON.parse(data.resultJson);
+		} catch (_) {}
+	}
+
+	// Parse param string → object
+	if (typeof data.param === 'string') {
+		try {
+			const parsed = JSON.parse(data.param) as IDataObject;
+			// param.input is often also a nested JSON string
+			if (typeof parsed.input === 'string') {
+				try { parsed.input = JSON.parse(parsed.input); } catch (_) {}
+			}
+			data.param = parsed;
+		} catch (_) {}
+	}
+
+	// Surface resultUrls at top level for easy access
+	const resultJson = data.resultJson as IDataObject | undefined;
+	if (resultJson?.resultUrls) {
+		data.resultUrls = resultJson.resultUrls;
+	}
+	// Also handle videoUrls (video models)
+	if (resultJson?.videoUrls) {
+		data.videoUrls = resultJson.videoUrls;
+	}
+	// Cover audioUrl pattern used by music models
+	if (resultJson?.audioUrl) {
+		data.audioUrl = resultJson.audioUrl;
+	}
+
+	return response;
+}
+
+/** Query a task by ID and return parsed response */
+export async function kieQueryTask(
+	context: IExecuteFunctions,
+	taskId: string,
+): Promise<IDataObject> {
+	const response = await kieRequest(context, 'GET', '/api/v1/jobs/recordInfo', undefined, { taskId });
+	return parseKieResponse(response);
+}
+
 export async function waitForTask(
 	context: IExecuteFunctions,
 	taskId: string,
@@ -62,7 +112,7 @@ export async function waitForTask(
 		const state = data?.state as string | undefined;
 
 		if (state === 'success' || state === 'fail') {
-			return response;
+			return parseKieResponse(response);
 		}
 
 		await delay(intervalMs);
@@ -94,7 +144,7 @@ export async function waitForDedicatedTask(
 		const status = (data?.status ?? data?.state ?? response.status ?? response.state) as string | undefined;
 
 		if (status === 'success' || status === 'fail' || status === 'failed') {
-			return response;
+			return parseKieResponse(response);
 		}
 
 		await delay(intervalMs);
