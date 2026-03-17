@@ -1,75 +1,76 @@
 {
-	"name": "n8n-nodes-kie",
-	"version": "0.1.0",
-	"description": "n8n community nodes for kie.ai - Sora 2 Pro, Seedream, GPT-image-1.5, ElevenLabs TTS/STT/SFX",
-	"keywords": [
-		"n8n-community-node-package",
-		"ai",
-		"kie",
-		"kie-ai",
-		"kie-api",
-		"sora",
-		"sora-2-pro",
-		"seedream",
-		"gpt-image",
-		"elevenlabs",
-		"text-to-image",
-		"text-to-video",
-		"text-to-speech",
-		"speech-to-text",
-		"sound-effects",
-		"image-editing",
-		"ai-generation"
-	],
-	"license": "MIT",
-	"homepage": "https://github.com/ArielleTolome/n8n-nodes-kie",
-	"author": {
-		"name": "ArielleTolome",
-		"url": "https://github.com/ArielleTolome"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/ArielleTolome/n8n-nodes-kie.git"
-	},
-	"main": "dist/index.js",
-	"scripts": {
-		"build": "tsc && gulp build:icons",
-		"dev": "tsc --watch",
-		"format": "prettier nodes credentials --write",
-		"lint": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json",
-		"lintfix": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json --fix",
-		"prepublishOnly": "npm run build && npm run lint -s"
-	},
-	"files": [
-		"dist"
-	],
-	"n8n": {
-		"n8nNodesApiVersion": 1,
-		"nodes": [
-			"dist/nodes/Seedream/Seedream.node.js",
-			"dist/nodes/Sora2Pro/Sora2Pro.node.js",
-			"dist/nodes/GptImage15/GptImage15.node.js",
-			"dist/nodes/ElevenLabs/ElevenLabs.node.js"
-		],
-		"credentials": [
-			"dist/credentials/KieApi.credentials.js"
-		]
-	},
-	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^6.21.0",
-		"@typescript-eslint/parser": "^6.21.0",
-		"eslint": "^8.57.1",
-		"eslint-plugin-n8n-nodes-base": "^1.11.0",
-		"gulp": "^5.0.0",
-		"n8n-workflow": "*",
-		"prettier": "^3.3.3",
-		"typescript": "^5.6.3"
-	},
-	"peerDependencies": {
-		"n8n-workflow": "*"
-	},
-	"overrides": {
-		"braces": "^3.0.3",
-		"form-data": "^4.0.4"
-	}
+  "name": "n8n-nodes-kie",
+  "version": "0.1.0",
+  "description": "n8n community nodes for kie.ai - Sora 2 Pro, Seedream, GPT-image-1.5, ElevenLabs TTS/STT/SFX",
+  "keywords": [
+    "n8n-community-node-package",
+    "ai",
+    "kie",
+    "kie-ai",
+    "kie-api",
+    "sora",
+    "sora-2-pro",
+    "seedream",
+    "gpt-image",
+    "elevenlabs",
+    "text-to-image",
+    "text-to-video",
+    "text-to-speech",
+    "speech-to-text",
+    "sound-effects",
+    "image-editing",
+    "ai-generation"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ArielleTolome/n8n-nodes-kie",
+  "author": {
+    "name": "ArielleTolome",
+    "url": "https://github.com/ArielleTolome"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArielleTolome/n8n-nodes-kie.git"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json",
+    "lintfix": "eslint 'nodes/**/*.ts' 'credentials/**/*.ts' package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -s",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "nodes": [
+      "dist/nodes/Seedream/Seedream.node.js",
+      "dist/nodes/Sora2Pro/Sora2Pro.node.js",
+      "dist/nodes/GptImage15/GptImage15.node.js",
+      "dist/nodes/ElevenLabs/ElevenLabs.node.js"
+    ],
+    "credentials": [
+      "dist/credentials/KieApi.credentials.js"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-n8n-nodes-base": "^1.11.0",
+    "gulp": "^5.0.0",
+    "n8n-workflow": "*",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "overrides": {
+    "braces": "^3.0.3",
+    "form-data": "^4.0.4"
+  }
 }
