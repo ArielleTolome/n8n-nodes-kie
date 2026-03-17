@@ -9,6 +9,20 @@ function delay(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Makes an authenticated HTTP request to the Kie.ai API.
+ *
+ * Automatically retries up to 3 times with exponential backoff on HTTP 429 (rate limit).
+ * Enhances error messages with the API response body when available.
+ *
+ * @param context - The n8n execute-functions context (provides credentials and HTTP helpers)
+ * @param method - HTTP method: 'GET' or 'POST'
+ * @param endpoint - API path, e.g. '/api/v1/jobs/createTask'
+ * @param body - Optional JSON request body (POST requests)
+ * @param qs - Optional query string parameters
+ * @param _retryCount - Internal retry counter (do not pass manually)
+ * @returns The parsed JSON response as an IDataObject
+ */
 export async function kieRequest(
 	context: IExecuteFunctions,
 	method: 'GET' | 'POST',
@@ -76,7 +90,16 @@ export async function kieRequest(
 	}
 }
 
-/** Parse double-encoded JSON strings in Kie.ai responses and surface resultUrls at top level */
+/**
+ * Parses double-encoded JSON strings in Kie.ai responses and promotes result URLs to top level.
+ *
+ * Kie.ai wraps result data inside `response.data.resultJson` (a JSON string). This function
+ * parses `resultJson` and `param` strings in-place and surfaces `resultUrls`, `videoUrls`, and
+ * `audioUrl` at `response.data` for easy downstream access in n8n expressions.
+ *
+ * @param response - The raw API response from kieRequest
+ * @returns The same response object with nested JSON strings parsed
+ */
 export function parseKieResponse(response: IDataObject): IDataObject {
 	const data = response.data as IDataObject | undefined;
 	if (!data) return response;
@@ -117,7 +140,16 @@ export function parseKieResponse(response: IDataObject): IDataObject {
 	return response;
 }
 
-/** Query a task by ID and return parsed response */
+/**
+ * Queries a Kie.ai task by ID and returns the parsed response.
+ *
+ * Calls GET /api/v1/jobs/recordInfo with the given taskId, then runs the response
+ * through parseKieResponse to decode nested JSON fields.
+ *
+ * @param context - The n8n execute-functions context
+ * @param taskId - The task ID returned when the job was created
+ * @returns The parsed task detail response
+ */
 export async function kieQueryTask(
 	context: IExecuteFunctions,
 	taskId: string,
@@ -126,6 +158,19 @@ export async function kieQueryTask(
 	return parseKieResponse(response);
 }
 
+/**
+ * Polls a Kie.ai task until it reaches a terminal state ('success' or 'fail').
+ *
+ * Polls GET /api/v1/jobs/recordInfo every `intervalMs` milliseconds (default 3s).
+ * Throws a NodeApiError if the task does not complete within `timeoutMs` (default 5 minutes).
+ *
+ * @param context - The n8n execute-functions context
+ * @param taskId - The task ID to poll
+ * @param intervalMs - Polling interval in milliseconds (default: 3000)
+ * @param timeoutMs - Maximum time to wait before throwing a timeout error (default: 300000)
+ * @returns The final parsed response when state is 'success' or 'fail'
+ * @throws NodeApiError if the task times out
+ */
 export async function waitForTask(
 	context: IExecuteFunctions,
 	taskId: string,
@@ -157,6 +202,23 @@ export async function waitForTask(
 	}
 }
 
+/**
+ * Polls a dedicated Kie.ai poll endpoint until the task reaches a terminal state.
+ *
+ * Used for nodes that have their own status endpoint (e.g. Topaz, Sora2Pro) rather than the
+ * generic /api/v1/jobs/recordInfo endpoint. Polls every `intervalMs` milliseconds (default 3s)
+ * and throws if the task does not complete within `timeoutMs` (default 5 minutes).
+ *
+ * Terminal states checked: 'success', 'fail', 'failed'.
+ *
+ * @param context - The n8n execute-functions context
+ * @param taskId - The task ID to poll
+ * @param pollEndpoint - The endpoint path to GET for status updates
+ * @param intervalMs - Polling interval in milliseconds (default: 3000)
+ * @param timeoutMs - Maximum time to wait before throwing a timeout error (default: 300000)
+ * @returns The final parsed response when a terminal state is reached
+ * @throws NodeApiError if the task times out
+ */
 export async function waitForDedicatedTask(
 	context: IExecuteFunctions,
 	taskId: string,
@@ -189,6 +251,17 @@ export async function waitForDedicatedTask(
 	}
 }
 
+/**
+ * Conditionally waits for a Kie.ai task to complete after creation.
+ *
+ * If `waitForCompletionFlag` is true and a `taskId` is present in `response.data`,
+ * delegates to `waitForTask`. Otherwise resolves immediately with the creation response.
+ *
+ * @param context - The n8n execute-functions context
+ * @param response - The response from the createTask API call
+ * @param waitForCompletionFlag - Whether to poll until completion
+ * @returns The creation response (immediate) or final task response (after polling)
+ */
 export function createTaskAndMaybeWait(
 	context: IExecuteFunctions,
 	response: IDataObject,
@@ -205,6 +278,19 @@ export function createTaskAndMaybeWait(
 	return Promise.resolve(response);
 }
 
+/**
+ * Conditionally waits for a dedicated-endpoint Kie.ai task to complete after creation.
+ *
+ * Like `createTaskAndMaybeWait` but uses `waitForDedicatedTask` with a node-specific
+ * `pollEndpoint` rather than the generic recordInfo endpoint. If `waitForCompletionFlag`
+ * is false or no taskId is found, resolves immediately with the creation response.
+ *
+ * @param context - The n8n execute-functions context
+ * @param response - The response from the createTask API call
+ * @param waitForCompletionFlag - Whether to poll until completion
+ * @param pollEndpoint - The dedicated status endpoint path to poll
+ * @returns The creation response (immediate) or final task response (after polling)
+ */
 export function dedicatedTaskAndMaybeWait(
 	context: IExecuteFunctions,
 	response: IDataObject,
