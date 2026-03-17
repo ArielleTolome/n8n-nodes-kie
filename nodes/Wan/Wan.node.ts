@@ -214,7 +214,7 @@ export class Wan implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						animateType: ['wan-2.2/animate-replace'],
+						animateType: ['wan/2-2-animate-replace'],
 					},
 				},
 				default: '',
@@ -349,7 +349,7 @@ export class Wan implements INodeType {
 						if (seed) input.seed = seed;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
@@ -357,10 +357,10 @@ export class Wan implements INodeType {
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
-						if (endImageUrl) input.endImageUrl = endImageUrl;
+						if (endImageUrl) input.end_image_url = endImageUrl;
 					} else if (operation === 'videoToVideo') {
 						model = this.getNodeParameter('modelV2V', i) as string;
-						input.videoUrl = this.getNodeParameter('videoUrl', i) as string;
+						input.video_url = this.getNodeParameter('videoUrl', i) as string;
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
@@ -369,15 +369,15 @@ export class Wan implements INodeType {
 						if (seed) input.seed = seed;
 					} else if (operation === 'speechToVideo') {
 						model = 'wan/2-2-a14b-speech-to-video-turbo';
-						input.audioUrl = this.getNodeParameter('audioUrl', i) as string;
+						input.audio_url = this.getNodeParameter('audioUrl', i) as string;
 					} else if (operation === 'animate') {
 						model = this.getNodeParameter('animateType', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
 						if (model === 'wan/2-2-animate-replace') {
 							const mask = this.getNodeParameter('maskUrl', i, '') as string;
-							if (mask) input.maskUrl = mask;
+							if (mask) input.mask_url = mask;
 						}
 					}
 

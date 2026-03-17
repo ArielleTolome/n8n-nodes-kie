@@ -253,12 +253,12 @@ export class Google implements INodeType {
 						model = this.getNodeParameter('model', i) as string;
 					} else if (operation === 'edit') {
 						model = this.getNodeParameter('modelEdit', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
-						if (maskUrl) input.maskUrl = maskUrl;
+						if (maskUrl) input.mask_url = maskUrl;
 					} else if (operation === 'imageToImage') {
 						model = 'nano-banana-pro';
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 					}
 
 					input.prompt = this.getNodeParameter('prompt', i) as string;
@@ -267,7 +267,7 @@ export class Google implements INodeType {
 					if (seed) input.seed = seed;
 					if (operation === 'generate' || operation === 'edit') {
 						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
-						if (negativePrompt) input.negativePrompt = negativePrompt;
+						if (negativePrompt) input.negative_prompt = negativePrompt;
 					}
 
 					const body: IDataObject = { model, input };

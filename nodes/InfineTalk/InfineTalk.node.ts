@@ -130,10 +130,10 @@ export class InfineTalk implements INodeType {
 					returnData.push(await kieQueryTask(this, taskId));
 				} else {
 					const input: IDataObject = {
-						audioUrl: this.getNodeParameter('audioUrl', i) as string,
+						audio_url: this.getNodeParameter('audioUrl', i) as string,
 					};
 					const targetLanguage = this.getNodeParameter('targetLanguage', i, '') as string;
-					if (targetLanguage) input.targetLanguage = targetLanguage;
+					if (targetLanguage) input.target_language = targetLanguage;
 					const speed = this.getNodeParameter('speed', i, 1.0) as number;
 					if (speed !== 1.0) input.speed = speed;
 					const pitch = this.getNodeParameter('pitch', i, 0) as number;

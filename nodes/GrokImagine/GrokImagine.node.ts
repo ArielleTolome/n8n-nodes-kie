@@ -143,7 +143,7 @@ export class GrokImagine implements INodeType {
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 					}
 					if (['imageToImage', 'imageToVideo', 'upscale'].includes(operation)) {
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 					}
 
 					const body: IDataObject = { model: modelMap[operation], input };

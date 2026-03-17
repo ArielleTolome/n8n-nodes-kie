@@ -245,9 +245,9 @@ export class Seedance implements INodeType {
 					};
 
 					if (operation === 'imageToVideo') {
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
-						if (endImageUrl) input.endImageUrl = endImageUrl;
+						if (endImageUrl) input.end_image_url = endImageUrl;
 					}
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;

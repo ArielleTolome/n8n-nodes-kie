@@ -349,7 +349,7 @@ export class Flux implements INodeType {
 						if (guidance !== 3.5) input.guidance = guidance;
 					} else if (operation === 'imageToImage') {
 						model = this.getNodeParameter('modelI2I', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.strength = this.getNodeParameter('strength', i) as number;
 						input.ratio = this.getNodeParameter('ratio', i) as string;

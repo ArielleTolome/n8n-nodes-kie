@@ -164,19 +164,19 @@ export class Topaz implements INodeType {
 					};
 
 					if (operation === 'imageUpscale') {
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						const faceRecovery = this.getNodeParameter('faceRecovery', i, false) as boolean;
-						if (faceRecovery) input.faceRecovery = true;
+						if (faceRecovery) input.face_recovery = true;
 					} else {
-						input.videoUrl = this.getNodeParameter('videoUrl', i) as string;
+						input.video_url = this.getNodeParameter('videoUrl', i) as string;
 						const outputFormat = this.getNodeParameter('outputFormat', i, 'mp4') as string;
-						if (outputFormat !== 'mp4') input.outputFormat = outputFormat;
+						if (outputFormat !== 'mp4') input.output_format = outputFormat;
 					}
 
 					const outputQuality = this.getNodeParameter('outputQuality', i, 'High') as string;
-					if (outputQuality !== 'High') input.outputQuality = outputQuality;
+					if (outputQuality !== 'High') input.output_quality = outputQuality;
 					const denoiseStrength = this.getNodeParameter('denoiseStrength', i, 0) as number;
-					if (denoiseStrength > 0) input.denoiseStrength = denoiseStrength;
+					if (denoiseStrength > 0) input.denoise_strength = denoiseStrength;
 
 					const body: IDataObject = { model, input };
 

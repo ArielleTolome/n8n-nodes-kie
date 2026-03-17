@@ -228,22 +228,22 @@ export class Qwen implements INodeType {
 						model = this.getNodeParameter('modelT2I', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
-						if (negativePrompt) input.negativePrompt = negativePrompt;
+						if (negativePrompt) input.negative_prompt = negativePrompt;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					} else if (operation === 'imageToImage') {
 						model = this.getNodeParameter('modelI2I', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
-						if (negativePrompt) input.negativePrompt = negativePrompt;
+						if (negativePrompt) input.negative_prompt = negativePrompt;
 						const i2iSeed = this.getNodeParameter('seed', i, 0) as number;
 						if (i2iSeed) input.seed = i2iSeed;
 					} else if (operation === 'imageEdit') {
 						model = this.getNodeParameter('modelEdit', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
-						if (maskUrl) input.maskUrl = maskUrl;
+						if (maskUrl) input.mask_url = maskUrl;
 					}
 
 					const body: IDataObject = { model, input };

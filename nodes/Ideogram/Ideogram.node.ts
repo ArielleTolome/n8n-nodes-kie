@@ -317,12 +317,12 @@ export class Ideogram implements INodeType {
 					};
 
 					if (['reframe', 'characterEdit', 'characterRemix'].includes(operation)) {
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 					}
 
 					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {
 						const charId = this.getNodeParameter('characterId', i, '') as string;
-						if (charId) input.characterId = charId;
+						if (charId) input.character_id = charId;
 					}
 
 					// Reference images (required for character/characterEdit, optional for remix)
@@ -332,19 +332,19 @@ export class Ideogram implements INodeType {
 							.map((img) => img.url as string)
 							.filter((url) => url && url.trim() !== '');
 						if (refUrls.length > 0) {
-							input.referenceImageUrls = refUrls;
+							input.reference_image_urls = refUrls;
 						}
 					}
 
 					// Mask URL (required for characterEdit)
 					if (operation === 'characterEdit') {
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
-						if (maskUrl) input.maskUrl = maskUrl;
+						if (maskUrl) input.mask_url = maskUrl;
 					}
 
 					// Rendering speed for character ops and generate
 					if (['character', 'characterEdit', 'characterRemix', 'generate'].includes(operation)) {
-						input.renderingSpeed = this.getNodeParameter('renderingSpeed', i, 'DEFAULT') as string;
+						input.rendering_speed = this.getNodeParameter('renderingSpeed', i, 'DEFAULT') as string;
 					}
 
 					if (operation === 'generate' || operation === 'reframe') {
@@ -355,13 +355,13 @@ export class Ideogram implements INodeType {
 						const style = this.getNodeParameter('style', i, '') as string;
 						if (style) input.style = style;
 						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
-						if (negativePrompt) input.negativePrompt = negativePrompt;
+						if (negativePrompt) input.negative_prompt = negativePrompt;
 						const styleType = this.getNodeParameter('styleType', i, '') as string;
-						if (styleType) input.styleType = styleType;
+						if (styleType) input.style_type = styleType;
 						const magicPromptOption = this.getNodeParameter('magicPromptOption', i, '') as string;
-						if (magicPromptOption) input.magicPromptOption = magicPromptOption;
+						if (magicPromptOption) input.magic_prompt_option = magicPromptOption;
 						const colorPalette = this.getNodeParameter('colorPalette', i, '') as string;
-						if (colorPalette) input.colorPalette = colorPalette;
+						if (colorPalette) input.color_palette = colorPalette;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					}
