@@ -71,14 +71,14 @@ export class Google implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Imagen 4 Ultra', value: 'imagen4-ultra/generate' },
-					{ name: 'Imagen 4', value: 'imagen4/generate' },
-					{ name: 'Imagen 4 Fast', value: 'imagen4-fast/generate' },
-					{ name: 'Nano Banana Pro', value: 'nano-banana-pro/generate' },
-					{ name: 'Nano Banana 2', value: 'nano-banana-2/generate' },
-					{ name: 'Nano Banana', value: 'nano-banana/generate' },
+					{ name: 'Imagen 4 Ultra', value: 'google/imagen4-ultra' },
+					{ name: 'Imagen 4', value: 'google/imagen4' },
+					{ name: 'Imagen 4 Fast', value: 'google/imagen4-fast' },
+					{ name: 'Nano Banana Pro', value: 'nano-banana-pro' },
+					{ name: 'Nano Banana 2', value: 'nano-banana-2' },
+					{ name: 'Nano Banana', value: 'google/nano-banana' },
 				],
-				default: 'imagen4/generate',
+				default: 'google/imagen4',
 			},
 			{
 				displayName: 'Model',
@@ -90,9 +90,9 @@ export class Google implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Nano Banana Edit', value: 'nano-banana/edit' },
+					{ name: 'Nano Banana Edit', value: 'google/nano-banana-edit' },
 				],
-				default: 'nano-banana/edit',
+				default: 'google/nano-banana-edit',
 			},
 			{
 				displayName: 'Prompt',
@@ -257,7 +257,7 @@ export class Google implements INodeType {
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
 						if (maskUrl) input.maskUrl = maskUrl;
 					} else if (operation === 'imageToImage') {
-						model = 'google/pro-image-to-image';
+						model = 'nano-banana-pro';
 						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
 					}
 

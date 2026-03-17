@@ -320,7 +320,7 @@ export class Sora2Pro implements INodeType {
 					const videoUrl = this.getNodeParameter('videoUrl', i) as string;
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 					const body: IDataObject = {
-						model: 'sora-2-watermark-remover',
+						model: 'sora-watermark-remover',
 						input: { videoUrl },
 					};
 					const wmReplyUrl = this.getNodeParameter('replyUrl', i, '') as string;
@@ -349,7 +349,7 @@ export class Sora2Pro implements INodeType {
 					} else if (operation === 'characters') {
 						model = this.getNodeParameter('modelChar', i) as string;
 					} else if (operation === 'storyboard') {
-						model = 'sora-2-storyboard';
+						model = 'sora-2-pro-storyboard';
 					}
 
 					const prompt = this.getNodeParameter('prompt', i) as string;

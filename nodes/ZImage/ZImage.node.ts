@@ -131,7 +131,7 @@ export class ZImage implements INodeType {
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 
-					const body: IDataObject = { model: 'z-image/generate', input };
+					const body: IDataObject = { model: 'z-image', input };
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
 					if (replyUrl) body.replyUrl = replyUrl;
 					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
