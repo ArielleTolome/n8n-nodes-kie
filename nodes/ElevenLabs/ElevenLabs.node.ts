@@ -38,7 +38,6 @@ export class ElevenLabs implements INodeType {
 					{ name: 'Speech-to-Text', value: 'speechToText', action: 'Speech to text' },
 					{ name: 'Sound Effects', value: 'soundEffects', action: 'Sound effects' },
 					{ name: 'Audio Isolation', value: 'audioIsolation', action: 'Audio isolation' },
-					{ name: 'Text-to-Dialogue', value: 'textToDialogue', action: 'Text to dialogue' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
 				default: 'textToSpeech',
@@ -363,18 +362,7 @@ export class ElevenLabs implements INodeType {
 					} else if (operation === 'audioIsolation') {
 						model = 'elevenlabs/audio-isolation';
 						input.audio_url = this.getNodeParameter('audioUrl', i) as string;
-					} else if (operation === 'textToDialogue') {
-						model = this.getNodeParameter('modelDialogue', i) as string;
-						const languageCode = this.getNodeParameter('languageCode', i, 'auto') as string;
-						input.stability = this.getNodeParameter('stability', i) as number;
-						input.language_code = languageCode;
-						const dialogueItems = this.getNodeParameter('dialogue', i, {}) as IDataObject;
-						const dialogue: IDataObject[] = [];
-						if (dialogueItems.dialogueItems) {
-							dialogue.push(...(dialogueItems.dialogueItems as IDataObject[]));
-						}
-						input.dialogue = dialogue;
-					}
+}
 
 					const body: IDataObject = { model, input };
 
