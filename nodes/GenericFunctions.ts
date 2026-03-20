@@ -47,12 +47,25 @@ export async function kieRequest(
 	}
 
 	try {
-		return await context.helpers.httpRequestWithAuthentication.call(
+		const response = await context.helpers.httpRequestWithAuthentication.call(
 			context,
 			'kieApi',
 			options,
-		) as Promise<IDataObject>;
+		) as IDataObject;
+
+		// Kie.ai returns HTTP 200 even for errors — check the JSON code field
+		const responseCode = response.code as number | undefined;
+		if (responseCode !== undefined && responseCode !== 200) {
+			const msg = (response.msg as string) || 'Unknown API error';
+			throw new NodeApiError(context.getNode(), response as unknown as import('n8n-workflow').JsonObject, {
+				message: `Kie.ai API error (${responseCode}): ${msg}`,
+			});
+		}
+
+		return response;
 	} catch (error: unknown) {
+		// Re-throw NodeApiError from the response check above
+		if (error instanceof NodeApiError) throw error;
 		// Extract HTTP status code from n8n error object
 		const nodeErr = error as {
 			httpCode?: string;
