@@ -47,12 +47,6 @@ export class Seedream implements INodeType {
 						action: 'Image edit',
 					},
 					{
-						name: 'Image-to-Image',
-						value: 'imageToImage',
-						description: 'Transform image with prompt',
-						action: 'Image to image',
-					},
-					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
@@ -72,11 +66,9 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream 5 Lite', value: 'seedream/5-lite-text-to-image' },
-					{ name: 'Seedream 4.5', value: 'seedream/4.5-text-to-image' },
 					{ name: 'Seedream v4', value: 'bytedance/seedream-v4-text-to-image' },
 				],
-				default: 'seedream/5-lite-text-to-image',
+				default: 'bytedance/seedream-v4-text-to-image',
 			},
 			{
 				displayName: 'Model',
@@ -88,10 +80,9 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream 4.5 Edit', value: 'seedream/4.5-edit' },
 					{ name: 'Seedream v4 Edit', value: 'bytedance/seedream-v4-edit' },
 				],
-				default: 'seedream/4.5-edit',
+				default: 'bytedance/seedream-v4-edit',
 			},
 			{
 				displayName: 'Prompt',
@@ -100,7 +91,7 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: '',
@@ -113,7 +104,7 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['imageEdit', 'imageToImage'],
+						operation: ['imageEdit'],
 					},
 				},
 				default: '',
@@ -138,7 +129,7 @@ export class Seedream implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				options: [
@@ -159,7 +150,7 @@ export class Seedream implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: 0,
@@ -171,7 +162,7 @@ export class Seedream implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: '',
@@ -184,7 +175,7 @@ export class Seedream implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: '',
@@ -196,7 +187,7 @@ export class Seedream implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit', 'imageToImage'],
+						operation: ['textToImage', 'imageEdit'],
 					},
 				},
 				default: true,
@@ -235,12 +226,9 @@ export class Seedream implements INodeType {
 						model = this.getNodeParameter('model', i) as string;
 					} else if (operation === 'imageEdit') {
 						model = this.getNodeParameter('modelEdit', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_urls = [this.getNodeParameter('imageUrl', i) as string];
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
-						if (maskUrl) input.maskUrl = maskUrl;
-					} else if (operation === 'imageToImage') {
-						model = 'seedream/5-lite-image-to-image';
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						if (maskUrl) input.mask_url = maskUrl;
 					}
 
 					input.prompt = this.getNodeParameter('prompt', i) as string;
