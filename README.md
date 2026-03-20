@@ -1,61 +1,62 @@
-# n8n-nodes-kie
+# n8n-nodes-kie-pro
 
-n8n community nodes for [kie.ai](https://kie.ai) — comprehensive coverage of all kie.ai models across video, image, audio, and music generation.
+[![npm version](https://img.shields.io/npm/v/n8n-nodes-kie-pro?color=blue)](https://www.npmjs.com/package/n8n-nodes-kie-pro)
+[![npm downloads](https://img.shields.io/npm/dm/n8n-nodes-kie-pro)](https://www.npmjs.com/package/n8n-nodes-kie-pro)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-All nodes use a single Kie.ai API key. Every create operation supports `waitForCompletion` (polls every 3s, 5-min timeout).
+**22 n8n community nodes for [Kie.ai](https://kie.ai)** — the unified AI API covering image generation, video generation, audio, music, and upscaling. One API key. All models.
 
-> **Note:** The npm package name `n8n-nodes-kie` may not be available. Install from GitHub (see below).
-
----
-
-## Examples
-
-Import ready-to-use workflow templates from the [`examples/`](./examples/) directory directly into n8n.
+> Includes Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 02, Runway Gen4, Google Imagen4, Nano Banana, Seedream, Seedance, Qwen, GPT-Image-1.5, Grok Imagine, Ideogram v3, Recraft, Topaz, ElevenLabs, Suno, ZImage, InfineTalk.
 
 ---
 
 ## Installation
 
-### GitHub Install (Recommended)
+### Via n8n GUI (Recommended)
 
-For self-hosted n8n running in Docker:
+1. Open your n8n instance → **Settings → Community Nodes**
+2. Click **Install**
+3. Enter: `n8n-nodes-kie-pro`
+4. Click **Install** and restart n8n
+
+### Docker (CLI)
 
 ```bash
 docker exec -u node n8n sh -c "
   mkdir -p /home/node/.n8n/nodes &&
   cd /home/node/.n8n/nodes &&
-  npm install github:ArielleTolome/n8n-nodes-kie
+  npm install n8n-nodes-kie-pro
 "
 docker restart n8n
 ```
 
-For self-hosted n8n (bare metal):
+### Bare Metal
 
 ```bash
 cd ~/.n8n/nodes
-npm install github:ArielleTolome/n8n-nodes-kie
+npm install n8n-nodes-kie-pro
 ```
 
-After restarting n8n, search for node names in the node picker (e.g. "Kling", "Suno", "Veo").
+After restarting n8n, search for node names in the node picker (e.g. "Kling", "Suno", "Veo", "Flux").
 
 ---
 
 ## API Key Setup
 
 1. Visit [kie.ai/api-key](https://kie.ai/api-key) to generate your API key
-2. In n8n, go to **Credentials > New Credential > Kie API**
+2. In n8n → **Credentials → New Credential → Kie API**
 3. Paste your API key and save
 
 ---
 
-## Available Nodes (21 Total)
+## Available Nodes (22 Total)
 
 ### 🎬 Video Generation
 
 #### Sora 2 Pro
 Operations: Text-to-Video, Image-to-Video, Characters, Storyboard, Remove Watermark, Query Task Status
 
-Models: `sora-2-pro`, `sora-2`
+Models: `sora-2-pro-text-to-video`, `sora-2-text-to-video`, `sora-2-characters-pro`, `sora-2-characters`
 
 Key parameters:
 - `prompt` — text description of the video
@@ -70,20 +71,18 @@ Key parameters:
 #### Kling
 Operations: Text-to-Video, Image-to-Video, Video-to-Video (Motion Control), AI Avatar, Query Task Status
 
-Models (T2V): `kling-3.0/video` *(new — up to 15s, native audio)*, `kling-2.6/text-to-video`, `kling/v2-5-turbo-text-to-video-pro`, `kling/v2-1-master-text-to-video`, `kling/v2-1-pro`, `kling/v2-1-standard`
+Models (T2V): `kling-3.0/video`, `kling-2.6/text-to-video`, `kling/v2-5-turbo-text-to-video-pro`, `kling/v2-1-master-text-to-video`, `kling/v2-1-pro`, `kling/v2-1-standard`
 
-Models (I2V): `kling-3.0/video` *(new)*, `kling-2.6/image-to-video`, `kling/v2-5-turbo-image-to-video-pro`, `kling/v2-1-master-image-to-video`, `kling/v2-1-pro`
+Models (I2V): `kling-3.0/video`, `kling-2.6/image-to-video`, `kling/v2-5-turbo-image-to-video-pro`, `kling/v2-1-master-image-to-video`, `kling/v2-1-pro`
 
 Key parameters:
 - `prompt`, `imageUrl`
 - `model` / `modelI2V` — model variant
 - `ratio` — aspect ratio (16:9, 9:16, 1:1)
-- `duration` — 5 or 10 seconds (Kling 3.0 supports 3–15s via duration field)
+- `duration` — 5 or 10 seconds (Kling 3.0 supports 3–15s)
 - `generationMode` — `std` or `pro` (Kling 3.0 only)
 - `enableSound` — boolean, enables native audio (Kling 3.0 only)
-- `cfgScale` / `seed` — for older models
 - `replyUrl` / `replyRef` — webhook
-- `captchaToken` — reCAPTCHA token if required
 - `waitForCompletion`
 
 ---
@@ -91,7 +90,7 @@ Key parameters:
 #### Seedance
 Operations: Text-to-Video, Image-to-Video, Query Task Status
 
-Models: `seedance-2.0/text-to-video`, `seedance-1.5-pro/text-to-video`, `seedance-v1-pro/text-to-video`, `seedance-v1-lite/text-to-video` (and I2V equivalents)
+Models: `bytedance/seedance-1.5-pro`, `bytedance/v1-pro-text-to-video`, `bytedance/v1-lite-text-to-video`, `bytedance/v1-pro-image-to-video`, `bytedance/v1-lite-image-to-video`, `bytedance/v1-pro-fast-image-to-video`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -104,19 +103,16 @@ Key parameters:
 #### Veo
 Operations: Generate, Extend, Get 1080p Video, Get 4K Video, Query Task Status
 
-Models: `veo3` (Veo 3.1 Standard), `veo3_fast` (Veo 3.1 Fast)
+Models: `veo3` (Veo 3 Standard), `veo3_fast` (Veo 3 Fast)
 
 Key parameters:
-- `prompt` — generation prompt
-- `model` — `veo3` or `veo3_fast`
-- `imageUrl` — single image for I2V
-- `referenceUrls` — multiple reference images (Reference-to-Video mode)
-- `endImageUrl` — end frame image URL
-- `ratio` — aspect ratio (16:9, 9:16, 1:1)
+- `prompt`, `model` — `veo3` or `veo3_fast`
+- `imageUrl` — source image for I2V
+- `referenceUrls` — multiple reference images
+- `endImageUrl` — end frame
+- `ratio` — aspect ratio
 - `duration` — 5 or 8 seconds
-- `enableTranslation` — auto-translate non-English prompts
-- `seed` — reproducibility seed
-- `replyUrl` / `replyRef` — webhook
+- `seed`, `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -124,9 +120,9 @@ Key parameters:
 #### Wan
 Operations: Text-to-Video, Image-to-Video, Video-to-Video, Speech-to-Video, Animate, Query Task Status
 
-Models (T2V): `wan2.5-t2v-preview/text-to-video`, `wan-2.6/text-to-video`, `wan-2.5/text-to-video`, `wan-2.2-turbo/text-to-video`
+Models (T2V): `wan/2-6-text-to-video`, `wan/2-2-a14b-text-to-video-turbo`
 
-Models (I2V): `wan-2.6/image-to-video`, `wan-2.6-flash/image-to-video`, `wan-2.5/image-to-video`, `wan-2.2-turbo/image-to-video`
+Models (V2V): `wan/2-6-video-to-video`, `wan/2-6-flash-video-to-video`, `wan/2-2-animate-move`, `wan/2-2-animate-replace`
 
 Key parameters:
 - `prompt`, `imageUrl`, `videoUrl`
@@ -139,9 +135,7 @@ Key parameters:
 #### Hailuo
 Operations: Text-to-Video, Image-to-Video, Query Task Status
 
-Models (T2V): `hailuo-02-pro/text-to-video`, `hailuo-02-standard/text-to-video`
-
-Models (I2V): `hailuo-2.3-pro/image-to-video`, `hailuo-2.3-standard/image-to-video`, `hailuo-02-pro/image-to-video`, `hailuo-02-standard/image-to-video`
+Models (T2V): `hailuo/02-text-to-video-pro`, `hailuo/02-text-to-video-standard`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -159,12 +153,10 @@ Models: `gen4_turbo` (Gen4 Turbo), `gen4` (Gen4)
 Key parameters:
 - `prompt`, `imageUrl`, `endImageUrl`
 - `model` — `gen4_turbo` or `gen4`
-- `quality` — `720p` or `1080p` (**required** by Runway API)
-- `ratio` — aspect ratio (16:9, 9:16, 1:1)
+- `quality` — `720p` or `1080p` (required by Runway API)
+- `ratio` — aspect ratio
 - `duration` — 5 or 10 seconds
-- `seed` — reproducibility seed
-- `replyUrl` / `replyRef` — webhook
-- `captchaToken`
+- `seed`, `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -172,11 +164,13 @@ Key parameters:
 #### GrokImagine
 Operations: Text-to-Image, Image-to-Image, Text-to-Video, Image-to-Video, Upscale, Query Task Status
 
+Models: `grok-imagine/text-to-image`, `grok-imagine/image-to-image`, `grok-imagine/text-to-video`, `grok-imagine/image-to-video`, `grok-imagine/upscale`
+
 Key parameters:
 - `prompt`, `imageUrl`
 - `aspectRatio`, `model`, `seed`
 - `outputFormat` — JPEG or PNG
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -186,19 +180,19 @@ Key parameters:
 #### Flux
 Operations: Text-to-Image, Image-to-Image, Kontext Generate/Edit, Query Task Status
 
-Models (T2I/I2I): `flux2/pro`, `flux2/flex`
+Models (T2I): `flux-2/pro-text-to-image`, `flux-2/flex-text-to-image`
 
-Models (Kontext): `flux-kontext-pro`, `flux-kontext-max`, `flux-kontext-dev`
+Models (I2I): `flux-2/pro-image-to-image`, `flux-2/flex-image-to-image`
+
+Models (Kontext): `flux-kontext-pro`, `flux-kontext-max`
 
 Key parameters:
 - `prompt`, `inputImage`
-- `model`, `aspectRatio`
+- `model`, `aspectRatio`, `resolution` — 1K or 2K (T2I/I2I)
 - `steps` — inference steps (Kontext)
 - `strength` — image strength for I2I (0–1)
 - `seed`, `outputFormat` (JPEG/PNG/WebP)
-- `quality` — output quality
-- `background` — background color
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -206,28 +200,27 @@ Key parameters:
 #### Seedream
 Operations: Text-to-Image, Image Edit, Image-to-Image, Query Task Status
 
-Models: `seedream-5-lite`, `seedream-4.5`, `seedream-v4` (T2I/I2I/Edit)
+Models: `seedream/5-lite-text-to-image`, `seedream/4.5-text-to-image`, `bytedance/seedream-v4-text-to-image`, `seedream/4.5-edit`, `bytedance/seedream-v4-edit`, `seedream/5-lite-image-to-image`
 
 Key parameters:
 - `prompt`, `imageUrl`
 - `model`, `aspectRatio`
 - `seed`, `outputFormat`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
 
-#### Google (Imagen)
+#### Google (Imagen4 + Nano Banana)
 Operations: Generate, Edit, Image-to-Image, Query Task Status
 
-Models: `imagen4-ultra`, `imagen4`, `imagen4-fast`, `nano-banana-pro`, `nano-banana-2`, `nano-banana`
+Models: `google/imagen4-ultra`, `google/imagen4`, `google/imagen4-fast`, `nano-banana-pro`, `nano-banana-2`, `google/nano-banana`, `google/nano-banana-edit`
 
 Key parameters:
 - `prompt`, `imageUrl`
 - `model`, `aspectRatio`
-- `seed`, `outputFormat`
-- `quality`
-- `replyUrl` / `replyRef`
+- `seed`, `outputFormat`, `quality`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -235,16 +228,15 @@ Key parameters:
 #### Ideogram
 Operations: Generate, Reframe, Character, Character Edit, Character Remix, Query Task Status
 
-Models: `ideogram-v3`, `ideogram-v3-turbo`
+Models: `ideogram/v3`, `ideogram/v3-reframe`, `ideogram/character`, `ideogram/character-edit`, `ideogram/character-remix`
 
 Key parameters:
 - `prompt`, `imageUrl`
 - `model`, `aspectRatio`
-- `renderingSpeed` — quality vs speed (TURBO/DEFAULT/QUALITY)
+- `renderingSpeed` — TURBO/DEFAULT/QUALITY
 - `seed`, `outputFormat`
-- `referenceUrls` — style reference images
-- `maskUrl` — inpainting mask
-- `replyUrl` / `replyRef`
+- `referenceUrls`, `maskUrl`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -252,13 +244,13 @@ Key parameters:
 #### Qwen
 Operations: Text-to-Image, Image-to-Image, Image Edit, Query Task Status
 
-Models: `qwen2` (Qwen 2), `qwen` (Qwen)
+Models: `qwen2/text-to-image`, `qwen/text-to-image`, `qwen/image-to-image`, `qwen/image-edit`, `qwen2/image-edit`
 
 Key parameters:
 - `prompt`, `imageUrl`
 - `model`, `aspectRatio`
 - `seed`, `outputFormat`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -266,11 +258,13 @@ Key parameters:
 #### GptImage15
 Operations: Text-to-Image, Image-to-Image, Query Task Status
 
+Models: `gpt-image/1.5-text-to-image`, `gpt-image/1.5-image-to-image`
+
 Key parameters:
 - `prompt`, `imageUrl`
 - `aspectRatio`, `quality` (standard/hd)
 - `seed`, `outputFormat`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -281,10 +275,9 @@ Operations: Generate, Query Task Status
 Models: `gpt-4o-image`, `gpt-4o-image-standard`, `gpt-4o-image-hd`
 
 Key parameters:
-- `prompt`
-- `model`, `aspectRatio`
+- `prompt`, `model`, `aspectRatio`
 - `seed`, `outputFormat`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -292,10 +285,12 @@ Key parameters:
 #### ZImage
 Operations: Generate, Query Task Status
 
+Model: `z-image`
+
 Key parameters:
 - `prompt`, `aspectRatio`
 - `seed`, `outputFormat`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -303,10 +298,11 @@ Key parameters:
 #### Recraft
 Operations: Remove Background, Crisp Upscale, Query Task Status
 
+Models: `recraft/remove-background`, `recraft/crisp-upscale`
+
 Key parameters:
-- `imageUrl`
-- `seed`, `outputFormat`
-- `replyUrl` / `replyRef`
+- `imageUrl`, `seed`, `outputFormat`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -314,11 +310,12 @@ Key parameters:
 #### Topaz
 Operations: Image Upscale, Video Upscale, Query Task Status
 
+Models: `topaz/image-upscale`, `topaz/video-upscale`
+
 Key parameters:
-- `imageUrl` / `videoUrl`
-- `scale` — upscale factor
+- `imageUrl` / `videoUrl`, `scale`
 - `outputFormat`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -328,31 +325,28 @@ Key parameters:
 #### ElevenLabs
 Operations: Text-to-Speech, Speech-to-Text, Sound Effects, Audio Isolation, Text-to-Dialogue, Query Task Status
 
-TTS Models: `elevenlabs/text-to-speech-turbo-2-5`, `elevenlabs/text-to-speech-multilingual-v2`
+Models: `elevenlabs/text-to-speech-turbo-2-5`, `elevenlabs/text-to-speech-multilingual-v2`
 
-Key parameters (Text-to-Speech):
+Key parameters:
 - `text` — text to speak
-- `ttsModel` — model selection
-- `voice` — speaker voice (Rachel, Aria, Roger, Sarah, Laura, etc.)
-- `stability` — voice stability (0–1)
-- `similarityBoost` — clarity/similarity boost (0–1)
-
-Key parameters (Text-to-Dialogue):
-- `dialogue` — array of `{ voiceId, text }` turns
-- `model` — `elevenlabs/text-to-dialogue-v3` or `elevenlabs/text-to-dialogue`
-- `stability`, `language_code`
+- `ttsModel`, `voice` (Rachel, Aria, Roger, Sarah, Laura, etc.)
+- `stability`, `similarityBoost`
+- `dialogue` — array of `{ voiceId, text }` turns (Text-to-Dialogue)
+- `waitForCompletion`
 
 ---
 
 #### Suno
 Operations: Generate Music, Extend Music, Generate Lyrics, Boost Style, Convert to WAV, Separate Vocals, Add Vocals, MIDI to Music, Music Video, Query Task Status
 
-Key parameters (Generate Music):
+Models: `chirp-v4-5-plus`, `chirp-v4-5`, `chirp-v4`, `chirp-v3-5`
+
+Key parameters:
 - `prompt` — style/lyric prompt
-- `model` — `v4.5_plus`, `v4.5`, `v4`, `v3.5`
+- `model` — `chirp-v4-5-plus`, `chirp-v4-5`, `chirp-v4`, or `chirp-v3-5`
 - `tags` — style tags (e.g. "pop, female vocals")
 - `title`, `lyric`
-- `seed`, `replyUrl`, `replyRef`
+- `seed`, `callBackUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
@@ -360,22 +354,25 @@ Key parameters (Generate Music):
 #### InfineTalk
 Operations: Dub from Audio, Query Task Status
 
+Model: `infinetalk/from-audio`
+
 Key parameters:
 - `audioUrl` — source audio file
 - `targetLanguage`
-- `replyUrl` / `replyRef`
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
 
 ## Features
 
-- **`waitForCompletion`** toggle on all create operations (on by default) — polls every 3s up to 5 min
-- **`resultUrls`** surfaced at top level in every response — direct access to output file URLs
-- **Callback / Webhook URL** support via `replyUrl` + `replyRef`
-- **`seed`** parameter on all generation operations for reproducible outputs
-- **Bearer token auth** via single Kie.ai API key
-- **`continueOnFail`** support — workflow continues even if one task fails
+- **`waitForCompletion`** on all create operations (on by default) — polls every 3s up to 5 min
+- **`resultUrls`** surfaced at top level in every response for direct file access
+- **Webhook support** via `replyUrl` + `replyRef` on all nodes
+- **`seed`** parameter on all generation nodes for reproducible outputs
+- **Bearer token auth** — single Kie.ai API key for all 22 nodes
+- **Exponential backoff** on 429 rate limit errors (2s / 4s / 8s retries)
+- **`continueOnFail`** support on all nodes
 
 ---
 
@@ -384,17 +381,17 @@ Key parameters:
 1. Drop a node into your workflow (e.g. **Kling**)
 2. Select the operation (e.g. **Text-to-Video**)
 3. Choose a model variant and fill in the prompt
-4. Execute — the node waits for completion and returns `resultUrls` with the output file URLs
+4. Execute — the node waits for completion and returns `resultUrls`
 
-To run fire-and-forget: disable **Wait for Completion** and use **Query Task Status** later with the returned `taskId`.
+**Fire-and-forget:** Disable **Wait for Completion** and use **Query Task Status** later with the returned `taskId`.
 
 ---
 
 ## Rate Limits
 
-Kie.ai enforces API rate limits. When a request is throttled, the API returns HTTP **429 (Too Many Requests)**.
+Kie.ai enforces 20 requests per 10 seconds. When throttled, the API returns HTTP 429.
 
-This node handles 429 responses automatically with **exponential backoff**:
+Automatic retry with exponential backoff:
 
 | Retry | Delay |
 |-------|-------|
@@ -402,14 +399,15 @@ This node handles 429 responses automatically with **exponential backoff**:
 | 2nd   | 4 s   |
 | 3rd   | 8 s   |
 
-After 3 retries the error is propagated. To avoid hitting rate limits, use `waitForCompletion: false` for high-volume workflows and manage concurrency at the n8n workflow level.
+After 3 retries the error is propagated. For high-volume workflows, use `waitForCompletion: false` and manage concurrency at the n8n level.
 
 ---
 
 ## Links
 
-- [kie.ai](https://kie.ai)
-- [kie.ai API Docs](https://docs.kie.ai)
+- [Kie.ai](https://kie.ai)
+- [Kie.ai API Docs](https://docs.kie.ai)
+- [npm package](https://www.npmjs.com/package/n8n-nodes-kie-pro)
 - [GitHub Repository](https://github.com/ArielleTolome/n8n-nodes-kie)
 
 ---
@@ -418,34 +416,26 @@ After 3 retries the error is propagated. To avoid hitting rate limits, use `wait
 
 | Version | Changes |
 |---------|---------|
-| v0.4.7 | Security audit — add `required: true` to API key credential field; add Rate Limits section to README |
-| v0.4.6 | README changelog update through v0.4.5; lint warning cleanup |
-| v0.4.5 | Snake_case audit — 36 API parameter naming bugs fixed across 11 nodes (camelCase → snake_case field names) |
-| v0.4.4 | Kling `tailImageUrl` snake_case bug fix; ElevenLabs fields verified; GenericFunctions retry logic verified |
-| v0.4.3 | n8n best practices compliance — JSDoc comments, TypeScript type improvements, code quality pass |
+| v0.5.6 | Model ID audit — fix Flux (`flux-2/` prefix), fix Suno chirp IDs (`chirp-v4-5-plus`, `chirp-v4-5`, `chirp-v4`, `chirp-v3-5`), remove invalid `qwen2/image-to-image`; publish as `n8n-nodes-kie-pro` |
+| v0.5.5 | Internal build; npm name fix attempt |
+| v0.4.7 | Security audit — add `required: true` to API key credential field |
+| v0.4.6 | README changelog update; lint warning cleanup |
+| v0.4.5 | Snake_case audit — 36 API parameter naming bugs fixed across 11 nodes |
+| v0.4.4 | Kling `tailImageUrl` snake_case bug fix; ElevenLabs fields verified |
+| v0.4.3 | n8n best practices compliance — JSDoc comments, TypeScript type improvements |
 | v0.4.2 | GitHub Actions CI/CD pipeline; CONTRIBUTING.md added |
-| v0.4.1 | Package metadata improvements; .npmignore added to reduce publish size |
-| v0.4.0 | Documentation update — complete changelog backfill (v0.3.5–v0.3.8); Kling node docs updated to mention Kling 3.0 (V3) model support |
-| v0.3.9 | Error handling improvements — 429 rate limit retry (exponential backoff 2/4/8s) in GenericFunctions; enriched error messages include API response body; Kling node adds Kling 3.0 T2V/I2V model + `mode` (std/pro) + `sound` fields |
-| v0.3.8 | Model ID fix — corrected Sora2Pro, Google, ZImage node model IDs |
-| v0.3.7 | Model ID fix — corrected Seedream, Seedance, Hailuo, Wan, Kling node model IDs |
-| v0.3.6 | UX polish — placeholder text and improved field descriptions across all nodes |
-| v0.3.5 | Bug fix — corrected stale model IDs and required fields based on kie.ai API verification (Wan, Runway) |
-| v0.3.4 | Fix Veo model names (`veo3`, `veo3_fast`); fix ElevenLabs TTS model ID (dot→hyphen); add `quality` field to Runway generate (now required by API); update README |
-| v0.3.3 | Final targeted gap-fill — seed for Flux/Ideogram/Recraft, steps for Flux; verify execute logic across all nodes |
-| v0.3.2 | Model-specific optional params — steps, strength, quality, background, outputFormat, seed gaps filled |
-| v0.3.1 | Deep-pass — seed, model params, and execute logic gaps filled across all nodes |
-| v0.3.0 | Added missing optional fields to Flux, Ideogram, Recraft, Topaz, Qwen, Suno, ElevenLabs, InfineTalk, Google |
-| v0.2.9 | Added missing optional fields to all nodes: seed, endImageUrl, replyUrl, replyRef, captchaToken |
-| v0.2.8 | Kling 3.0 Motion Control V2V + Kling 2.5 Turbo standard model |
-| v0.2.7 | ElevenLabs V3 model selector + language_code for Text-to-Dialogue |
-| v0.2.6 | Qwen Image 2.0 model selectors for T2I and I2I operations |
-| v0.2.5 | Replace comma-separated reference URL fields with fixedCollection pickers (Veo, Ideogram) |
-| v0.2.4 | Flux Kontext inputImage bug fix; Ideogram reference images, mask URL, rendering speed |
-| v0.2.3 | Complete model coverage audit — Veo 3.1, Seedance 2.0, Wan 2.5, Suno versions, Kling 3.0 |
-| v0.2.2 | Add Veo 3.1 (Fast/Quality/Reference/4K), Wan 2.5 models |
-| v0.2.1 | Fix resultJson parsing — `resultUrls` now surfaced at top level |
-| v0.2.0 | Full model coverage — 21 nodes: Sora2Pro, Kling, Seedance, Veo, Wan, Hailuo, Runway, GrokImagine, Flux, Seedream, Google, Ideogram, Qwen, GptImage15, FourOImage, ZImage, Recraft, Topaz, ElevenLabs, Suno, InfineTalk |
+| v0.4.1 | Package metadata improvements; .npmignore added |
+| v0.4.0 | Documentation update — complete changelog backfill |
+| v0.3.9 | 429 rate limit retry (exponential backoff); Kling 3.0 model + sound fields |
+| v0.3.8 | Model ID fix — Sora2Pro, Google, ZImage |
+| v0.3.7 | Model ID fix — Seedream, Seedance, Hailuo, Wan, Kling |
+| v0.3.6 | UX polish — placeholder text and field descriptions across all nodes |
+| v0.3.5 | Bug fix — Wan, Runway model IDs corrected |
+| v0.3.4 | Fix Veo model names; fix ElevenLabs TTS model ID; add `quality` to Runway |
+| v0.3.3 | Seed for Flux/Ideogram/Recraft; steps for Flux |
+| v0.3.0–v0.3.2 | Model-specific optional params gaps filled across all nodes |
+| v0.2.9 | Added seed, endImageUrl, replyUrl, replyRef, captchaToken to all nodes |
+| v0.2.0–v0.2.8 | Full 21-node release + Kling 3.0, ElevenLabs V3, Qwen 2.0, Veo 3.1 |
 | v0.1.0 | Initial release — Sora 2 Pro, Seedream, GPT-image-1.5, ElevenLabs |
 
 ---
