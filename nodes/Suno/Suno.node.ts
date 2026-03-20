@@ -85,12 +85,14 @@ export class Suno implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['generateMusic'] } },
 				options: [
-					{ name: 'V4.5 Plus', value: 'chirp-v4-5-plus' },
-					{ name: 'V4.5', value: 'chirp-v4-5' },
-					{ name: 'V4', value: 'chirp-v4' },
-					{ name: 'V3.5', value: 'chirp-v3-5' },
+					{ name: 'V5', value: 'V5' },
+					{ name: 'V4.5 Plus', value: 'V4_5PLUS' },
+					{ name: 'V4.5 All', value: 'V4_5ALL' },
+					{ name: 'V4.5', value: 'V4_5' },
+					{ name: 'V4', value: 'V4' },
+					{ name: 'V3.5', value: 'V3_5' },
 				],
-				default: 'chirp-v4-5',
+				default: 'V4_5',
 				description: 'Suno model version to use',
 			},
 			{
@@ -215,6 +217,7 @@ export class Suno implements INodeType {
 						if (title) body.title = title;
 						if (tags) body.tags = tags;
 						body.instrumental = instrumental;
+						body.customMode = !!(lyrics || style || tags);
 						body.model = modelVersion;
 					} else if (operation === 'extendMusic') {
 						endpoint = '/api/v1/generate/extend';

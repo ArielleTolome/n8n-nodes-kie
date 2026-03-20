@@ -200,6 +200,22 @@ export class Flux implements INodeType {
 				description: 'Set to 0 for random seed',
 			},
 			{
+				displayName: 'Resolution',
+				name: 'resolution',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage'],
+					},
+				},
+				options: [
+					{ name: '1K', value: '1K' },
+					{ name: '2K', value: '2K' },
+				],
+				default: '1K',
+				description: 'Output resolution (1K or 2K)',
+			},
+			{
 				displayName: 'Steps',
 				name: 'steps',
 				type: 'number',
@@ -341,7 +357,8 @@ export class Flux implements INodeType {
 					if (operation === 'textToImage') {
 						model = this.getNodeParameter('model', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
-						input.ratio = this.getNodeParameter('ratio', i) as string;
+						input.aspect_ratio = this.getNodeParameter('ratio', i) as string;
+						input.resolution = this.getNodeParameter('resolution', i) as string;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 						input.steps = this.getNodeParameter('steps', i) as number;
@@ -349,10 +366,11 @@ export class Flux implements INodeType {
 						if (guidance !== 3.5) input.guidance = guidance;
 					} else if (operation === 'imageToImage') {
 						model = this.getNodeParameter('modelI2I', i) as string;
-						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+						input.input_urls = [this.getNodeParameter('imageUrl', i) as string];
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.strength = this.getNodeParameter('strength', i) as number;
-						input.ratio = this.getNodeParameter('ratio', i) as string;
+						input.aspect_ratio = this.getNodeParameter('ratio', i) as string;
+						input.resolution = this.getNodeParameter('resolution', i) as string;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					}

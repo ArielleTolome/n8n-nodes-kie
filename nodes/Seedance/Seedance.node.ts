@@ -41,12 +41,6 @@ export class Seedance implements INodeType {
 						action: 'Text to video',
 					},
 					{
-						name: 'Image-to-Video',
-						value: 'imageToVideo',
-						description: 'Generate video from image',
-						action: 'Image to video',
-					},
-					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
@@ -57,76 +51,17 @@ export class Seedance implements INodeType {
 				required: true,
 			},
 			{
-				displayName: 'Model',
-				name: 'model',
-				type: 'options',
-				displayOptions: {
-					show: {
-						operation: ['textToVideo'],
-					},
-				},
-				options: [
-					{ name: 'Seedance 1.5 Pro', value: 'bytedance/seedance-1.5-pro' },
-					{ name: 'Seedance v1 Pro', value: 'bytedance/v1-pro-text-to-video' },
-					{ name: 'Seedance v1 Lite', value: 'bytedance/v1-lite-text-to-video' },
-				],
-				default: 'bytedance/seedance-1.5-pro',
-			},
-			{
-				displayName: 'Model',
-				name: 'modelI2V',
-				type: 'options',
-				displayOptions: {
-					show: {
-						operation: ['imageToVideo'],
-					},
-				},
-				options: [
-					{ name: 'Seedance v1 Pro', value: 'bytedance/v1-pro-image-to-video' },
-					{ name: 'Seedance v1 Pro Fast', value: 'bytedance/v1-pro-fast-image-to-video' },
-					{ name: 'Seedance v1 Lite', value: 'bytedance/v1-lite-image-to-video' },
-				],
-				default: 'bytedance/v1-pro-image-to-video',
-			},
-			{
 				displayName: 'Prompt',
 				name: 'prompt',
 				type: 'string',
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				default: '',
 				description: 'Text prompt for video generation',
-			},
-			{
-				displayName: 'Image URL',
-				name: 'imageUrl',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['imageToVideo'],
-					},
-				},
-				default: '',
-				placeholder: 'https://...',
-				description: 'URL of the input image',
-			},
-			{
-				displayName: 'End Frame URL',
-				name: 'endImageUrl',
-				type: 'string',
-				displayOptions: {
-					show: {
-						operation: ['imageToVideo'],
-					},
-				},
-				default: '',
-				placeholder: 'https://...',
-				description: 'Optional end frame image URL for image-to-video',
 			},
 			{
 				displayName: 'Duration',
@@ -134,14 +69,14 @@ export class Seedance implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				options: [
-					{ name: '5 Seconds', value: 5 },
-					{ name: '10 Seconds', value: 10 },
+					{ name: '4 Seconds', value: '4' },
+					{ name: '8 Seconds', value: '8' },
 				],
-				default: 5,
+				default: '8',
 			},
 			{
 				displayName: 'Aspect Ratio',
@@ -149,7 +84,7 @@ export class Seedance implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				options: [
@@ -165,7 +100,7 @@ export class Seedance implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				default: 0,
@@ -177,7 +112,7 @@ export class Seedance implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				default: '',
@@ -190,7 +125,7 @@ export class Seedance implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				default: '',
@@ -202,7 +137,7 @@ export class Seedance implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo'],
+						operation: ['textToVideo'],
 					},
 				},
 				default: true,
@@ -234,21 +169,14 @@ export class Seedance implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieQueryTask(this, taskId));
 				} else {
-					const model = operation === 'textToVideo'
-						? this.getNodeParameter('model', i) as string
-						: this.getNodeParameter('modelI2V', i) as string;
+					const model = 'bytedance/seedance-1.5-pro';
 
 					const input: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
-						duration: this.getNodeParameter('duration', i) as number,
-						ratio: this.getNodeParameter('ratio', i) as string,
+						duration: this.getNodeParameter('duration', i) as string,
+						aspect_ratio: this.getNodeParameter('ratio', i) as string,
 					};
 
-					if (operation === 'imageToVideo') {
-						input.image_url = this.getNodeParameter('imageUrl', i) as string;
-						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
-						if (endImageUrl) input.end_image_url = endImageUrl;
-					}
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 
