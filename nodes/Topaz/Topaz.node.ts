@@ -159,8 +159,9 @@ export class Topaz implements INodeType {
 					returnData.push(await kieQueryTask(this, taskId));
 				} else {
 					const model = operation === 'imageUpscale' ? 'topaz/image-upscale' : 'topaz/video-upscale';
+					const scaleVal = this.getNodeParameter('scale', i) as number;
 					const input: IDataObject = {
-						scale: this.getNodeParameter('scale', i) as number,
+						upscale_factor: String(scaleVal),
 					};
 
 					if (operation === 'imageUpscale') {

@@ -87,10 +87,41 @@ export class GrokImagine implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['imageToImage', 'imageToVideo', 'upscale'],
+						operation: ['imageToImage', 'imageToVideo'],
 					},
 				},
 				default: '',
+			},
+			{
+				displayName: 'Task ID (to upscale)',
+				name: 'upscaleTaskId',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['upscale'],
+					},
+				},
+				default: '',
+				description: 'Task ID of a previous Grok Imagine generation to upscale',
+			},
+			{
+				displayName: 'Aspect Ratio',
+				name: 'aspectRatio',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage'],
+					},
+				},
+				options: [
+					{ name: '1:1', value: '1:1' },
+					{ name: '16:9', value: '16:9' },
+					{ name: '9:16', value: '9:16' },
+					{ name: '4:3', value: '4:3' },
+					{ name: '3:4', value: '3:4' },
+				],
+				default: '1:1',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -142,8 +173,15 @@ export class GrokImagine implements INodeType {
 					if (operation !== 'upscale') {
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 					}
-					if (['imageToImage', 'imageToVideo', 'upscale'].includes(operation)) {
+					if (['textToImage', 'imageToImage'].includes(operation)) {
+						input.aspect_ratio = this.getNodeParameter('aspectRatio', i) as string;
+					}
+					if (operation === 'imageToImage') {
+						input.image_urls = [this.getNodeParameter('imageUrl', i) as string];
+					} else if (operation === 'imageToVideo') {
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+					} else if (operation === 'upscale') {
+						input.task_id = this.getNodeParameter('upscaleTaskId', i) as string;
 					}
 
 					const body: IDataObject = { model: modelMap[operation], input };

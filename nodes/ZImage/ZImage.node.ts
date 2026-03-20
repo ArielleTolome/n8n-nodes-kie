@@ -124,7 +124,7 @@ export class ZImage implements INodeType {
 				} else {
 					const input: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
-						ratio: this.getNodeParameter('ratio', i) as string,
+						aspect_ratio: this.getNodeParameter('ratio', i) as string,
 					};
 					const style = this.getNodeParameter('style', i, '') as string;
 					if (style) input.style = style;
