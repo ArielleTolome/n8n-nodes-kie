@@ -79,7 +79,6 @@ export class Kling implements INodeType {
 				},
 				options: [
 					{ name: 'Kling 3.0', value: 'kling-3.0/video' },
-					{ name: 'Kling 2.6', value: 'kling-2.6/text-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-text-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-text-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
@@ -98,7 +97,6 @@ export class Kling implements INodeType {
 				},
 				options: [
 					{ name: 'Kling 3.0', value: 'kling-3.0/video' },
-					{ name: 'Kling 2.6', value: 'kling-2.6/image-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-image-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
@@ -329,7 +327,6 @@ export class Kling implements INodeType {
 				},
 				options: [
 					{ name: 'Kling 3.0 Motion Control', value: 'kling-3.0/motion-control' },
-					{ name: 'Kling 2.6 Motion Control', value: 'kling-2.6/motion-control' },
 				],
 				default: 'kling-3.0/motion-control',
 				description: 'Model to use for motion control video generation',
@@ -452,8 +449,6 @@ export class Kling implements INodeType {
 					const input: IDataObject = {
 						input_urls: [characterImageUrl],
 						video_urls: [referenceVideoUrl],
-						character_orientation: characterOrientation,
-						mode: resolutionV2V,
 					};
 					if (promptV2V) input.prompt = promptV2V;
 

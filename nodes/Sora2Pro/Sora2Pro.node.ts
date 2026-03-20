@@ -236,11 +236,24 @@ export class Sora2Pro implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo', 'imageToVideo', 'characters', 'storyboard'],
+						operation: ['textToVideo', 'imageToVideo', 'characters'],
 					},
 				},
 				default: 0,
 				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
+				displayName: 'Shots (JSON)',
+				name: 'shotsJson',
+				type: 'string',
+				typeOptions: { rows: 4 },
+				displayOptions: {
+					show: {
+						operation: ['storyboard'],
+					},
+				},
+				default: '[{"prompt": "Scene one description", "duration": "5"}, {"prompt": "Scene two description", "duration": "5"}]',
+				description: 'Array of shot objects. Each shot requires a "prompt" and "duration" (in seconds as a string). Total duration of all shots must equal 10, 15, or 25.',
 			},
 			{
 				displayName: 'Reply URL',
@@ -352,20 +365,34 @@ export class Sora2Pro implements INodeType {
 						model = 'sora-2-pro-storyboard';
 					}
 
-					const prompt = this.getNodeParameter('prompt', i) as string;
-					const aspectRatio = this.getNodeParameter('aspectRatio', i) as string;
 					const nFrames = this.getNodeParameter('nFrames', i) as string;
 					const size = this.getNodeParameter('size', i) as string;
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
-					const seed = this.getNodeParameter('seed', i, 0) as number;
-					const input: IDataObject = {
-						prompt,
-						aspect_ratio: aspectRatio,
-						n_frames: nFrames,
-						size,
-					};
-					if (seed) input.seed = seed;
+					let input: IDataObject;
+
+					if (operation === 'storyboard') {
+						// Storyboard requires shots array; total shot duration must be 10, 15, or 25
+						const shotsRaw = this.getNodeParameter('shotsJson', i) as string;
+						let shots: IDataObject[];
+						try {
+							shots = JSON.parse(shotsRaw);
+						} catch {
+							throw new Error('Shots JSON is not valid JSON. Please provide a valid JSON array.');
+						}
+						input = { shots, n_frames: nFrames, size };
+					} else {
+						const prompt = this.getNodeParameter('prompt', i) as string;
+						const aspectRatio = this.getNodeParameter('aspectRatio', i) as string;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						input = {
+							prompt,
+							aspect_ratio: aspectRatio,
+							n_frames: nFrames,
+							size,
+						};
+						if (seed) input.seed = seed;
+					}
 
 					if (operation === 'imageToVideo') {
 						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
