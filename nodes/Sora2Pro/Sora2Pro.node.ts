@@ -368,7 +368,8 @@ export class Sora2Pro implements INodeType {
 					if (seed) input.seed = seed;
 
 					if (operation === 'imageToVideo') {
-						input.input_image_url = this.getNodeParameter('imageUrl', i) as string;
+						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						input.image_urls = [imageUrl];
 						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
 						if (endImageUrl) input.tail_image_url = endImageUrl;
 					}

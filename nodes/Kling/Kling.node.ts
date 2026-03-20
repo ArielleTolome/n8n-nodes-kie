@@ -483,30 +483,38 @@ export class Kling implements INodeType {
 
 					if (operation === 'textToVideo') {
 						model = this.getNodeParameter('model', i) as string;
-						input.prompt = this.getNodeParameter('prompt', i) as string;
-						input.duration = this.getNodeParameter('duration', i) as number;
+						const prompt = this.getNodeParameter('prompt', i) as string;
+						const duration = this.getNodeParameter('duration', i) as number;
+						input.duration = String(duration);
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						if (model === 'kling-3.0/video') {
-							// Kling 3.0 uses mode + sound instead of cfg_scale
+							// Kling 3.0 uses multi_shots + mode + sound
+							input.multi_shots = [{ prompt }];
 							input.mode = this.getNodeParameter('generationMode', i, 'std') as string;
 							input.sound = this.getNodeParameter('enableSound', i, false) as boolean;
 						} else {
+							input.prompt = prompt;
 							input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
 							const seed = this.getNodeParameter('seed', i, 0) as number;
 							if (seed) input.seed = seed;
 						}
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
-						input.imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						const prompt = this.getNodeParameter('promptI2V', i, '') as string;
-						if (prompt) input.prompt = prompt;
-						input.duration = this.getNodeParameter('duration', i) as number;
+						const duration = this.getNodeParameter('duration', i) as number;
+						input.duration = String(duration);
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 						if (model === 'kling-3.0/video') {
-							// Kling 3.0 uses mode + sound instead of cfg_scale
+							// Kling 3.0 uses multi_shots for I2V
+							const shot: IDataObject = { image_url: imageUrl };
+							if (prompt) shot.prompt = prompt;
+							input.multi_shots = [shot];
 							input.mode = this.getNodeParameter('generationMode', i, 'std') as string;
 							input.sound = this.getNodeParameter('enableSound', i, false) as boolean;
 						} else {
+							input.image_url = imageUrl;
+							if (prompt) input.prompt = prompt;
 							input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
 							const seed = this.getNodeParameter('seed', i, 0) as number;
 							if (seed) input.seed = seed;
