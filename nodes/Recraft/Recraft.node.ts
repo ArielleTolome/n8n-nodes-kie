@@ -97,7 +97,7 @@ export class Recraft implements INodeType {
 				} else {
 					const model = operation === 'removeBackground' ? 'recraft/remove-background' : 'recraft/crisp-upscale';
 					const input: IDataObject = {
-						image_url: this.getNodeParameter('imageUrl', i) as string,
+						image: this.getNodeParameter('imageUrl', i) as string,
 					};
 
 					const body: IDataObject = { model, input };

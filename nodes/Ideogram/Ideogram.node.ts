@@ -35,7 +35,6 @@ export class Ideogram implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Generate', value: 'generate', action: 'Generate image' },
-					{ name: 'Reframe', value: 'reframe', action: 'Reframe image' },
 					{ name: 'Character', value: 'character', action: 'Character generation' },
 					{ name: 'Character Edit', value: 'characterEdit', action: 'Character edit' },
 					{ name: 'Character Remix', value: 'characterRemix', action: 'Character remix' },
@@ -51,7 +50,7 @@ export class Ideogram implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['generate', 'reframe', 'character', 'characterEdit', 'characterRemix'],
+						operation: ['generate', 'character', 'characterEdit', 'characterRemix'],
 					},
 				},
 				default: '',
@@ -63,7 +62,7 @@ export class Ideogram implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['reframe', 'characterEdit', 'characterRemix'],
+						operation: ['characterEdit', 'characterRemix'],
 					},
 				},
 				default: '',
@@ -120,13 +119,14 @@ export class Ideogram implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Auto (default)', value: '' },
 					{ name: 'Turbo', value: 'TURBO' },
 					{ name: 'Default', value: 'DEFAULT' },
 					{ name: 'Balanced', value: 'BALANCED' },
 					{ name: 'Quality', value: 'QUALITY' },
 				],
-				default: 'DEFAULT',
-				description: 'Rendering speed vs quality trade-off',
+				default: '',
+				description: 'Rendering speed vs quality trade-off (leave as Auto to omit)',
 			},
 			{
 				displayName: 'Character ID',
@@ -145,7 +145,7 @@ export class Ideogram implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['generate', 'reframe'],
+						operation: ['generate'],
 					},
 				},
 				options: [
@@ -248,7 +248,7 @@ export class Ideogram implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['generate', 'reframe', 'character', 'characterEdit', 'characterRemix'],
+						operation: ['generate', 'character', 'characterEdit', 'characterRemix'],
 					},
 				},
 				default: '',
@@ -260,7 +260,7 @@ export class Ideogram implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['generate', 'reframe', 'character', 'characterEdit', 'characterRemix'],
+						operation: ['generate', 'character', 'characterEdit', 'characterRemix'],
 					},
 				},
 				default: '',
@@ -272,7 +272,7 @@ export class Ideogram implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['generate', 'reframe', 'character', 'characterEdit', 'characterRemix'],
+						operation: ['generate', 'character', 'characterEdit', 'characterRemix'],
 					},
 				},
 				default: true,
@@ -305,8 +305,7 @@ export class Ideogram implements INodeType {
 					returnData.push(await kieQueryTask(this, taskId));
 				} else {
 					const modelMap: Record<string, string> = {
-						generate: 'ideogram/v3',
-						reframe: 'ideogram/v3-reframe',
+						generate: 'ideogram/v3-text-to-image',
 						character: 'ideogram/character',
 						characterEdit: 'ideogram/character-edit',
 						characterRemix: 'ideogram/character-remix',
@@ -316,7 +315,7 @@ export class Ideogram implements INodeType {
 						prompt: this.getNodeParameter('prompt', i) as string,
 					};
 
-					if (['reframe', 'characterEdit', 'characterRemix'].includes(operation)) {
+					if (['characterEdit', 'characterRemix'].includes(operation)) {
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 					}
 
@@ -342,12 +341,13 @@ export class Ideogram implements INodeType {
 						if (maskUrl) input.mask_url = maskUrl;
 					}
 
-					// Rendering speed for character ops and generate
+					// Rendering speed for character ops and generate (only send when explicitly set)
 					if (['character', 'characterEdit', 'characterRemix', 'generate'].includes(operation)) {
-						input.rendering_speed = this.getNodeParameter('renderingSpeed', i, 'DEFAULT') as string;
+						const speed = this.getNodeParameter('renderingSpeed', i, '') as string;
+						if (speed) input.rendering_speed = speed;
 					}
 
-					if (operation === 'generate' || operation === 'reframe') {
+					if (operation === 'generate') {
 						input.ratio = this.getNodeParameter('ratio', i) as string;
 					}
 

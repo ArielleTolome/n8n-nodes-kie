@@ -100,7 +100,6 @@ export class Wan implements INodeType {
 				},
 				options: [
 					{ name: 'Wan 2.6', value: 'wan/2-6-image-to-video' },
-					{ name: 'Wan 2.6 Flash', value: 'wan/2-6-flash-image-to-video' },
 					{ name: 'Wan 2.2 Turbo', value: 'wan/2-2-a14b-image-to-video-turbo' },
 				],
 				default: 'wan/2-6-image-to-video',
@@ -116,7 +115,6 @@ export class Wan implements INodeType {
 				},
 				options: [
 					{ name: 'Wan 2.6', value: 'wan/2-6-video-to-video' },
-					{ name: 'Wan 2.6 Flash', value: 'wan/2-6-flash-video-to-video' },
 				],
 				default: 'wan/2-6-video-to-video',
 			},
@@ -153,11 +151,11 @@ export class Wan implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['imageToVideo', 'videoToVideo', 'animate'],
+						operation: ['imageToVideo', 'videoToVideo', 'speechToVideo', 'animate'],
 					},
 				},
 				default: '',
-				description: 'Optional prompt to guide generation',
+				description: 'Optional prompt to guide generation (required for Speech-to-Video)',
 			},
 			{
 				displayName: 'Image URL',
@@ -166,7 +164,7 @@ export class Wan implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['imageToVideo', 'animate'],
+						operation: ['imageToVideo', 'speechToVideo', 'animate'],
 					},
 				},
 				default: '',
@@ -190,7 +188,7 @@ export class Wan implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['videoToVideo'],
+						operation: ['videoToVideo', 'animate'],
 					},
 				},
 				default: '',
@@ -344,35 +342,44 @@ export class Wan implements INodeType {
 						model = this.getNodeParameter('model', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.duration = this.getNodeParameter('duration', i) as number;
+						input.duration = String(this.getNodeParameter('duration', i));
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
-						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
+						if (model === 'wan/2-6-image-to-video') {
+							input.image_urls = [imageUrl];
+						} else {
+							input.image_url = imageUrl;
+						}
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.duration = this.getNodeParameter('duration', i) as number;
+						input.duration = String(this.getNodeParameter('duration', i));
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
 						if (endImageUrl) input.end_image_url = endImageUrl;
 					} else if (operation === 'videoToVideo') {
 						model = this.getNodeParameter('modelV2V', i) as string;
-						input.video_url = this.getNodeParameter('videoUrl', i) as string;
+						input.video_urls = [this.getNodeParameter('videoUrl', i) as string];
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
 						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.duration = this.getNodeParameter('duration', i) as number;
+						input.duration = String(this.getNodeParameter('duration', i));
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					} else if (operation === 'speechToVideo') {
 						model = 'wan/2-2-a14b-speech-to-video-turbo';
 						input.audio_url = this.getNodeParameter('audioUrl', i) as string;
+						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+						const p = this.getNodeParameter('promptOpt', i, '') as string;
+						if (p) input.prompt = p;
 					} else if (operation === 'animate') {
 						model = this.getNodeParameter('animateType', i) as string;
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+						input.video_url = this.getNodeParameter('videoUrl', i) as string;
 						const p = this.getNodeParameter('promptOpt', i, '') as string;
 						if (p) input.prompt = p;
 						if (model === 'wan/2-2-animate-replace') {
