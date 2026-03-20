@@ -78,13 +78,10 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Kling 3.0', value: 'kling-3.0/video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-text-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-text-to-video' },
-					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
-					{ name: 'Kling 2.1 Standard', value: 'kling/v2-1-standard' },
 				],
-				default: 'kling-3.0/video',
+				default: 'kling/v2-5-turbo-text-to-video-pro',
 			},
 			{
 				displayName: 'Model',
@@ -96,12 +93,12 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Kling 3.0', value: 'kling-3.0/video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-image-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
+					{ name: 'Kling 2.1 Standard', value: 'kling/v2-1-standard' },
 				],
-				default: 'kling-3.0/video',
+				default: 'kling/v2-5-turbo-image-to-video-pro',
 			},
 			{
 				displayName: 'Model',
@@ -158,16 +155,32 @@ export class Kling implements INodeType {
 				description: 'URL of the input image',
 			},
 			{
-				displayName: 'Avatar ID',
-				name: 'avatarId',
+				displayName: 'Avatar Image URL',
+				name: 'avatarImageUrl',
 				type: 'string',
+				required: true,
 				displayOptions: {
 					show: {
 						operation: ['aiAvatar'],
 					},
 				},
 				default: '',
-				description: 'Avatar ID for AI avatar generation',
+				placeholder: 'https://...',
+				description: 'URL of the portrait/avatar image (jpg/jpeg/png, face clearly visible)',
+			},
+			{
+				displayName: 'Audio URL',
+				name: 'audioUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['aiAvatar'],
+					},
+				},
+				default: '',
+				placeholder: 'https://...',
+				description: 'URL of the audio file to drive the avatar lip-sync',
 			},
 			{
 				displayName: 'Duration',

@@ -160,7 +160,7 @@ export class FourOImage implements INodeType {
 					const body: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
 						n: this.getNodeParameter('n', i) as number,
-						size: this.getNodeParameter('size', i) as string,
+						resolution: this.getNodeParameter('size', i) as string,
 						quality: this.getNodeParameter('quality', i) as string,
 						style: this.getNodeParameter('style', i) as string,
 					};

@@ -184,8 +184,7 @@ export class ElevenLabs implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['textToDialogue'] } },
 				options: [
-					{ name: 'ElevenLabs V3 (Recommended)', value: 'elevenlabs/text-to-dialogue-v3' },
-					{ name: 'ElevenLabs V2', value: 'elevenlabs/text-to-dialogue' },
+					{ name: 'ElevenLabs V3', value: 'elevenlabs/text-to-dialogue-v3' },
 				],
 				default: 'elevenlabs/text-to-dialogue-v3',
 				description: 'The ElevenLabs dialogue model to use',
