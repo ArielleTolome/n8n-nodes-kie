@@ -85,12 +85,12 @@ export class Suno implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['generateMusic'] } },
 				options: [
-					{ name: 'V4.5 Plus', value: 'v4.5_plus' },
-					{ name: 'V4.5', value: 'v4.5' },
-					{ name: 'V4', value: 'v4' },
-					{ name: 'V3.5', value: 'v3.5' },
+					{ name: 'V4.5 Plus', value: 'chirp-v4-5-plus' },
+					{ name: 'V4.5', value: 'chirp-v4-5' },
+					{ name: 'V4', value: 'chirp-v4' },
+					{ name: 'V3.5', value: 'chirp-v3-5' },
 				],
-				default: 'v4.5',
+				default: 'chirp-v4-5',
 				description: 'Suno model version to use',
 			},
 			{

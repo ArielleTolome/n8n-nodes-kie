@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-kie",
-  "version": "0.5.4",
+  "version": "0.5.6",
   "description": "n8n community nodes for kie.ai - 21 AI model nodes covering video, image, audio, and music generation",
   "keywords": [
     "n8n",

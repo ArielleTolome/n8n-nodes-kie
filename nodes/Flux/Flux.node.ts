@@ -69,10 +69,10 @@ export class Flux implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Flux 2 Pro', value: 'flux2/pro-text-to-image' },
-					{ name: 'Flux 2 Flex', value: 'flux2/flex-text-to-image' },
+					{ name: 'Flux 2 Pro', value: 'flux-2/pro-text-to-image' },
+					{ name: 'Flux 2 Flex', value: 'flux-2/flex-text-to-image' },
 				],
-				default: 'flux2/pro-text-to-image',
+				default: 'flux-2/pro-text-to-image',
 			},
 			{
 				displayName: 'Model',
@@ -84,10 +84,10 @@ export class Flux implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Flux 2 Pro', value: 'flux2/pro-image-to-image' },
-					{ name: 'Flux 2 Flex', value: 'flux2/flex-image-to-image' },
+					{ name: 'Flux 2 Pro', value: 'flux-2/pro-image-to-image' },
+					{ name: 'Flux 2 Flex', value: 'flux-2/flex-image-to-image' },
 				],
-				default: 'flux2/pro-image-to-image',
+				default: 'flux-2/pro-image-to-image',
 			},
 			{
 				displayName: 'Model',

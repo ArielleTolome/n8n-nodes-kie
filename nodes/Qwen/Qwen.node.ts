@@ -127,10 +127,9 @@ export class Qwen implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['imageToImage'] } },
 				options: [
-					{ name: 'Qwen Image 2.0 (Recommended)', value: 'qwen2/image-to-image' },
 					{ name: 'Qwen Image 1.0', value: 'qwen/image-to-image' },
 				],
-				default: 'qwen2/image-to-image',
+				default: 'qwen/image-to-image',
 				description: 'The Qwen image model to use',
 			},
 			{
