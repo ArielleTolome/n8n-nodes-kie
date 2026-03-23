@@ -41,6 +41,12 @@ export class Seedance implements INodeType {
 						action: 'Text to video',
 					},
 					{
+						name: 'Image to Video',
+						value: 'imageToVideo',
+						description: 'Generate video from image',
+						action: 'Image to video',
+					},
+					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
@@ -64,12 +70,53 @@ export class Seedance implements INodeType {
 				description: 'Text prompt for video generation',
 			},
 			{
+				displayName: 'Image URL',
+				name: 'imageUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				placeholder: 'https://...',
+				description: 'Image URL for image-to-video generation',
+			},
+			{
+				displayName: 'Prompt',
+				name: 'prompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Optional text prompt for image-to-video generation',
+			},
+			{
+				displayName: 'Model',
+				name: 'model',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Seedance 1.5 Pro', value: 'bytedance/seedance-1.5-pro' },
+				],
+				default: 'bytedance/seedance-1.5-pro',
+				description: 'Model to use for image-to-video generation',
+			},
+			{
 				displayName: 'Duration',
 				name: 'duration',
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				options: [
@@ -84,7 +131,7 @@ export class Seedance implements INodeType {
 				type: 'options',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				options: [
@@ -100,7 +147,7 @@ export class Seedance implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				default: 0,
@@ -112,7 +159,7 @@ export class Seedance implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				default: '',
@@ -125,11 +172,23 @@ export class Seedance implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				default: '',
 				description: 'Custom reference passed in webhook callback',
+			},
+			{
+				displayName: 'Captcha Token',
+				name: 'captchaToken',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'reCAPTCHA token if required by the API',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -137,7 +196,7 @@ export class Seedance implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				default: true,
@@ -168,7 +227,7 @@ export class Seedance implements INodeType {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieQueryTask(this, taskId));
-				} else {
+				} else if (operation === 'textToVideo') {
 					const model = 'bytedance/seedance-1.5-pro';
 
 					const input: IDataObject = {
@@ -185,6 +244,42 @@ export class Seedance implements INodeType {
 					if (replyUrl) body.replyUrl = replyUrl;
 					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
 					if (replyRef) body.replyRef = replyRef;
+					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
+					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
+
+					if (waitFlag) {
+						const taskId = (response.data as IDataObject)?.taskId as string;
+						if (taskId) {
+							returnData.push(await waitForTask(this, taskId));
+						} else {
+							returnData.push(response);
+						}
+					} else {
+						returnData.push(response);
+					}
+				} else if (operation === 'imageToVideo') {
+					const model = this.getNodeParameter('model', i) as string;
+
+					const input: IDataObject = {
+						image_url: this.getNodeParameter('imageUrl', i) as string,
+						duration: this.getNodeParameter('duration', i) as string,
+						aspect_ratio: this.getNodeParameter('ratio', i) as string,
+					};
+
+					const prompt = this.getNodeParameter('prompt', i, '') as string;
+					if (prompt) input.prompt = prompt;
+
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) input.seed = seed;
+
+					const body: IDataObject = { model, input };
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+					const captchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (captchaToken) body.captchaToken = captchaToken;
+
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

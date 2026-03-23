@@ -34,19 +34,20 @@ export class Runway implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Generate', value: 'generate', action: 'Generate video' },
+					{ name: 'Text to Video', value: 'textToVideo', action: 'Generate video from text' },
+					{ name: 'Image to Video', value: 'imageToVideo', action: 'Generate video from image' },
 					{ name: 'Extend', value: 'extend', action: 'Extend video' },
 					{ name: 'Aleph Generate', value: 'aleph', action: 'Aleph generate' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
-				default: 'generate',
+				default: 'textToVideo',
 				required: true,
 			},
 			{
 				displayName: 'Model',
 				name: 'model',
 				type: 'options',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: 'Gen4 Turbo', value: 'gen4_turbo' },
 					{ name: 'Gen4', value: 'gen4' },
@@ -58,47 +59,32 @@ export class Runway implements INodeType {
 				name: 'prompt',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['generate', 'aleph'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'aleph'] } },
 				default: '',
 			},
 			{
 				displayName: 'Image URL',
 				name: 'imageUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate'] } },
+				required: true,
+				displayOptions: { show: { operation: ['imageToVideo'] } },
 				default: '',
-				description: 'Optional image URL for image-to-video',
+				description: 'Image URL for image-to-video generation',
 			},
 			{
 				displayName: 'End Frame URL',
 				name: 'endImageUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['imageToVideo'] } },
 				default: '',
 				description: 'Optional end/last frame image URL for image-to-video',
-			},
-			{
-				displayName: 'Seed',
-				name: 'seed',
-				type: 'number',
-				displayOptions: { show: { operation: ['generate'] } },
-				default: 0,
-				description: 'Seed for reproducibility (0 = random)',
-			},
-			{
-				displayName: 'Video URL',
-				name: 'videoUrl',
-				type: 'string',
-				required: true,
-				displayOptions: { show: { operation: ['aleph'] } },
-				default: '',
 			},
 			{
 				displayName: 'Quality',
 				name: 'quality',
 				type: 'options',
 				required: true,
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: '720p', value: '720p' },
 					{ name: '1080p', value: '1080p' },
@@ -110,7 +96,7 @@ export class Runway implements INodeType {
 				displayName: 'Aspect Ratio',
 				name: 'ratio',
 				type: 'options',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: '16:9', value: '16:9' },
 					{ name: '9:16', value: '9:16' },
@@ -122,12 +108,28 @@ export class Runway implements INodeType {
 				displayName: 'Duration (Seconds)',
 				name: 'duration',
 				type: 'options',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: '5', value: 5 },
 					{ name: '10', value: 10 },
 				],
 				default: 5,
+			},
+			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
+				displayName: 'Video URL',
+				name: 'videoUrl',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { operation: ['aleph'] } },
+				default: '',
 			},
 			{
 				displayName: 'Task ID',
@@ -150,7 +152,7 @@ export class Runway implements INodeType {
 				displayName: 'Reply URL',
 				name: 'replyUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend', 'aleph'] } },
 				default: '',
 				description: 'Webhook URL to call when the task completes',
 			},
@@ -158,7 +160,7 @@ export class Runway implements INodeType {
 				displayName: 'Reply Ref',
 				name: 'replyRef',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend', 'aleph'] } },
 				default: '',
 				description: 'Custom reference string passed back in the webhook callback',
 			},
@@ -166,7 +168,7 @@ export class Runway implements INodeType {
 				displayName: 'Captcha Token',
 				name: 'captchaToken',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend', 'aleph'] } },
 				default: '',
 				description: 'reCAPTCHA token if required by the API',
 			},
@@ -174,7 +176,7 @@ export class Runway implements INodeType {
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['generate', 'extend', 'aleph'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend', 'aleph'] } },
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -199,7 +201,7 @@ export class Runway implements INodeType {
 				if (operation === 'queryTaskStatus') {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/runway/record-detail', undefined, { taskId }));
-				} else if (operation === 'generate') {
+				} else if (operation === 'textToVideo') {
 					const body: IDataObject = {
 						model: this.getNodeParameter('model', i) as string,
 						prompt: this.getNodeParameter('prompt', i) as string,
@@ -207,7 +209,37 @@ export class Runway implements INodeType {
 						ratio: this.getNodeParameter('ratio', i) as string,
 						duration: this.getNodeParameter('duration', i) as number,
 					};
-					const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) body.seed = seed;
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+					const captchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (captchaToken) body.captchaToken = captchaToken;
+
+					const response = await kieRequest(this, 'POST', '/api/v1/runway/generate', body);
+					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
+
+					if (waitFlag) {
+						const taskId = (response.data as IDataObject)?.taskId ?? response.taskId;
+						if (taskId) {
+							returnData.push(await waitForDedicatedTask(this, taskId as string, '/api/v1/runway/record-detail'));
+						} else {
+							returnData.push(response);
+						}
+					} else {
+						returnData.push(response);
+					}
+				} else if (operation === 'imageToVideo') {
+					const body: IDataObject = {
+						model: this.getNodeParameter('model', i) as string,
+						prompt: this.getNodeParameter('prompt', i) as string,
+						quality: this.getNodeParameter('quality', i) as string,
+						ratio: this.getNodeParameter('ratio', i) as string,
+						duration: this.getNodeParameter('duration', i) as number,
+					};
+					const imageUrl = this.getNodeParameter('imageUrl', i) as string;
 					if (imageUrl) body.imageUrl = imageUrl;
 					const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
 					if (endImageUrl) body.endImageUrl = endImageUrl;

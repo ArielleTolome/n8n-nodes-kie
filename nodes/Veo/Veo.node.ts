@@ -34,20 +34,21 @@ export class Veo implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Generate', value: 'generate', action: 'Generate video' },
+					{ name: 'Text to Video', value: 'textToVideo', action: 'Generate video from text' },
+					{ name: 'Image to Video', value: 'imageToVideo', action: 'Generate video from image' },
 					{ name: 'Extend', value: 'extend', action: 'Extend video' },
 					{ name: 'Get 1080p Video', value: 'get1080p', action: 'Get 1080p video' },
 					{ name: 'Get 4K Video', value: 'get4k', action: 'Get 4K video' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
-				default: 'generate',
+				default: 'textToVideo',
 				required: true,
 			},
 			{
 				displayName: 'Model',
 				name: 'model',
 				type: 'options',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: 'Veo 3.1 (Standard)', value: 'veo3' },
 					{ name: 'Veo 3.1 Fast', value: 'veo3_fast' },
@@ -59,24 +60,25 @@ export class Veo implements INodeType {
 				name: 'prompt',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				default: '',
 			},
 			{
 				displayName: 'Image URL',
 				name: 'imageUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate'] } },
+				required: true,
+				displayOptions: { show: { operation: ['imageToVideo'] } },
 				default: '',
 				placeholder: 'https://...',
-				description: 'Optional image URL for image-to-video',
+				description: 'Image URL for image-to-video generation',
 			},
 			{
 				displayName: 'Reference Images',
 				name: 'referenceUrls',
 				type: 'fixedCollection',
 				typeOptions: { multipleValues: true },
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['imageToVideo'] } },
 				default: {},
 				placeholder: 'Add Reference Image',
 				description: 'Reference images for Veo 3.1 Reference-to-Video. When set, overrides the Image URL field.',
@@ -97,10 +99,19 @@ export class Veo implements INodeType {
 				],
 			},
 			{
+				displayName: 'End Frame URL',
+				name: 'endImageUrl',
+				type: 'string',
+				displayOptions: { show: { operation: ['imageToVideo'] } },
+				default: '',
+				placeholder: 'https://...',
+				description: 'Optional end frame image URL for image-to-video',
+			},
+			{
 				displayName: 'Aspect Ratio',
 				name: 'ratio',
 				type: 'options',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: '16:9', value: '16:9' },
 					{ name: '9:16', value: '9:16' },
@@ -112,7 +123,7 @@ export class Veo implements INodeType {
 				displayName: 'Duration (Seconds)',
 				name: 'duration',
 				type: 'options',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				options: [
 					{ name: '5', value: 5 },
 					{ name: '8', value: 8 },
@@ -123,23 +134,14 @@ export class Veo implements INodeType {
 				displayName: 'Enable Translation',
 				name: 'enableTranslation',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				default: false,
-			},
-			{
-				displayName: 'End Frame URL',
-				name: 'endImageUrl',
-				type: 'string',
-				displayOptions: { show: { operation: ['generate'] } },
-				default: '',
-				placeholder: 'https://...',
-				description: 'Optional end frame image URL for image-to-video',
 			},
 			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
-				displayOptions: { show: { operation: ['generate'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
 				default: 0,
 				description: 'Set to 0 for random seed',
 			},
@@ -147,7 +149,7 @@ export class Veo implements INodeType {
 				displayName: 'Reply URL',
 				name: 'replyUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate', 'extend'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend'] } },
 				default: '',
 				placeholder: 'https://...',
 				description: 'Webhook URL called when the task completes',
@@ -156,7 +158,7 @@ export class Veo implements INodeType {
 				displayName: 'Reply Ref',
 				name: 'replyRef',
 				type: 'string',
-				displayOptions: { show: { operation: ['generate', 'extend'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend'] } },
 				default: '',
 				description: 'Custom reference passed in webhook callback',
 			},
@@ -197,7 +199,7 @@ export class Veo implements INodeType {
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['generate', 'extend'] } },
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo', 'extend'] } },
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -228,7 +230,35 @@ export class Veo implements INodeType {
 				} else if (operation === 'get4k') {
 					const taskId = this.getNodeParameter('fourKTaskId', i) as string;
 					returnData.push(await kieRequest(this, 'GET', '/api/v1/veo/get-4k-video', undefined, { taskId }));
-				} else if (operation === 'generate') {
+				} else if (operation === 'textToVideo') {
+					const body: IDataObject = {
+						model: this.getNodeParameter('model', i) as string,
+						prompt: this.getNodeParameter('prompt', i) as string,
+						ratio: this.getNodeParameter('ratio', i) as string,
+						duration: this.getNodeParameter('duration', i) as number,
+						enableTranslation: this.getNodeParameter('enableTranslation', i) as boolean,
+					};
+					const seed = this.getNodeParameter('seed', i, 0) as number;
+					if (seed) body.seed = seed;
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
+
+					const response = await kieRequest(this, 'POST', '/api/v1/veo/generate', body);
+					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
+
+					if (waitFlag) {
+						const taskId = (response.data as IDataObject)?.taskId ?? response.taskId;
+						if (taskId) {
+							returnData.push(await waitForDedicatedTask(this, taskId as string, '/api/v1/veo/record-info'));
+						} else {
+							returnData.push(response);
+						}
+					} else {
+						returnData.push(response);
+					}
+				} else if (operation === 'imageToVideo') {
 					const body: IDataObject = {
 						model: this.getNodeParameter('model', i) as string,
 						prompt: this.getNodeParameter('prompt', i) as string,
@@ -243,7 +273,7 @@ export class Veo implements INodeType {
 					if (referenceUrls.length > 0) {
 						body.referenceUrls = referenceUrls;
 					} else {
-						const imageUrl = this.getNodeParameter('imageUrl', i, '') as string;
+						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						if (imageUrl) body.imageUrl = imageUrl;
 					}
 					const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
