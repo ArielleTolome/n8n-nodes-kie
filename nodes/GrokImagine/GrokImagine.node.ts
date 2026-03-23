@@ -60,6 +60,11 @@ export class GrokImagine implements INodeType {
 						action: 'Upscale image',
 					},
 					{
+						name: 'Extend Video',
+						value: 'extend',
+						action: 'Extend video',
+					},
+					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						action: 'Get task status',
@@ -104,6 +109,19 @@ export class GrokImagine implements INodeType {
 				},
 				default: '',
 				description: 'Task ID of a previous Grok Imagine generation to upscale',
+			},
+			{
+				displayName: 'Task ID (to extend)',
+				name: 'extendTaskId',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['extend'],
+					},
+				},
+				default: '',
+				description: 'Task ID of a previous Grok Imagine video generation to extend',
 			},
 			{
 				displayName: 'Aspect Ratio',
@@ -167,10 +185,11 @@ export class GrokImagine implements INodeType {
 						textToVideo: 'grok-imagine/text-to-video',
 						imageToVideo: 'grok-imagine/image-to-video',
 						upscale: 'grok-imagine/upscale',
+						extend: 'grok-imagine/extend',
 					};
 
 					const input: IDataObject = {};
-					if (operation !== 'upscale') {
+					if (!['upscale', 'extend'].includes(operation)) {
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 					}
 					if (['textToImage', 'imageToImage'].includes(operation)) {
@@ -182,6 +201,8 @@ export class GrokImagine implements INodeType {
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
 					} else if (operation === 'upscale') {
 						input.task_id = this.getNodeParameter('upscaleTaskId', i) as string;
+					} else if (operation === 'extend') {
+						input.task_id = this.getNodeParameter('extendTaskId', i) as string;
 					}
 
 					const body: IDataObject = { model: modelMap[operation], input };

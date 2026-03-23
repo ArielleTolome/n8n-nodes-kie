@@ -34,7 +34,10 @@ export class Ideogram implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{ name: 'Generate', value: 'generate', action: 'Generate image' },
+					{ name: 'Generate (V3)', value: 'generate', action: 'Generate image' },
+					{ name: 'Edit (V3)', value: 'v3Edit', action: 'Edit image v3' },
+					{ name: 'Remix (V3)', value: 'v3Remix', action: 'Remix image v3' },
+					{ name: 'Reframe (V3)', value: 'v3Reframe', action: 'Reframe image v3' },
 					{ name: 'Character', value: 'character', action: 'Character generation' },
 					{ name: 'Character Edit', value: 'characterEdit', action: 'Character edit' },
 					{ name: 'Character Remix', value: 'characterRemix', action: 'Character remix' },
@@ -50,7 +53,7 @@ export class Ideogram implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['generate', 'character', 'characterEdit', 'characterRemix'],
+						operation: ['generate', 'character', 'characterEdit', 'characterRemix', 'v3Edit', 'v3Remix'],
 					},
 				},
 				default: '',
@@ -62,10 +65,36 @@ export class Ideogram implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['characterEdit', 'characterRemix'],
+						operation: ['characterEdit', 'characterRemix', 'v3Edit', 'v3Remix', 'v3Reframe'],
 					},
 				},
 				default: '',
+			},
+			{
+				displayName: 'Mask URL',
+				name: 'v3MaskUrl',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['v3Edit'],
+					},
+				},
+				default: '',
+				description: 'URL of the mask image for inpainting (must match image dimensions)',
+			},
+			{
+				displayName: 'Resolution',
+				name: 'v3Resolution',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['v3Reframe'],
+					},
+				},
+				default: '',
+				placeholder: '1024x1024',
+				description: 'Output resolution for reframe (e.g. 1024x1024)',
 			},
 			{
 				displayName: 'Reference Images',
@@ -306,6 +335,9 @@ export class Ideogram implements INodeType {
 				} else {
 					const modelMap: Record<string, string> = {
 						generate: 'ideogram/v3-text-to-image',
+						v3Edit: 'ideogram/v3-edit',
+						v3Remix: 'ideogram/v3-remix',
+						v3Reframe: 'ideogram/v3-reframe',
 						character: 'ideogram/character',
 						characterEdit: 'ideogram/character-edit',
 						characterRemix: 'ideogram/character-remix',
@@ -315,8 +347,18 @@ export class Ideogram implements INodeType {
 						prompt: this.getNodeParameter('prompt', i) as string,
 					};
 
-					if (['characterEdit', 'characterRemix'].includes(operation)) {
+					if (['characterEdit', 'characterRemix', 'v3Edit', 'v3Remix', 'v3Reframe'].includes(operation)) {
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+					}
+
+					if (operation === 'v3Edit') {
+						const maskUrl = this.getNodeParameter('v3MaskUrl', i, '') as string;
+						if (maskUrl) input.mask_url = maskUrl;
+					}
+
+					if (operation === 'v3Reframe') {
+						const resolution = this.getNodeParameter('v3Resolution', i, '') as string;
+						if (resolution) input.resolution = resolution;
 					}
 
 					if (['character', 'characterEdit', 'characterRemix'].includes(operation)) {

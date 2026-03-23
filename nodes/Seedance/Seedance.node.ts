@@ -57,6 +57,23 @@ export class Seedance implements INodeType {
 				required: true,
 			},
 			{
+				displayName: 'Model',
+				name: 'modelT2V',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Seedance 1.5 Pro', value: 'bytedance/seedance-1.5-pro' },
+					{ name: 'Bytedance V1 Pro', value: 'bytedance/v1-pro-text-to-video' },
+					{ name: 'Bytedance V1 Lite', value: 'bytedance/v1-lite-text-to-video' },
+				],
+				default: 'bytedance/seedance-1.5-pro',
+				description: 'Model to use for text-to-video generation',
+			},
+			{
 				displayName: 'Prompt',
 				name: 'prompt',
 				type: 'string',
@@ -106,6 +123,9 @@ export class Seedance implements INodeType {
 				},
 				options: [
 					{ name: 'Seedance 1.5 Pro', value: 'bytedance/seedance-1.5-pro' },
+					{ name: 'Bytedance V1 Pro', value: 'bytedance/v1-pro-image-to-video' },
+					{ name: 'Bytedance V1 Pro Fast', value: 'bytedance/v1-pro-fast-image-to-video' },
+					{ name: 'Bytedance V1 Lite', value: 'bytedance/v1-lite-image-to-video' },
 				],
 				default: 'bytedance/seedance-1.5-pro',
 				description: 'Model to use for image-to-video generation',
@@ -229,7 +249,7 @@ export class Seedance implements INodeType {
 					returnData.push(await kieQueryTask(this, taskId));
 				} else if (operation === 'textToVideo') {
 					// Seedance 2.0 model ID: 'bytedance/seedance-2.0-pro' (Coming Soon — activate when live)
-					const model = 'bytedance/seedance-1.5-pro';
+					const model = this.getNodeParameter('modelT2V', i, 'bytedance/seedance-1.5-pro') as string;
 
 					const input: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
