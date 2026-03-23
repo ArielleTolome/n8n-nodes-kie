@@ -85,6 +85,7 @@ export class Wan implements INodeType {
 				},
 				options: [
 					{ name: 'Wan 2.6', value: 'wan/2-6-text-to-video' },
+					{ name: 'Wan 2.5', value: 'wan/2-5-text-to-video' },
 					{ name: 'Wan 2.2 Turbo', value: 'wan/2-2-a14b-text-to-video-turbo' },
 				],
 				default: 'wan/2-6-text-to-video',
@@ -100,6 +101,8 @@ export class Wan implements INodeType {
 				},
 				options: [
 					{ name: 'Wan 2.6', value: 'wan/2-6-image-to-video' },
+					{ name: 'Wan 2.6 Flash', value: 'wan/2-6-flash-image-to-video' },
+					{ name: 'Wan 2.5', value: 'wan/2-5-image-to-video' },
 					{ name: 'Wan 2.2 Turbo', value: 'wan/2-2-a14b-image-to-video-turbo' },
 				],
 				default: 'wan/2-6-image-to-video',
@@ -115,6 +118,7 @@ export class Wan implements INodeType {
 				},
 				options: [
 					{ name: 'Wan 2.6', value: 'wan/2-6-video-to-video' },
+					{ name: 'Wan 2.6 Flash', value: 'wan/2-6-flash-video-to-video' },
 				],
 				default: 'wan/2-6-video-to-video',
 			},

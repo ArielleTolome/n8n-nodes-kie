@@ -78,10 +78,12 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Kling 3.0 (Recommended)', value: 'kling-3.0/video' },
+					{ name: 'Kling 2.6', value: 'kling-2.6/text-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-text-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-text-to-video' },
 				],
-				default: 'kling/v2-5-turbo-text-to-video-pro',
+				default: 'kling-3.0/video',
 			},
 			{
 				displayName: 'Model',
@@ -93,12 +95,13 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Kling 2.6 (Recommended)', value: 'kling-2.6/image-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-image-to-video' },
 					{ name: 'Kling 2.1 Pro', value: 'kling/v2-1-pro' },
 					{ name: 'Kling 2.1 Standard', value: 'kling/v2-1-standard' },
 				],
-				default: 'kling/v2-5-turbo-image-to-video-pro',
+				default: 'kling-2.6/image-to-video',
 			},
 			{
 				displayName: 'Model',

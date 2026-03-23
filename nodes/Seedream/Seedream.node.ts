@@ -47,6 +47,12 @@ export class Seedream implements INodeType {
 						action: 'Image edit',
 					},
 					{
+						name: 'Image-to-Image',
+						value: 'imageToImage',
+						description: 'Transform an image with a text prompt (Seedream 5.0 Lite)',
+						action: 'Image to image',
+					},
+					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
@@ -66,9 +72,11 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream v4', value: 'bytedance/seedream-v4-text-to-image' },
+					{ name: 'Seedream 5.0 Lite (Recommended)', value: 'seedream/5-lite-text-to-image' },
+					{ name: 'Seedream 4.5', value: 'seedream/4.5-text-to-image' },
+					{ name: 'Seedream 4.0', value: 'bytedance/seedream-v4-text-to-image' },
 				],
-				default: 'bytedance/seedream-v4-text-to-image',
+				default: 'seedream/5-lite-text-to-image',
 			},
 			{
 				displayName: 'Model',
@@ -80,9 +88,25 @@ export class Seedream implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Seedream v4 Edit', value: 'bytedance/seedream-v4-edit' },
+					{ name: 'Seedream 4.5 Edit (Recommended)', value: 'seedream/4.5-edit' },
+					{ name: 'Seedream 4.0 Edit', value: 'bytedance/seedream-v4-edit' },
 				],
-				default: 'bytedance/seedream-v4-edit',
+				default: 'seedream/4.5-edit',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelI2I',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['imageToImage'],
+					},
+				},
+				options: [
+					{ name: 'Seedream 5.0 Lite', value: 'seedream/5-lite-image-to-image' },
+				],
+				default: 'seedream/5-lite-image-to-image',
+				description: 'The Seedream model to use for image-to-image',
 			},
 			{
 				displayName: 'Prompt',
@@ -91,7 +115,7 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit'],
+						operation: ['textToImage', 'imageEdit', 'imageToImage'],
 					},
 				},
 				default: '',
@@ -104,7 +128,7 @@ export class Seedream implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['imageEdit'],
+						operation: ['imageEdit', 'imageToImage'],
 					},
 				},
 				default: '',
@@ -150,7 +174,7 @@ export class Seedream implements INodeType {
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit'],
+						operation: ['textToImage', 'imageEdit', 'imageToImage'],
 					},
 				},
 				default: 0,
@@ -162,7 +186,7 @@ export class Seedream implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit'],
+						operation: ['textToImage', 'imageEdit', 'imageToImage'],
 					},
 				},
 				default: '',
@@ -175,7 +199,7 @@ export class Seedream implements INodeType {
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit'],
+						operation: ['textToImage', 'imageEdit', 'imageToImage'],
 					},
 				},
 				default: '',
@@ -187,7 +211,7 @@ export class Seedream implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageEdit'],
+						operation: ['textToImage', 'imageEdit', 'imageToImage'],
 					},
 				},
 				default: true,
@@ -229,10 +253,15 @@ export class Seedream implements INodeType {
 						input.image_urls = [this.getNodeParameter('imageUrl', i) as string];
 						const maskUrl = this.getNodeParameter('maskUrl', i, '') as string;
 						if (maskUrl) input.mask_url = maskUrl;
+					} else if (operation === 'imageToImage') {
+						model = this.getNodeParameter('modelI2I', i) as string;
+						input.image_urls = [this.getNodeParameter('imageUrl', i) as string];
 					}
 
 					input.prompt = this.getNodeParameter('prompt', i) as string;
-					input.image_size = this.getNodeParameter('imageSize', i) as string;
+					if (operation !== 'imageToImage') {
+						input.image_size = this.getNodeParameter('imageSize', i) as string;
+					}
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 
