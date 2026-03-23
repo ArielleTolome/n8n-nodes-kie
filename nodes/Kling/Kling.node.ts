@@ -340,6 +340,7 @@ export class Kling implements INodeType {
 				},
 				options: [
 					{ name: 'Kling 3.0 Motion Control', value: 'kling-3.0/motion-control' },
+					{ name: 'Kling 2.6 Motion Control', value: 'kling-2.6/motion-control' },
 				],
 				default: 'kling-3.0/motion-control',
 				description: 'Model to use for motion control video generation',
@@ -462,6 +463,8 @@ export class Kling implements INodeType {
 						video_urls: [referenceVideoUrl],
 					};
 					if (promptV2V) input.prompt = promptV2V;
+					if (characterOrientation) input.character_orientation = characterOrientation;
+					if (resolutionV2V) input.resolution = resolutionV2V;
 
 					const motionModel = this.getNodeParameter('modelV2V', i, 'kling-3.0/motion-control') as string;
 					const body: IDataObject = { model: motionModel, input };

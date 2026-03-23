@@ -81,9 +81,11 @@ export class Hailuo implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Hailuo 02 Pro', value: 'hailuo/02-image-to-video-pro' },
+					{ name: 'Hailuo 2.3 Pro (Recommended)', value: 'hailuo/2-3-image-to-video-pro' },
+					{ name: 'Hailuo 2.3 Standard', value: 'hailuo/2-3-image-to-video-standard' },
+					{ name: 'Hailuo 02 Pro (Legacy)', value: 'hailuo/02-image-to-video-pro' },
 				],
-				default: 'hailuo/02-image-to-video-pro',
+				default: 'hailuo/2-3-image-to-video-pro',
 			},
 			{
 				displayName: 'Prompt',

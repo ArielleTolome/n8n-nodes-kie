@@ -228,6 +228,7 @@ export class Seedance implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieQueryTask(this, taskId));
 				} else if (operation === 'textToVideo') {
+					// Seedance 2.0 model ID: 'bytedance/seedance-2.0-pro' (Coming Soon — activate when live)
 					const model = 'bytedance/seedance-1.5-pro';
 
 					const input: IDataObject = {
