@@ -36,6 +36,11 @@ export class Suno implements INodeType {
 				options: [
 					{ name: 'Generate Music', value: 'generateMusic', action: 'Generate music' },
 					{ name: 'Extend Music', value: 'extendMusic', action: 'Extend music' },
+					{ name: 'Upload & Cover Audio', value: 'uploadCover', action: 'Upload and cover audio' },
+					{ name: 'Upload & Extend Audio', value: 'uploadExtend', action: 'Upload and extend audio' },
+					{ name: 'Add Instrumental', value: 'addInstrumental', action: 'Add instrumental' },
+					{ name: 'Add Vocals', value: 'addVocals', action: 'Add vocals' },
+					{ name: 'Replace Music Section', value: 'replaceSection', action: 'Replace music section' },
 					{ name: 'Generate Lyrics', value: 'generateLyrics', action: 'Generate lyrics' },
 					{ name: 'Boost Style', value: 'boostStyle', action: 'Boost style' },
 					{ name: 'Convert to WAV', value: 'convertWav', action: 'Convert to WAV' },
@@ -51,7 +56,7 @@ export class Suno implements INodeType {
 				displayName: 'Prompt',
 				name: 'prompt',
 				type: 'string',
-				displayOptions: { show: { operation: ['generateMusic', 'generateLyrics'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'generateLyrics', 'uploadCover', 'uploadExtend', 'replaceSection'] } },
 				default: '',
 				description: 'Text description of the music or lyrics to generate',
 			},
@@ -68,7 +73,7 @@ export class Suno implements INodeType {
 				displayName: 'Style',
 				name: 'style',
 				type: 'string',
-				displayOptions: { show: { operation: ['generateMusic', 'boostStyle'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'boostStyle', 'uploadCover'] } },
 				default: '',
 				description: 'Music style description (e.g. "upbeat pop", "jazz ballad")',
 			},
@@ -108,9 +113,50 @@ export class Suno implements INodeType {
 				name: 'sourceTaskId',
 				type: 'string',
 				required: true,
-				displayOptions: { show: { operation: ['extendMusic', 'boostStyle', 'convertWav', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['extendMusic', 'boostStyle', 'convertWav', 'generateMidi', 'createMusicVideo', 'addInstrumental', 'addVocals', 'replaceSection'] } },
 				default: '',
 				description: 'Task ID of the source music',
+			},
+			{
+				displayName: 'Upload URL',
+				name: 'uploadUrl',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { operation: ['uploadCover', 'uploadExtend'] } },
+				default: '',
+				description: 'URL of the audio file to upload (must be publicly accessible)',
+			},
+			{
+				displayName: 'Tags',
+				name: 'uploadTags',
+				type: 'string',
+				displayOptions: { show: { operation: ['addInstrumental'] } },
+				default: '',
+				description: 'Music style tags for instrumental (e.g. "jazz, piano, upbeat")',
+			},
+			{
+				displayName: 'Negative Tags',
+				name: 'negativeTags',
+				type: 'string',
+				displayOptions: { show: { operation: ['addInstrumental', 'replaceSection'] } },
+				default: '',
+				description: 'Music styles to exclude (e.g. "drums, electric guitar")',
+			},
+			{
+				displayName: 'Section Start (Seconds)',
+				name: 'sectionStart',
+				type: 'number',
+				displayOptions: { show: { operation: ['replaceSection'] } },
+				default: 0,
+				description: 'Start time in seconds of the section to replace',
+			},
+			{
+				displayName: 'Section End (Seconds)',
+				name: 'sectionEnd',
+				type: 'number',
+				displayOptions: { show: { operation: ['replaceSection'] } },
+				default: 10,
+				description: 'End time in seconds of the section to replace',
 			},
 			{
 				displayName: 'Audio URL',
@@ -156,7 +202,7 @@ export class Suno implements INodeType {
 				displayName: 'Reply URL',
 				name: 'replyUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
 				default: '',
 				description: 'Webhook URL to call when the task completes',
 			},
@@ -164,7 +210,7 @@ export class Suno implements INodeType {
 				displayName: 'Reply Ref',
 				name: 'replyRef',
 				type: 'string',
-				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
 				default: '',
 				description: 'Custom reference string passed back in the webhook callback',
 			},
@@ -172,7 +218,7 @@ export class Suno implements INodeType {
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
 			},
@@ -249,6 +295,34 @@ export class Suno implements INodeType {
 					} else if (operation === 'createMusicVideo') {
 						endpoint = '/api/v1/mp4/generate';
 						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
+					} else if (operation === 'uploadCover') {
+						endpoint = '/api/v1/generate/upload-cover';
+						body.uploadUrl = this.getNodeParameter('uploadUrl', i) as string;
+						body.prompt = this.getNodeParameter('prompt', i, '') as string;
+						const coverStyle = this.getNodeParameter('style', i, '') as string;
+						if (coverStyle) body.style = coverStyle;
+					} else if (operation === 'uploadExtend') {
+						endpoint = '/api/v1/generate/upload-extend';
+						body.uploadUrl = this.getNodeParameter('uploadUrl', i) as string;
+						body.prompt = this.getNodeParameter('prompt', i, '') as string;
+					} else if (operation === 'addInstrumental') {
+						endpoint = '/api/v1/generate/add-instrumental';
+						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
+						const instTags = this.getNodeParameter('uploadTags', i, '') as string;
+						if (instTags) body.tags = instTags;
+						const negTags = this.getNodeParameter('negativeTags', i, '') as string;
+						if (negTags) body.negativeTags = negTags;
+					} else if (operation === 'addVocals') {
+						endpoint = '/api/v1/generate/add-vocals';
+						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
+					} else if (operation === 'replaceSection') {
+						endpoint = '/api/v1/generate/replace-section';
+						body.taskId = this.getNodeParameter('sourceTaskId', i) as string;
+						body.prompt = this.getNodeParameter('prompt', i, '') as string;
+						body.startTime = this.getNodeParameter('sectionStart', i, 0) as number;
+						body.endTime = this.getNodeParameter('sectionEnd', i, 10) as number;
+						const negReplTags = this.getNodeParameter('negativeTags', i, '') as string;
+						if (negReplTags) body.negativeTags = negReplTags;
 					}
 
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
