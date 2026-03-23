@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-kie-pro",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "n8n community nodes for Kie.ai — 22 AI model nodes: Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 02, Runway Gen4, Seedream, Seedance, Qwen, Google Imagen4, Nano Banana, GPT-Image-1.5, Grok Imagine, Ideogram v3, Recraft, Topaz, ElevenLabs, Suno, ZImage, InfineTalk — image generation, video generation, audio, music, upscaling",
   "keywords": [
     "n8n-community-node-package",
