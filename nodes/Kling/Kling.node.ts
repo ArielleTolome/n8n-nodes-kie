@@ -456,6 +456,8 @@ export class Kling implements INodeType {
 					const characterImageUrl = this.getNodeParameter('characterImageUrl', i) as string;
 					const referenceVideoUrl = this.getNodeParameter('referenceVideoUrl', i) as string;
 					const promptV2V = this.getNodeParameter('promptV2V', i, '') as string;
+					const characterOrientation = this.getNodeParameter('characterOrientation', i, '') as string;
+					const resolutionV2V = this.getNodeParameter('resolutionV2V', i, '') as string;
 					const waitForCompletionV2V = this.getNodeParameter('waitForCompletionV2V', i) as boolean;
 
 					const input: IDataObject = {
