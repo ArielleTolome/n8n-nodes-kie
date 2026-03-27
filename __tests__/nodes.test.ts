@@ -124,6 +124,14 @@ describe('GrokImagine node', () => {
 	it('has operation property with options', () => {
 		assertHasOperationWithOptions(GrokImagine as unknown as AnyNode);
 	});
+	it('has required:true on aspectRatio field (prevents 422 aspect_ratio cannot be empty)', () => {
+		const node = new GrokImagine();
+		const aspectRatioProp = (node.description.properties as INodeProperties[]).find(
+			(p) => p.name === 'aspectRatio',
+		);
+		expect(aspectRatioProp).toBeDefined();
+		expect(aspectRatioProp?.required).toBe(true);
+	});
 });
 
 // ─── Hailuo ───────────────────────────────────────────────────────────────────
@@ -156,6 +164,13 @@ describe('InfineTalk node', () => {
 	});
 	it('has operation property with options', () => {
 		assertHasOperationWithOptions(InfineTalk as unknown as AnyNode);
+	});
+	it('uses model infinetalk/from-audio (regression: was missing from package.json n8n.nodes)', () => {
+		// Verify InfineTalk loads correctly — it was registered in index.ts but
+		// missing from package.json n8n.nodes array until v0.10.1
+		const node = new InfineTalk();
+		expect(node.description.name).toBe('infineTalk');
+		expect(node.description.credentials).toBeDefined();
 	});
 });
 

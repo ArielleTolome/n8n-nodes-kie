@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 Format: [Semantic Versioning](https://semver.org/)
 
+## [0.10.4] - 2026-03-27
+### Fixed
+- **Suno**: Corrected `modelVersion` getNodeParameter fallback from `'v4.5'` to `'V4_5'` — matches dropdown values
+- **Ideogram**: Renamed `'Auto (default)'` renderingSpeed option to `'Auto'` to satisfy property validation test
+### Added
+- **Tests**: Regression test for GrokImagine `aspectRatio` having `required: true`
+- **Tests**: Regression test for InfineTalk node loading correctly (was missing from `n8n.nodes` array)
+- Test count increased from 118 → 120 (all passing)
+
+## [0.10.3] - 2026-03-27
+### Fixed
+- **Suno**: Corrected `modelVersion` getNodeParameter fallback from `'v4.5'` to `'V4_5'`
+
+## [0.10.2] - 2026-03-27
+### Fixed
+- **Ideogram**: Renamed `'Auto (default)'` → `'Auto'` in renderingSpeed options, fixing property validation test
+- All 118 tests now passing (was 1 failing)
+
+## [0.10.1] - 2026-03-27
+### Fixed
+- **package.json**: InfineTalk node missing from `n8n.nodes` array — the node existed in code but was invisible to n8n users
+
 ## [0.10.0] - 2026-03-27
 ### Fixed
 - **GrokImagine**: Fixed critical 422 "aspect_ratio cannot be empty" error in Text-to-Image by adding `required: true` to the `aspectRatio` field and a `|| '1:1'` fallback in execute()
