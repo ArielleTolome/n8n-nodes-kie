@@ -148,14 +148,14 @@ export class Ideogram implements INodeType {
 					},
 				},
 				options: [
-					{ name: 'Auto (default)', value: '' },
+					{ name: 'Auto', value: '' },
 					{ name: 'Turbo', value: 'TURBO' },
 					{ name: 'Default', value: 'DEFAULT' },
 					{ name: 'Balanced', value: 'BALANCED' },
 					{ name: 'Quality', value: 'QUALITY' },
 				],
 				default: '',
-				description: 'Rendering speed vs quality trade-off (leave as Auto to omit)',
+				description: 'Rendering speed vs quality trade-off (leave as Auto to omit from API call)',
 			},
 			{
 				displayName: 'Character ID',
