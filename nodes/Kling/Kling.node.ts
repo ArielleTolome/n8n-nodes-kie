@@ -503,6 +503,10 @@ export class Kling implements INodeType {
 						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
+						const genMode = this.getNodeParameter('generationMode', i, 'std') as string;
+						if (genMode && genMode !== 'std') input.mode = genMode;
+						const enableSound = this.getNodeParameter('enableSound', i, false) as boolean;
+						if (enableSound) input.enable_sound = true;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
@@ -515,6 +519,10 @@ export class Kling implements INodeType {
 						if (seed) input.seed = seed;
 						const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
 						if (tailImageUrl) input.tail_image_url = tailImageUrl;
+						const i2vGenMode = this.getNodeParameter('generationMode', i, 'std') as string;
+						if (i2vGenMode && i2vGenMode !== 'std') input.mode = i2vGenMode;
+						const i2vEnableSound = this.getNodeParameter('enableSound', i, false) as boolean;
+						if (i2vEnableSound) input.enable_sound = true;
 					} else if (operation === 'aiAvatar') {
 						model = this.getNodeParameter('modelAvatar', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;

@@ -6,7 +6,7 @@
 
 **22 n8n community nodes for [Kie.ai](https://kie.ai)** — the unified AI API covering image generation, video generation, audio, music, and upscaling. One API key. All models.
 
-> Includes Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 02, Runway Gen4, Google Imagen4, Nano Banana, Seedream, Seedance, Qwen, GPT-Image-1.5, Grok Imagine, Ideogram v3, Recraft, Topaz, ElevenLabs, Suno, ZImage, InfineTalk.
+> Includes Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 2.3, Runway Gen4, Google Imagen4, Nano Banana, Seedream 5.0, Seedance/Bytedance, Qwen Image 2.0, GPT-Image-1.5, Grok Imagine, Ideogram v3, Recraft, Topaz, ElevenLabs, Suno V5, ZImage, InfineTalk.
 
 ---
 
@@ -71,9 +71,11 @@ Key parameters:
 #### Kling
 Operations: Text-to-Video, Image-to-Video, Video-to-Video (Motion Control), AI Avatar, Query Task Status
 
-Models (T2V): `kling-3.0/video`, `kling-2.6/text-to-video`, `kling/v2-5-turbo-text-to-video-pro`, `kling/v2-1-master-text-to-video`, `kling/v2-1-pro`, `kling/v2-1-standard`
+Models (T2V): `kling-3.0/video` ✨, `kling-2.6/text-to-video`, `kling/v2-5-turbo-text-to-video-pro`, `kling/v2-1-master-text-to-video`
 
-Models (I2V): `kling-3.0/video`, `kling-2.6/image-to-video`, `kling/v2-5-turbo-image-to-video-pro`, `kling/v2-1-master-image-to-video`, `kling/v2-1-pro`
+Models (I2V): `kling-2.6/image-to-video` ✨, `kling/v2-5-turbo-image-to-video-pro`, `kling/v2-1-master-image-to-video`, `kling/v2-1-pro`, `kling/v2-1-standard`
+
+Models (V2V): `kling-3.0/motion-control`, `kling-2.6/motion-control`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -120,9 +122,11 @@ Key parameters:
 #### Wan
 Operations: Text-to-Video, Image-to-Video, Video-to-Video, Speech-to-Video, Animate, Query Task Status
 
-Models (T2V): `wan/2-6-text-to-video`, `wan/2-2-a14b-text-to-video-turbo`
+Models (T2V): `wan/2-6-text-to-video`, `wan/2-5-text-to-video`, `wan/2-2-a14b-text-to-video-turbo`
 
-Models (V2V): `wan/2-6-video-to-video`, `wan/2-6-flash-video-to-video`, `wan/2-2-animate-move`, `wan/2-2-animate-replace`
+Models (I2V): `wan/2-6-image-to-video`, `wan/2-6-flash-image-to-video` ✨, `wan/2-5-image-to-video`, `wan/2-2-a14b-image-to-video-turbo`
+
+Models (V2V): `wan/2-6-video-to-video`, `wan/2-6-flash-video-to-video` ✨, `wan/2-2-animate-move`, `wan/2-2-animate-replace`
 
 Key parameters:
 - `prompt`, `imageUrl`, `videoUrl`
@@ -136,6 +140,8 @@ Key parameters:
 Operations: Text-to-Video, Image-to-Video, Query Task Status
 
 Models (T2V): `hailuo/02-text-to-video-pro`, `hailuo/02-text-to-video-standard`
+
+Models (I2V): `hailuo/2-3-image-to-video-pro` ✨, `hailuo/2-3-image-to-video-standard` ✨, `hailuo/02-image-to-video-pro`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -162,9 +168,9 @@ Key parameters:
 ---
 
 #### GrokImagine
-Operations: Text-to-Image, Image-to-Image, Text-to-Video, Image-to-Video, Upscale, Query Task Status
+Operations: Text-to-Image, Image-to-Image, Text-to-Video, Image-to-Video, Upscale, Extend Video ✨, Query Task Status
 
-Models: `grok-imagine/text-to-image`, `grok-imagine/image-to-image`, `grok-imagine/text-to-video`, `grok-imagine/image-to-video`, `grok-imagine/upscale`
+Models: `grok-imagine/text-to-image`, `grok-imagine/image-to-image`, `grok-imagine/text-to-video`, `grok-imagine/image-to-video`, `grok-imagine/upscale`, `grok-imagine/extend`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -226,9 +232,9 @@ Key parameters:
 ---
 
 #### Ideogram
-Operations: Generate, Reframe, Character, Character Edit, Character Remix, Query Task Status
+Operations: Generate (V3), Edit (V3) ✨, Remix (V3) ✨, Reframe (V3) ✨, Character, Character Edit, Character Remix, Query Task Status
 
-Models: `ideogram/v3`, `ideogram/v3-reframe`, `ideogram/character`, `ideogram/character-edit`, `ideogram/character-remix`
+Models: `ideogram/v3-text-to-image`, `ideogram/v3-edit`, `ideogram/v3-remix`, `ideogram/v3-reframe`, `ideogram/character`, `ideogram/character-edit`, `ideogram/character-remix`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -244,7 +250,7 @@ Key parameters:
 #### Qwen
 Operations: Text-to-Image, Image-to-Image, Image Edit, Query Task Status
 
-Models: `qwen2/text-to-image`, `qwen/text-to-image`, `qwen/image-to-image`, `qwen/image-edit`, `qwen2/image-edit`
+Models: `qwen2/text-to-image`, `qwen/text-to-image`, `qwen2/image-to-image` ✨, `qwen/image-to-image`, `qwen/image-edit`, `qwen2/image-edit`
 
 Key parameters:
 - `prompt`, `imageUrl`
@@ -323,9 +329,9 @@ Key parameters:
 ### 🎵 Audio & Music
 
 #### ElevenLabs
-Operations: Text-to-Speech, Speech-to-Text, Sound Effects, Audio Isolation, Text-to-Dialogue, Query Task Status
+Operations: Text-to-Speech, Text-to-Dialogue V3 ✨, Speech-to-Text, Sound Effects, Audio Isolation, Query Task Status
 
-Models: `elevenlabs/text-to-speech-turbo-2-5`, `elevenlabs/text-to-speech-multilingual-v2`
+Models: `elevenlabs/text-to-speech-turbo-2-5`, `elevenlabs/text-to-speech-multilingual-v2`, `elevenlabs/text-to-dialogue-v3`
 
 Key parameters:
 - `text` — text to speak
@@ -337,16 +343,18 @@ Key parameters:
 ---
 
 #### Suno
-Operations: Generate Music, Extend Music, Generate Lyrics, Boost Style, Convert to WAV, Separate Vocals, Add Vocals, MIDI to Music, Music Video, Query Task Status
+Operations: Generate Music, Extend Music, Upload & Cover Audio ✨, Upload & Extend Audio ✨, Add Instrumental ✨, Add Vocals ✨, Replace Music Section ✨, Generate Lyrics, Boost Style, Convert to WAV, Separate Vocals, Generate MIDI, Create Music Video, Query Task Status
 
-Models: `chirp-v4-5-plus`, `chirp-v4-5`, `chirp-v4`, `chirp-v3-5`
+Models: `V5`, `V4_5PLUS`, `V4_5ALL`, `V4_5`, `V4`, `V3_5`
 
 Key parameters:
 - `prompt` — style/lyric prompt
-- `model` — `chirp-v4-5-plus`, `chirp-v4-5`, `chirp-v4`, or `chirp-v3-5`
+- `modelVersion` — `V5`, `V4_5PLUS`, `V4_5ALL`, `V4_5`, `V4`, or `V3_5`
 - `tags` — style tags (e.g. "pop, female vocals")
-- `title`, `lyric`
-- `seed`, `callBackUrl`, `replyRef`
+- `title`, `lyrics`, `style`, `instrumental`
+- `sourceTaskId` — for extend/boost/midi/video operations
+- `uploadUrl` — audio URL for upload operations
+- `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---

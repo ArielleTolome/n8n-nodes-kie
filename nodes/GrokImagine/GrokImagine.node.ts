@@ -127,6 +127,7 @@ export class GrokImagine implements INodeType {
 				displayName: 'Aspect Ratio',
 				name: 'aspectRatio',
 				type: 'options',
+				required: true,
 				displayOptions: {
 					show: {
 						operation: ['textToImage', 'imageToImage'],
@@ -140,6 +141,7 @@ export class GrokImagine implements INodeType {
 					{ name: '3:4', value: '3:4' },
 				],
 				default: '1:1',
+				description: 'Aspect ratio for the generated image (required by Grok Imagine API)',
 			},
 			{
 				displayName: 'Wait for Completion',
@@ -193,7 +195,7 @@ export class GrokImagine implements INodeType {
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 					}
 					if (['textToImage', 'imageToImage'].includes(operation)) {
-						input.aspect_ratio = this.getNodeParameter('aspectRatio', i) as string;
+						input.aspect_ratio = (this.getNodeParameter('aspectRatio', i) as string) || '1:1';
 					}
 					if (operation === 'imageToImage') {
 						input.image_urls = [this.getNodeParameter('imageUrl', i) as string];
