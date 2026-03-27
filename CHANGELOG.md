@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 Format: [Semantic Versioning](https://semver.org/)
 
+## [0.10.0] - 2026-03-27
+### Fixed
+- **GrokImagine**: Fixed critical 422 "aspect_ratio cannot be empty" error in Text-to-Image by adding `required: true` to the `aspectRatio` field and a `|| '1:1'` fallback in execute()
+- **GrokImagine**: Confirmed `image_urls` array format for Image-to-Image is correct per Kie.ai API
+- **Kling**: Fixed `generationMode` (Standard/Pro) field not being sent to the API — now correctly sent as `input.mode` for both textToVideo and imageToVideo
+- **Kling**: Fixed `enableSound` field not being sent to the API — now correctly sent as `input.enable_sound`
+- **package.json**: Fixed InfineTalk node not registered in `n8n.nodes` array — node was built but never exposed to n8n
+
 ## [0.5.1] - 2026-03-17
 ### Fixed
 - Example workflow type strings corrected: `image-generation-flux.json` → `n8n-nodes-kie.flux`, `image-generation-ideogram.json` → `n8n-nodes-kie.ideogram`, `text-to-speech-elevenlabs.json` → `n8n-nodes-kie.elevenLabs`, `video-to-video-topaz.json` → `n8n-nodes-kie.topaz` (all were using non-existent `n8n-nodes-kie.kie` type)
