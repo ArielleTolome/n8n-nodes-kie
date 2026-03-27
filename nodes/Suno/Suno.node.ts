@@ -256,7 +256,7 @@ export class Suno implements INodeType {
 						const title = this.getNodeParameter('title', i, '') as string;
 						const tags = this.getNodeParameter('tags', i, '') as string;
 						const instrumental = this.getNodeParameter('instrumental', i) as boolean;
-						const modelVersion = this.getNodeParameter('modelVersion', i, 'v4.5') as string;
+						const modelVersion = this.getNodeParameter('modelVersion', i, 'V4_5') as string;
 						if (prompt) body.prompt = prompt;
 						if (lyrics) body.lyrics = lyrics;
 						if (style) body.style = style;
