@@ -89,13 +89,41 @@ export class GrokImagine implements INodeType {
 				displayName: 'Image URL',
 				name: 'imageUrl',
 				type: 'string',
-				required: true,
 				displayOptions: {
 					show: {
 						operation: ['imageToImage', 'imageToVideo'],
 					},
 				},
 				default: '',
+				description: 'Primary image URL. Use "Additional Image URLs" below for multi-image input.',
+			},
+			{
+				displayName: 'Additional Image URLs',
+				name: 'additionalImageUrls',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				displayOptions: {
+					show: {
+						operation: ['imageToImage', 'imageToVideo'],
+					},
+				},
+				default: {},
+				placeholder: 'Add Image URL',
+				description: 'Additional reference images. Image-to-Image supports up to 5; Image-to-Video supports up to 7.',
+				options: [
+					{
+						displayName: 'Image',
+						name: 'image',
+						values: [
+							{
+								displayName: 'URL',
+								name: 'url',
+								type: 'string',
+								default: '',
+							},
+						],
+					},
+				],
 			},
 			{
 				displayName: 'Task ID (to upscale)',
@@ -197,7 +225,7 @@ export class GrokImagine implements INodeType {
 				type: 'boolean',
 				displayOptions: {
 					show: {
-						operation: ['textToImage', 'imageToImage', 'textToVideo', 'imageToVideo', 'upscale'],
+						operation: ['textToImage', 'imageToImage', 'textToVideo', 'imageToVideo', 'upscale', 'extend'],
 					},
 				},
 				default: true,
@@ -246,9 +274,25 @@ export class GrokImagine implements INodeType {
 						input.aspect_ratio = (this.getNodeParameter('aspectRatio', i) as string) || '1:1';
 					}
 					if (operation === 'imageToImage') {
-						input.image_urls = [this.getNodeParameter('imageUrl', i) as string];
+						const primaryUrl = this.getNodeParameter('imageUrl', i, '') as string;
+						const additionalCollection = this.getNodeParameter('additionalImageUrls', i, {}) as IDataObject;
+						const additionalUrls = ((additionalCollection.image as IDataObject[]) || [])
+							.map((img) => img.url as string)
+							.filter((url) => url && url.trim() !== '');
+						const allImageUrls = primaryUrl ? [primaryUrl, ...additionalUrls] : additionalUrls;
+						input.image_urls = allImageUrls.slice(0, 5);
 					} else if (operation === 'imageToVideo') {
-						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+						const primaryUrl = this.getNodeParameter('imageUrl', i, '') as string;
+						const additionalCollection = this.getNodeParameter('additionalImageUrls', i, {}) as IDataObject;
+						const additionalUrls = ((additionalCollection.image as IDataObject[]) || [])
+							.map((img) => img.url as string)
+							.filter((url) => url && url.trim() !== '');
+						const allVideoUrls = primaryUrl ? [primaryUrl, ...additionalUrls] : additionalUrls;
+						if (allVideoUrls.length > 1) {
+							input.image_urls = allVideoUrls.slice(0, 7);
+						} else if (allVideoUrls.length === 1) {
+							input.image_url = allVideoUrls[0];
+						}
 					} else if (operation === 'upscale') {
 						input.task_id = this.getNodeParameter('upscaleTaskId', i) as string;
 					} else if (operation === 'extend') {

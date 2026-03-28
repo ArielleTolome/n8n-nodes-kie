@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-kie-pro",
-  "version": "0.12.2",
-  "description": "n8n community nodes for Kie.ai — 23 AI model nodes: Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 2.3, Runway Gen4, Seedream 5, Seedance 1.5 Pro, Qwen, Google Imagen4, Nano Banana, GPT-Image-1.5, Grok Imagine (w/ video), Ideogram v3, Recraft, Topaz, ElevenLabs, Suno, ZImage, InfineTalk, Gemini 2.5/3 — image generation, video generation, audio, music, upscaling, LLM chat",
+  "version": "0.13.0",
+  "description": "n8n community nodes for Kie.ai — 26 AI model nodes: Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3 4K, Wan 2.6, Hailuo 2.3, Runway Gen4, Seedream 5, Seedance 1.5 Pro, Qwen, Google Imagen4, Nano Banana, GPT-Image-1.5, Grok Imagine (w/ video extend), Ideogram v3, Recraft, Topaz, ElevenLabs, Suno V5.5 (music+sounds+mashup), ZImage, InfineTalk, Gemini 2.5/3, Claude Opus/Sonnet, OpenAI GPT-5/Codex, Midjourney Niji 7 — image generation, video generation, audio, music, upscaling, LLM chat",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -90,7 +90,19 @@
     "character-animation",
     "stable-diffusion",
     "ai-models",
-    "generative-ai"
+    "generative-ai",
+    "claude",
+    "claude-opus",
+    "claude-sonnet",
+    "anthropic",
+    "gpt-5",
+    "openai-gpt5",
+    "codex",
+    "midjourney",
+    "niji-7",
+    "suno-v5-5",
+    "music-mashup",
+    "sound-effects"
   ],
   "license": "MIT",
   "homepage": "https://github.com/ArielleTolome/n8n-nodes-kie#readme",
@@ -143,7 +155,10 @@
       "dist/nodes/Suno/Suno.node.js",
       "dist/nodes/ElevenLabs/ElevenLabs.node.js",
       "dist/nodes/InfineTalk/InfineTalk.node.js",
-      "dist/nodes/Gemini/Gemini.node.js"
+      "dist/nodes/Gemini/Gemini.node.js",
+      "dist/nodes/Claude/Claude.node.js",
+      "dist/nodes/OpenAIChat/OpenAIChat.node.js",
+      "dist/nodes/Midjourney/Midjourney.node.js"
     ],
     "credentials": [
       "dist/credentials/KieApi.credentials.js"

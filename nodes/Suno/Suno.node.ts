@@ -47,6 +47,8 @@ export class Suno implements INodeType {
 					{ name: 'Separate Vocals', value: 'separateVocals', action: 'Separate vocals' },
 					{ name: 'Generate MIDI', value: 'generateMidi', action: 'Generate MIDI' },
 					{ name: 'Create Music Video', value: 'createMusicVideo', action: 'Create music video' },
+					{ name: 'Generate Sound Effect', value: 'generateSound', action: 'Generate sound effect' },
+					{ name: 'Music Mashup', value: 'musicMashup', action: 'Mashup two audio tracks' },
 					{ name: 'Query Task Status', value: 'queryTaskStatus', action: 'Get task status' },
 				],
 				default: 'generateMusic',
@@ -90,6 +92,7 @@ export class Suno implements INodeType {
 				type: 'options',
 				displayOptions: { show: { operation: ['generateMusic'] } },
 				options: [
+					{ name: 'V5.5 (Latest)', value: 'V5_5' },
 					{ name: 'V5', value: 'V5' },
 					{ name: 'V4.5 Plus', value: 'V4_5PLUS' },
 					{ name: 'V4.5 All', value: 'V4_5ALL' },
@@ -97,7 +100,7 @@ export class Suno implements INodeType {
 					{ name: 'V4', value: 'V4' },
 					{ name: 'V3.5', value: 'V3_5' },
 				],
-				default: 'V4_5',
+				default: 'V5_5',
 				description: 'Suno model version to use',
 			},
 			{
@@ -202,7 +205,7 @@ export class Suno implements INodeType {
 				displayName: 'Reply URL',
 				name: 'replyUrl',
 				type: 'string',
-				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo', 'generateSound', 'musicMashup'] } },
 				default: '',
 				description: 'Webhook URL to call when the task completes',
 			},
@@ -210,7 +213,7 @@ export class Suno implements INodeType {
 				displayName: 'Reply Ref',
 				name: 'replyRef',
 				type: 'string',
-				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo', 'generateSound', 'musicMashup'] } },
 				default: '',
 				description: 'Custom reference string passed back in the webhook callback',
 			},
@@ -218,9 +221,113 @@ export class Suno implements INodeType {
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
-				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo'] } },
+				displayOptions: { show: { operation: ['generateMusic', 'extendMusic', 'uploadCover', 'uploadExtend', 'addInstrumental', 'addVocals', 'replaceSection', 'generateLyrics', 'boostStyle', 'convertWav', 'separateVocals', 'generateMidi', 'createMusicVideo', 'generateSound', 'musicMashup'] } },
 				default: true,
 				description: 'Whether to wait for the task to complete (polls every 3s, 5min timeout)',
+			},
+			// Sound Effect fields
+			{
+				displayName: 'Sound Prompt',
+				name: 'soundPrompt',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { operation: ['generateSound'] } },
+				default: '',
+				description: 'Text description of the sound effect to generate',
+			},
+			{
+				displayName: 'Loop',
+				name: 'soundLoop',
+				type: 'boolean',
+				displayOptions: { show: { operation: ['generateSound'] } },
+				default: false,
+				description: 'Whether to generate a loopable sound effect',
+			},
+			{
+				displayName: 'BPM',
+				name: 'soundBpm',
+				type: 'number',
+				displayOptions: { show: { operation: ['generateSound'] } },
+				default: 0,
+				description: 'Beats per minute (optional, 0 for auto)',
+			},
+			{
+				displayName: 'Key',
+				name: 'soundKey',
+				type: 'string',
+				displayOptions: { show: { operation: ['generateSound'] } },
+				default: '',
+				description: 'Musical key (e.g. "C major", "A minor") — optional',
+			},
+			// Mashup fields
+			{
+				displayName: 'Audio URL 1',
+				name: 'mashupUrl1',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: '',
+				description: 'URL of the first audio track',
+			},
+			{
+				displayName: 'Audio URL 2',
+				name: 'mashupUrl2',
+				type: 'string',
+				required: true,
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: '',
+				description: 'URL of the second audio track',
+			},
+			{
+				displayName: 'Mashup Lyrics',
+				name: 'mashupLyrics',
+				type: 'string',
+				typeOptions: { rows: 4 },
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: '',
+				description: 'Optional custom lyrics for the mashup',
+			},
+			{
+				displayName: 'Mashup Style',
+				name: 'mashupStyle',
+				type: 'string',
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: '',
+				description: 'Music style description for the mashup',
+			},
+			{
+				displayName: 'Mashup Title',
+				name: 'mashupTitle',
+				type: 'string',
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: '',
+			},
+			{
+				displayName: 'Style Weight',
+				name: 'styleWeight',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: 0.5,
+				description: 'Weight given to style influence (0-1)',
+			},
+			{
+				displayName: 'Audio Weight',
+				name: 'audioWeight',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: 0.5,
+				description: 'Weight given to audio influence (0-1)',
+			},
+			{
+				displayName: 'Weirdness Constraint',
+				name: 'weirdnessConstraint',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 1, numberStepSize: 0.01 },
+				displayOptions: { show: { operation: ['musicMashup'] } },
+				default: 0,
+				description: 'Controls how unusual/experimental the mashup can be (0 = normal, 1 = weird)',
 			},
 			{
 				displayName: 'Task ID',
@@ -323,6 +430,32 @@ export class Suno implements INodeType {
 						body.endTime = this.getNodeParameter('sectionEnd', i, 10) as number;
 						const negReplTags = this.getNodeParameter('negativeTags', i, '') as string;
 						if (negReplTags) body.negativeTags = negReplTags;
+					} else if (operation === 'generateSound') {
+						endpoint = '/api/v1/sounds/generate';
+						body.model = 'ai-music-api/sounds';
+						body.prompt = this.getNodeParameter('soundPrompt', i) as string;
+						const soundLoop = this.getNodeParameter('soundLoop', i, false) as boolean;
+						if (soundLoop) body.loop = true;
+						const soundBpm = this.getNodeParameter('soundBpm', i, 0) as number;
+						if (soundBpm) body.bpm = soundBpm;
+						const soundKey = this.getNodeParameter('soundKey', i, '') as string;
+						if (soundKey) body.key = soundKey;
+					} else if (operation === 'musicMashup') {
+						endpoint = '/api/v1/mashup/generate';
+						body.model = 'ai-music-api/mashup';
+						const url1 = this.getNodeParameter('mashupUrl1', i) as string;
+						const url2 = this.getNodeParameter('mashupUrl2', i) as string;
+						body.uploadUrlList = [url1, url2];
+						const mashupLyrics = this.getNodeParameter('mashupLyrics', i, '') as string;
+						if (mashupLyrics) body.lyrics = mashupLyrics;
+						const mashupStyle = this.getNodeParameter('mashupStyle', i, '') as string;
+						if (mashupStyle) body.style = mashupStyle;
+						const mashupTitle = this.getNodeParameter('mashupTitle', i, '') as string;
+						if (mashupTitle) body.title = mashupTitle;
+						body.styleWeight = this.getNodeParameter('styleWeight', i, 0.5) as number;
+						body.audioWeight = this.getNodeParameter('audioWeight', i, 0.5) as number;
+						const weirdnessConstraint = this.getNodeParameter('weirdnessConstraint', i, 0) as number;
+						if (weirdnessConstraint) body.weirdnessConstraint = weirdnessConstraint;
 					}
 
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;

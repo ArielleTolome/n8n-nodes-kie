@@ -19,4 +19,8 @@ export * from './nodes/Veo/Veo.node';
 export * from './nodes/Suno/Suno.node';
 export * from './nodes/ElevenLabs/ElevenLabs.node';
 export * from './nodes/InfineTalk/InfineTalk.node';
+export * from './nodes/Gemini/Gemini.node';
+export * from './nodes/Claude/Claude.node';
+export * from './nodes/OpenAIChat/OpenAIChat.node';
+export * from './nodes/Midjourney/Midjourney.node';
 export * from './credentials/KieApi.credentials';
