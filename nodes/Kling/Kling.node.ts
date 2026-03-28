@@ -95,6 +95,7 @@ export class Kling implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Kling 3.0', value: 'kling-3.0/image-to-video' },
 					{ name: 'Kling 2.6 (Recommended)', value: 'kling-2.6/image-to-video' },
 					{ name: 'Kling 2.5 Turbo Pro', value: 'kling/v2-5-turbo-image-to-video-pro' },
 					{ name: 'Kling 2.1 Master', value: 'kling/v2-1-master-image-to-video' },
@@ -197,6 +198,7 @@ export class Kling implements INodeType {
 				options: [
 					{ name: '5 Seconds', value: 5 },
 					{ name: '10 Seconds', value: 10 },
+					{ name: '15 Seconds (Kling 3.0 only)', value: 15 },
 				],
 				default: 5,
 			},
@@ -509,36 +511,61 @@ export class Kling implements INodeType {
 
 					if (operation === 'textToVideo') {
 						model = this.getNodeParameter('model', i) as string;
+						const isKling30 = model === 'kling-3.0/video';
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.duration = String(this.getNodeParameter('duration', i) as number);
-						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
-						const seed = this.getNodeParameter('seed', i, 0) as number;
-						if (seed) input.seed = seed;
 						const genMode = this.getNodeParameter('generationMode', i, 'std') as string;
 						input.mode = genMode || 'std';
 						const enableSound = this.getNodeParameter('enableSound', i, false) as boolean;
-						if (enableSound) input.enable_sound = true;
 						const negPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
-						if (negPrompt) input.negative_prompt = negPrompt;
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (isKling30) {
+							// Kling 3.0 uses different field names and requires multi_shots
+							input.aspect_ratio = this.getNodeParameter('ratio', i) as string;
+							input.multi_shots = false;
+							input.sound = enableSound;
+							if (negPrompt) input.negative_prompt = negPrompt;
+							if (seed) input.seed = seed;
+						} else {
+							// Kling 2.x and older
+							input.ratio = this.getNodeParameter('ratio', i) as string;
+							input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
+							if (enableSound) input.enable_sound = true;
+							if (negPrompt) input.negative_prompt = negPrompt;
+							if (seed) input.seed = seed;
+						}
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
-						input.image_url = this.getNodeParameter('imageUrl', i) as string;
+						const isKling30I2V = model === 'kling-3.0/image-to-video';
+						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
 						const prompt = this.getNodeParameter('promptI2V', i, '') as string;
 						if (prompt) input.prompt = prompt;
 						input.duration = String(this.getNodeParameter('duration', i) as number);
-						input.ratio = this.getNodeParameter('ratio', i) as string;
-						input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
-						const seed = this.getNodeParameter('seed', i, 0) as number;
-						if (seed) input.seed = seed;
-						const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
-						if (tailImageUrl) input.tail_image_url = tailImageUrl;
 						const i2vGenMode = this.getNodeParameter('generationMode', i, 'std') as string;
 						input.mode = i2vGenMode || 'std';
 						const i2vEnableSound = this.getNodeParameter('enableSound', i, false) as boolean;
-						if (i2vEnableSound) input.enable_sound = true;
 						const i2vNegPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
-						if (i2vNegPrompt) input.negative_prompt = i2vNegPrompt;
+						const i2vSeed = this.getNodeParameter('seed', i, 0) as number;
+						const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
+						if (isKling30I2V) {
+							// Kling 3.0 i2v uses image_urls array, aspect_ratio, sound, multi_shots
+							input.image_urls = [imageUrl];
+							input.aspect_ratio = this.getNodeParameter('ratio', i) as string;
+							input.multi_shots = false;
+							input.sound = i2vEnableSound;
+							if (tailImageUrl) (input.image_urls as string[]).push(tailImageUrl);
+							if (i2vNegPrompt) input.negative_prompt = i2vNegPrompt;
+							if (i2vSeed) input.seed = i2vSeed;
+						} else {
+							// Kling 2.x and older
+							input.image_url = imageUrl;
+							input.ratio = this.getNodeParameter('ratio', i) as string;
+							input.cfg_scale = this.getNodeParameter('cfgScale', i) as number;
+							if (tailImageUrl) input.tail_image_url = tailImageUrl;
+							if (i2vEnableSound) input.enable_sound = true;
+							if (i2vNegPrompt) input.negative_prompt = i2vNegPrompt;
+							if (i2vSeed) input.seed = i2vSeed;
+						}
 					} else if (operation === 'aiAvatar') {
 						model = this.getNodeParameter('modelAvatar', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
