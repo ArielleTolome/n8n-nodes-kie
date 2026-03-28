@@ -1,0 +1,126 @@
+{
+  "name": "Kie.ai Node Error Reporter",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "kie-node-check",
+              "leftValue": "={{ $json.execution.lastNodeExecuted }}",
+              "rightValue": "kie-pro",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-kie-errors",
+      "name": "Is Kie.ai Node?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const exec = $input.first().json;\nconst errorMsg = exec.error?.message || 'Unknown error';\nconst lastNode = exec.execution?.lastNodeExecuted || 'unknown';\nconst workflowName = exec.workflow?.name || 'unknown';\nconst n8nVersion = exec.n8nVersion || 'unknown';\n\n// Parse error code from message like \"Kie.ai API error (422): ...\"\nconst codeMatch = errorMsg.match(/\\((\\d+)\\)/);\nconst errorCode = codeMatch ? codeMatch[1] : 'unknown';\n\nreturn [{\n  json: {\n    node: lastNode,\n    operation: 'unknown',\n    errorCode,\n    errorMessage: errorMsg.substring(0, 500),\n    packageVersion: 'n8n-nodes-kie-pro (local instance)',\n    n8nVersion,\n    workflowName,\n    timestamp: new Date().toISOString(),\n    executionId: exec.id,\n    workflowId: exec.workflow?.id,\n  }\n}];"
+      },
+      "id": "extract-error-data",
+      "name": "Extract Error Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 240]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "issue",
+        "operation": "create",
+        "owner": {
+          "__rl": true,
+          "value": "ArielleTolome",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-nodes-kie",
+          "mode": "name"
+        },
+        "title": "=[Auto] {{ $json.node }} — {{ $json.errorCode }}: {{ $json.errorMessage.substring(0, 80) }}",
+        "body": "=## Auto-reported Error (Local n8n Instance)\n\n**Node:** `{{ $json.node }}`\n**Error Code:** `{{ $json.errorCode }}`\n**Workflow:** `{{ $json.workflowName }}`\n**n8n Version:** `{{ $json.n8nVersion }}`\n**Reported At:** {{ $json.timestamp }}\n\n### Error Message\n```\n{{ $json.errorMessage }}\n```\n\n---\n*Auto-created by the Kie.ai Node Error Reporter workflow in your n8n instance.*",
+        "labels": {
+          "values": [
+            { "label": "bug" },
+            { "label": "auto-reported" }
+          ]
+        }
+      },
+      "id": "create-github-issue",
+      "name": "Create GitHub Issue",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [900, 240],
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "github-credential-id",
+          "name": "GitHub OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ✅ Non-Kie.ai Error\nIgnored — only Kie.ai node errors create issues.",
+        "height": 80,
+        "width": 300
+      },
+      "id": "ignore-note",
+      "name": "Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [680, 420]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [{ "node": "Is Kie.ai Node?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is Kie.ai Node?": {
+      "main": [
+        [{ "node": "Extract Error Data", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Extract Error Data": {
+      "main": [
+        [{ "node": "Create GitHub Issue", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["error-handling", "kie-ai"],
+  "triggerCount": 0,
+  "updatedAt": "2026-03-28T00:00:00.000Z",
+  "versionId": "1"
+}

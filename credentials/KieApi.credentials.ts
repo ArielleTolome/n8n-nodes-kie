@@ -34,6 +34,13 @@ export class KieApi implements ICredentialType {
 			required: true,
 			description: 'Your Kie.ai API key',
 		},
+		{
+			displayName: 'Enable Error Reporting',
+			name: 'errorReporting',
+			type: 'boolean',
+			default: true,
+			description: 'Whether to automatically report API errors to the n8n-nodes-kie-pro maintainer so they can be fixed faster. No personal data is sent — only node name, operation, error code, and package version.',
+		},
 	];
 
 	authenticate: IAuthenticateGeneric = {

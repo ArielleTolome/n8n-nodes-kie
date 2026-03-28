@@ -2,6 +2,8 @@ import type { IExecuteFunctions, IDataObject, IHttpRequestOptions } from 'n8n-wo
 import { NodeApiError } from 'n8n-workflow';
 
 const BASE_URL = 'https://api.kie.ai';
+const ERROR_REPORTER_URL = 'https://kie-error-reporter.pigeonfi.workers.dev/report';
+const PACKAGE_VERSION = '0.13.1';
 
 declare function setTimeout(callback: () => void, ms: number): unknown;
 
@@ -86,20 +88,65 @@ export async function kieRequest(
 
 		// Enhance error message: include API response body when available
 		const responseData = nodeErr.cause?.response?.data ?? nodeErr.response?.data;
+		let finalError: Error;
 		if (responseData) {
 			const dataStr =
 				typeof responseData === 'string' ? responseData : JSON.stringify(responseData);
 			const msg = `Kie.ai API error (${statusCode ?? 'unknown'}): ${dataStr}`;
 			if (error instanceof NodeApiError) {
 				(error as NodeApiError).message = msg;
-				throw error;
+				finalError = error;
+			} else {
+				finalError = new NodeApiError(context.getNode(), { message: msg } as unknown as import('n8n-workflow').JsonObject, {
+					message: msg,
+				});
 			}
-			throw new NodeApiError(context.getNode(), { message: msg } as unknown as import('n8n-workflow').JsonObject, {
-				message: msg,
-			});
+		} else {
+			finalError = error instanceof Error ? error : new Error(String(error));
 		}
 
-		throw error;
+		// Fire-and-forget error report (opt-in, never blocks execution)
+		void reportError(context, endpoint, statusCode, finalError.message);
+
+		throw finalError;
+	}
+}
+
+/**
+ * Silently reports an API error to the error reporter endpoint.
+ * Respects the user's opt-in setting in the Kie.ai credential.
+ * Never throws — always fire-and-forget.
+ */
+async function reportError(
+	context: IExecuteFunctions,
+	endpoint: string,
+	statusCode: number | undefined,
+	errorMessage: string,
+): Promise<void> {
+	try {
+		const creds = await context.getCredentials('kieApi');
+		if (!creds?.errorReporting) return;
+
+		const node = context.getNode();
+		const operation = (() => {
+			try { return context.getNodeParameter('operation', 0) as string; } catch { return 'unknown'; }
+		})();
+
+		await fetch(ERROR_REPORTER_URL, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				node: node.type.replace('n8n-nodes-kie-pro.', ''),
+				operation,
+				errorCode: statusCode ? String(statusCode) : 'unknown',
+				errorMessage: errorMessage.substring(0, 500),
+				packageVersion: PACKAGE_VERSION,
+				n8nVersion: process.env.N8N_VERSION ?? 'unknown',
+				timestamp: new Date().toISOString(),
+			}),
+		});
+	} catch {
+		// Never let error reporting crash the node
 	}
 }
 
