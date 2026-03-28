@@ -516,7 +516,7 @@ export class Kling implements INodeType {
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 						const genMode = this.getNodeParameter('generationMode', i, 'std') as string;
-						if (genMode && genMode !== 'std') input.mode = genMode;
+						input.mode = genMode || 'std';
 						const enableSound = this.getNodeParameter('enableSound', i, false) as boolean;
 						if (enableSound) input.enable_sound = true;
 						const negPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
@@ -534,7 +534,7 @@ export class Kling implements INodeType {
 						const tailImageUrl = this.getNodeParameter('tailImageUrl', i, '') as string;
 						if (tailImageUrl) input.tail_image_url = tailImageUrl;
 						const i2vGenMode = this.getNodeParameter('generationMode', i, 'std') as string;
-						if (i2vGenMode && i2vGenMode !== 'std') input.mode = i2vGenMode;
+						input.mode = i2vGenMode || 'std';
 						const i2vEnableSound = this.getNodeParameter('enableSound', i, false) as boolean;
 						if (i2vEnableSound) input.enable_sound = true;
 						const i2vNegPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
