@@ -4,9 +4,9 @@
 [![npm downloads](https://img.shields.io/npm/dm/n8n-nodes-kie-pro)](https://www.npmjs.com/package/n8n-nodes-kie-pro)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**22 n8n community nodes for [Kie.ai](https://kie.ai)** — the unified AI API covering image generation, video generation, audio, music, and upscaling. One API key. All models.
+**25 n8n community nodes for [Kie.ai](https://kie.ai)** — the unified AI API covering image generation, video generation, audio, music, chat, and upscaling. One API key. All models.
 
-> Includes Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 2.3, Runway Gen4, Google Imagen4, Nano Banana, Seedream 5.0, Seedance/Bytedance, Qwen Image 2.0, GPT-Image-1.5, Grok Imagine, Ideogram v3, Recraft, Topaz, ElevenLabs, Suno V5, ZImage, InfineTalk.
+> Includes Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 2.3, Runway Gen4, Google Imagen4, Nano Banana, Seedream 5.0, Seedance/Bytedance, Qwen Image 2.0, GPT-Image-1.5, Grok Imagine (incl. video + extend), Ideogram v3, Recraft, Topaz, ElevenLabs, Suno V5.5 (incl. Sounds + Mashup), ZImage, InfineTalk, **Gemini** (2.5/3/3.1), **Claude** (4 series), **OpenAI Chat** (GPT-5/Codex), **Midjourney** (Niji 7).
 
 ---
 
@@ -49,7 +49,7 @@ After restarting n8n, search for node names in the node picker (e.g. "Kling", "S
 
 ---
 
-## Available Nodes (22 Total)
+## Available Nodes (25 Total)
 
 ### 🎬 Video Generation
 
@@ -343,9 +343,9 @@ Key parameters:
 ---
 
 #### Suno
-Operations: Generate Music, Extend Music, Upload & Cover Audio ✨, Upload & Extend Audio ✨, Add Instrumental ✨, Add Vocals ✨, Replace Music Section ✨, Generate Lyrics, Boost Style, Convert to WAV, Separate Vocals, Generate MIDI, Create Music Video, Query Task Status
+Operations: Generate Music, Extend Music, Upload & Cover Audio, Upload & Extend Audio, Add Instrumental, Add Vocals, Replace Music Section, Generate Lyrics, Boost Style, Convert to WAV, Separate Vocals, Generate MIDI, Create Music Video, **Generate Sound** ✨, **Music Mashup** ✨, Query Task Status
 
-Models: `V5`, `V4_5PLUS`, `V4_5ALL`, `V4_5`, `V4`, `V3_5`
+Models: `V5_5` ✨, `V5`, `V4_5PLUS`, `V4_5ALL`, `V4_5`, `V4`, `V3_5`
 
 Key parameters:
 - `prompt` — style/lyric prompt
@@ -367,6 +367,71 @@ Model: `infinetalk/from-audio`
 Key parameters:
 - `audioUrl` — source audio file
 - `targetLanguage`
+- `replyUrl`, `replyRef`
+- `waitForCompletion`
+
+---
+
+---
+
+### 💬 Chat / LLM
+
+#### Claude (Kie.ai) ✨
+Operations: Chat Completion
+
+Models: `claude-opus-4-6` ✨, `claude-sonnet-4-6`, `claude-haiku-4-5`, `claude-sonnet-4-5`, `claude-opus-4-5`
+
+Key parameters:
+- `model` — Claude model to use
+- `message` — user message
+- `systemPrompt` — optional system instructions
+- `chatHistory` — JSON array of `{role, content}` for multi-turn conversations
+- `imageUrl` — optional image for multimodal inputs
+- `temperature`, `maxTokens`
+- Returns `reply` + `updatedHistory` for chaining
+
+---
+
+#### OpenAI Chat (Kie.ai) ✨
+Operations: Chat Completion
+
+Models: `chat/gpt-5-2` ✨, `market/codex/gpt-codex`
+
+Key parameters:
+- `model` — GPT-5.2 or GPT Codex
+- `message`, `systemPrompt`, `chatHistory`
+- `reasoningEffort` — low/medium/high
+- `webSearch` — enable Google Search grounding
+- Returns `reply` + `updatedHistory`
+
+---
+
+#### Gemini (Kie.ai) ✨
+Operations: Chat Completion
+
+Models: `gemini/gemini-3.1-pro` ✨, `gemini/gemini-3-pro`, `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash`
+
+Key parameters:
+- `model`, `message`, `systemPrompt`, `chatHistory`
+- `imageUrl` — multimodal support
+- `googleSearch` — enable real-time search grounding
+- `thinkingBudget` — reasoning tokens
+- Returns `reply` + `updatedHistory`
+
+---
+
+### 🎨 Image Generation (continued)
+
+#### Midjourney (Kie.ai) ✨
+Operations: Text-to-Image, Image-to-Image, Query Task Status
+
+Models: Midjourney Standard, Niji 7 (anime)
+
+Key parameters:
+- `prompt`, `imageUrl`
+- `model` — Standard or Niji 7
+- `mode` — relaxed / fast / turbo
+- `aspectRatio`, `seed`
 - `replyUrl`, `replyRef`
 - `waitForCompletion`
 
@@ -422,29 +487,20 @@ After 3 retries the error is propagated. For high-volume workflows, use `waitFor
 
 ## Changelog
 
-| Version | Changes |
-|---------|---------|
-| v0.5.6 | Model ID audit — fix Flux (`flux-2/` prefix), fix Suno chirp IDs (`chirp-v4-5-plus`, `chirp-v4-5`, `chirp-v4`, `chirp-v3-5`), remove invalid `qwen2/image-to-image`; publish as `n8n-nodes-kie-pro` |
-| v0.5.5 | Internal build; npm name fix attempt |
-| v0.4.7 | Security audit — add `required: true` to API key credential field |
-| v0.4.6 | README changelog update; lint warning cleanup |
-| v0.4.5 | Snake_case audit — 36 API parameter naming bugs fixed across 11 nodes |
-| v0.4.4 | Kling `tailImageUrl` snake_case bug fix; ElevenLabs fields verified |
-| v0.4.3 | n8n best practices compliance — JSDoc comments, TypeScript type improvements |
-| v0.4.2 | GitHub Actions CI/CD pipeline; CONTRIBUTING.md added |
-| v0.4.1 | Package metadata improvements; .npmignore added |
-| v0.4.0 | Documentation update — complete changelog backfill |
-| v0.3.9 | 429 rate limit retry (exponential backoff); Kling 3.0 model + sound fields |
-| v0.3.8 | Model ID fix — Sora2Pro, Google, ZImage |
-| v0.3.7 | Model ID fix — Seedream, Seedance, Hailuo, Wan, Kling |
-| v0.3.6 | UX polish — placeholder text and field descriptions across all nodes |
-| v0.3.5 | Bug fix — Wan, Runway model IDs corrected |
-| v0.3.4 | Fix Veo model names; fix ElevenLabs TTS model ID; add `quality` to Runway |
-| v0.3.3 | Seed for Flux/Ideogram/Recraft; steps for Flux |
-| v0.3.0–v0.3.2 | Model-specific optional params gaps filled across all nodes |
-| v0.2.9 | Added seed, endImageUrl, replyUrl, replyRef, captchaToken to all nodes |
-| v0.2.0–v0.2.8 | Full 21-node release + Kling 3.0, ElevenLabs V3, Qwen 2.0, Veo 3.1 |
-| v0.1.0 | Initial release — Sora 2 Pro, Seedream, GPT-image-1.5, ElevenLabs |
+See [CHANGELOG.md](./CHANGELOG.md) for the full history.
+
+| Version | Highlights |
+|---------|-----------|
+| **v0.13.0** | ✨ NEW: Claude node (Opus 4.6, Sonnet 4.6, Haiku 4.5), OpenAI Chat (GPT-5.2, Codex), Midjourney (Niji 7); Suno V5.5 + Sounds + Mashup operations; Grok multi-image support; auto-publish CI |
+| **v0.12.2** | Fix Kling 3.0 `multi_shots cannot be empty` 422 — different API schema from v2.x now fully handled |
+| **v0.12.1** | Fix Kling 3.0 `mode` field always required — fixes 500 error |
+| **v0.12.0** | ✨ NEW: Gemini node (2.5 Flash/Pro, 3 Pro, 3.1 Pro) with multimodal + Google Search |
+| **v0.11.0** | Deep audit: `negativePrompt`, `seed`, `numOutputs` added across 9 nodes (Hailuo, GrokImagine, Kling, Seedream, Wan, Seedance, Google, Ideogram, Flux) |
+| **v0.10.0–v0.10.4** | GrokImagine aspect_ratio fix; Kling mode/sound fix; InfineTalk registration; Suno model format fix |
+| v0.5.6 | Model ID audit; published as `n8n-nodes-kie-pro` |
+| v0.4.5 | 36 API snake_case naming bugs fixed across 11 nodes |
+| v0.4.0 | Kling 3.0 support; 429 retry with exponential backoff |
+| v0.1.0 | Initial release — 21 nodes |
 
 ---
 
