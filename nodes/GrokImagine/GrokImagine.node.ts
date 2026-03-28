@@ -144,6 +144,54 @@ export class GrokImagine implements INodeType {
 				description: 'Aspect ratio for the generated image (required by Grok Imagine API)',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated image',
+			},
+			{
+				displayName: 'Seed',
+				name: 'seed',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'textToVideo', 'imageToVideo'],
+					},
+				},
+				default: 0,
+				description: 'Seed for reproducibility (0 = random)',
+			},
+			{
+				displayName: 'Reply URL',
+				name: 'replyUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'textToVideo', 'imageToVideo', 'upscale', 'extend'],
+					},
+				},
+				default: '',
+				description: 'Webhook URL to call when the task completes',
+			},
+			{
+				displayName: 'Reply Ref',
+				name: 'replyRef',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageToImage', 'textToVideo', 'imageToVideo', 'upscale', 'extend'],
+					},
+				},
+				default: '',
+				description: 'Custom reference string passed back in the webhook callback',
+			},
+			{
 				displayName: 'Wait for Completion',
 				name: 'waitForCompletion',
 				type: 'boolean',
@@ -207,7 +255,20 @@ export class GrokImagine implements INodeType {
 						input.task_id = this.getNodeParameter('extendTaskId', i) as string;
 					}
 
+					if (['textToImage', 'imageToImage'].includes(operation)) {
+						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negativePrompt) input.negative_prompt = negativePrompt;
+					}
+					if (!['upscale', 'extend'].includes(operation)) {
+						const seed = this.getNodeParameter('seed', i, 0) as number;
+						if (seed) input.seed = seed;
+					}
+
 					const body: IDataObject = { model: modelMap[operation], input };
+					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
+					if (replyUrl) body.replyUrl = replyUrl;
+					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
+					if (replyRef) body.replyRef = replyRef;
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 

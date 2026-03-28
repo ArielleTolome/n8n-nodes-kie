@@ -124,6 +124,51 @@ export class Hailuo implements INodeType {
 				description: 'Optional end/last frame image URL for image-to-video',
 			},
 			{
+				displayName: 'Aspect Ratio',
+				name: 'ratio',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: '16:9', value: '16:9' },
+					{ name: '9:16', value: '9:16' },
+					{ name: '1:1', value: '1:1' },
+				],
+				default: '16:9',
+				description: 'Video aspect ratio',
+			},
+			{
+				displayName: 'Duration (Seconds)',
+				name: 'duration',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: '5 Seconds', value: '5' },
+					{ name: '10 Seconds', value: '10' },
+				],
+				default: '5',
+				description: 'Video duration',
+			},
+			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated video',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -210,6 +255,12 @@ export class Hailuo implements INodeType {
 						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
 						if (endImageUrl) input.end_image_url = endImageUrl;
 					}
+					const ratio = this.getNodeParameter('ratio', i, '16:9') as string;
+					if (ratio) input.ratio = ratio;
+					const duration = this.getNodeParameter('duration', i, '5') as string;
+					if (duration) input.duration = duration;
+					const negPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+					if (negPrompt) input.negative_prompt = negPrompt;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 

@@ -270,6 +270,18 @@ export class Kling implements INodeType {
 				description: 'Set to 0 for random seed',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated video',
+			},
+			{
 				displayName: 'Tail Frame URL',
 				name: 'tailImageUrl',
 				type: 'string',
@@ -507,6 +519,8 @@ export class Kling implements INodeType {
 						if (genMode && genMode !== 'std') input.mode = genMode;
 						const enableSound = this.getNodeParameter('enableSound', i, false) as boolean;
 						if (enableSound) input.enable_sound = true;
+						const negPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negPrompt) input.negative_prompt = negPrompt;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
 						input.image_url = this.getNodeParameter('imageUrl', i) as string;
@@ -523,6 +537,8 @@ export class Kling implements INodeType {
 						if (i2vGenMode && i2vGenMode !== 'std') input.mode = i2vGenMode;
 						const i2vEnableSound = this.getNodeParameter('enableSound', i, false) as boolean;
 						if (i2vEnableSound) input.enable_sound = true;
+						const i2vNegPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (i2vNegPrompt) input.negative_prompt = i2vNegPrompt;
 					} else if (operation === 'aiAvatar') {
 						model = this.getNodeParameter('modelAvatar', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;

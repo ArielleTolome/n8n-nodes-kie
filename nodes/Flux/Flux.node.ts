@@ -158,6 +158,18 @@ export class Flux implements INodeType {
 				default: 'jpeg',
 			},
 			{
+				displayName: 'Seed',
+				name: 'seedKontext',
+				type: 'number',
+				displayOptions: {
+					show: {
+						operation: ['kontext'],
+					},
+				},
+				default: 0,
+				description: 'Set to 0 for random seed',
+			},
+			{
 				displayName: 'Prompt Upsampling',
 				name: 'promptUpsampling',
 				type: 'boolean',
@@ -331,6 +343,8 @@ export class Flux implements INodeType {
 					if (promptUpsampling) body.promptUpsampling = true;
 					const kontextStrength = this.getNodeParameter('strength', i, 0) as number;
 					if (kontextStrength > 0) body.strength = kontextStrength;
+					const seedKontext = this.getNodeParameter('seedKontext', i, 0) as number;
+					if (seedKontext) body.seed = seedKontext;
 
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
 					if (replyUrl) body.replyUrl = replyUrl;

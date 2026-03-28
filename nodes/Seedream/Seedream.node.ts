@@ -169,6 +169,31 @@ export class Seedream implements INodeType {
 				default: 'square_hd',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToImage', 'imageEdit'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated image',
+			},
+			{
+				displayName: 'Number of Images',
+				name: 'numOutputs',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 4 },
+				displayOptions: {
+					show: {
+						operation: ['textToImage'],
+					},
+				},
+				default: 1,
+				description: 'Number of images to generate (1-4)',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -261,6 +286,14 @@ export class Seedream implements INodeType {
 					input.prompt = this.getNodeParameter('prompt', i) as string;
 					if (operation !== 'imageToImage') {
 						input.image_size = this.getNodeParameter('imageSize', i) as string;
+					}
+					if (operation === 'textToImage' || operation === 'imageEdit') {
+						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negativePrompt) input.negative_prompt = negativePrompt;
+					}
+					if (operation === 'textToImage') {
+						const numOutputs = this.getNodeParameter('numOutputs', i, 1) as number;
+						if (numOutputs > 1) input.num_images = numOutputs;
 					}
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;

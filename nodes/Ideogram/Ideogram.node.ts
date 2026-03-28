@@ -260,6 +260,19 @@ export class Ideogram implements INodeType {
 				description: 'Optional color palette preset name or hex colors (e.g. "pastel", "#FF5733,#00FF00")',
 			},
 			{
+				displayName: 'Number of Images',
+				name: 'numOutputs',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 8 },
+				displayOptions: {
+					show: {
+						operation: ['generate'],
+					},
+				},
+				default: 1,
+				description: 'Number of images to generate (1-8)',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -404,6 +417,8 @@ export class Ideogram implements INodeType {
 						if (magicPromptOption) input.magic_prompt_option = magicPromptOption;
 						const colorPalette = this.getNodeParameter('colorPalette', i, '') as string;
 						if (colorPalette) input.color_palette = colorPalette;
+						const numOutputs = this.getNodeParameter('numOutputs', i, 1) as number;
+						if (numOutputs > 1) input.num_images = numOutputs;
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
 					}

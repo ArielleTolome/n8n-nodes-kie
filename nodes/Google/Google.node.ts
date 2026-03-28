@@ -161,12 +161,25 @@ export class Google implements INodeType {
 				description: 'Elements to avoid in the generated image',
 			},
 			{
+				displayName: 'Number of Images',
+				name: 'numOutputs',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 4 },
+				displayOptions: {
+					show: {
+						operation: ['generate'],
+					},
+				},
+				default: 1,
+				description: 'Number of images to generate (1-4)',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
 				displayOptions: {
 					show: {
-						operation: ['generate', 'edit'],
+						operation: ['generate', 'edit', 'imageToImage'],
 					},
 				},
 				default: 0,
@@ -268,6 +281,10 @@ export class Google implements INodeType {
 					if (operation === 'generate' || operation === 'edit') {
 						const negativePrompt = this.getNodeParameter('negativePrompt', i, '') as string;
 						if (negativePrompt) input.negative_prompt = negativePrompt;
+					}
+					if (operation === 'generate') {
+						const numOutputs = this.getNodeParameter('numOutputs', i, 1) as number;
+						if (numOutputs > 1) input.num_images = numOutputs;
 					}
 
 					const body: IDataObject = { model, input };

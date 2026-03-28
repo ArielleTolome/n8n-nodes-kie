@@ -254,6 +254,18 @@ export class Wan implements INodeType {
 				default: 5,
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo', 'videoToVideo'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated video',
+			},
+			{
 				displayName: 'Seed',
 				name: 'seed',
 				type: 'number',
@@ -349,6 +361,8 @@ export class Wan implements INodeType {
 						input.duration = String(this.getNodeParameter('duration', i));
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
+						const negPromptT2V = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negPromptT2V) input.negative_prompt = negPromptT2V;
 					} else if (operation === 'imageToVideo') {
 						model = this.getNodeParameter('modelI2V', i) as string;
 						const imageUrl = this.getNodeParameter('imageUrl', i) as string;
@@ -365,6 +379,8 @@ export class Wan implements INodeType {
 						if (seed) input.seed = seed;
 						const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
 						if (endImageUrl) input.end_image_url = endImageUrl;
+						const negPromptI2V = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negPromptI2V) input.negative_prompt = negPromptI2V;
 					} else if (operation === 'videoToVideo') {
 						model = this.getNodeParameter('modelV2V', i) as string;
 						input.video_urls = [this.getNodeParameter('videoUrl', i) as string];
@@ -374,6 +390,8 @@ export class Wan implements INodeType {
 						input.duration = String(this.getNodeParameter('duration', i));
 						const seed = this.getNodeParameter('seed', i, 0) as number;
 						if (seed) input.seed = seed;
+						const negPromptV2V = this.getNodeParameter('negativePrompt', i, '') as string;
+						if (negPromptV2V) input.negative_prompt = negPromptV2V;
 					} else if (operation === 'speechToVideo') {
 						model = 'wan/2-2-a14b-speech-to-video-turbo';
 						input.audio_url = this.getNodeParameter('audioUrl', i) as string;

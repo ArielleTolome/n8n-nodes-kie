@@ -199,12 +199,24 @@ export class Seedance implements INodeType {
 				description: 'Custom reference passed in webhook callback',
 			},
 			{
+				displayName: 'Negative Prompt',
+				name: 'negativePrompt',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: '',
+				description: 'Elements to avoid in the generated video',
+			},
+			{
 				displayName: 'Captcha Token',
 				name: 'captchaToken',
 				type: 'string',
 				displayOptions: {
 					show: {
-						operation: ['imageToVideo'],
+						operation: ['textToVideo', 'imageToVideo'],
 					},
 				},
 				default: '',
@@ -259,12 +271,16 @@ export class Seedance implements INodeType {
 
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
+					const t2vNegPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+					if (t2vNegPrompt) input.negative_prompt = t2vNegPrompt;
 
 					const body: IDataObject = { model, input };
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
 					if (replyUrl) body.replyUrl = replyUrl;
 					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
 					if (replyRef) body.replyRef = replyRef;
+					const t2vCaptchaToken = this.getNodeParameter('captchaToken', i, '') as string;
+					if (t2vCaptchaToken) body.captchaToken = t2vCaptchaToken;
 					const response = await kieRequest(this, 'POST', '/api/v1/jobs/createTask', body);
 					const waitFlag = this.getNodeParameter('waitForCompletion', i) as boolean;
 
@@ -292,6 +308,8 @@ export class Seedance implements INodeType {
 
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
+					const i2vNegPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
+					if (i2vNegPrompt) input.negative_prompt = i2vNegPrompt;
 
 					const body: IDataObject = { model, input };
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
