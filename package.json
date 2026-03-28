@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-kie-pro",
-  "version": "0.11.0",
-  "description": "n8n community nodes for Kie.ai — 22 AI model nodes: Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 02, Runway Gen4, Seedream, Seedance, Qwen, Google Imagen4, Nano Banana, GPT-Image-1.5, Grok Imagine, Ideogram v3, Recraft, Topaz, ElevenLabs, Suno, ZImage, InfineTalk — image generation, video generation, audio, music, upscaling",
+  "version": "0.12.0",
+  "description": "n8n community nodes for Kie.ai — 23 AI model nodes: Flux-2 Pro, Flux Kontext, Sora 2, Kling 3.0, Veo3, Wan 2.6, Hailuo 2.3, Runway Gen4, Seedream 5, Seedance 1.5 Pro, Qwen, Google Imagen4, Nano Banana, GPT-Image-1.5, Grok Imagine (w/ video), Ideogram v3, Recraft, Topaz, ElevenLabs, Suno, ZImage, InfineTalk, Gemini 2.5/3 — image generation, video generation, audio, music, upscaling, LLM chat",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
@@ -142,7 +142,8 @@
       "dist/nodes/Veo/Veo.node.js",
       "dist/nodes/Suno/Suno.node.js",
       "dist/nodes/ElevenLabs/ElevenLabs.node.js",
-      "dist/nodes/InfineTalk/InfineTalk.node.js"
+      "dist/nodes/InfineTalk/InfineTalk.node.js",
+      "dist/nodes/Gemini/Gemini.node.js"
     ],
     "credentials": [
       "dist/credentials/KieApi.credentials.js"
