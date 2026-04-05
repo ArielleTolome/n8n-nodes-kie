@@ -172,6 +172,68 @@ export class GrokImagine implements INodeType {
 				description: 'Aspect ratio for the generated image (required by Grok Imagine API)',
 			},
 			{
+				displayName: 'Video Aspect Ratio',
+				name: 'videoAspectRatio',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: '16:9', value: '16:9' },
+					{ name: '9:16', value: '9:16' },
+					{ name: '1:1', value: '1:1' },
+					{ name: '3:2', value: '3:2' },
+					{ name: '2:3', value: '2:3' },
+				],
+				default: '16:9',
+			},
+			{
+				displayName: 'Mode',
+				name: 'mode',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: 'Normal', value: 'normal' },
+					{ name: 'Fun', value: 'fun' },
+					{ name: 'Spicy', value: 'spicy' },
+				],
+				default: 'normal',
+			},
+			{
+				displayName: 'Duration (Seconds)',
+				name: 'duration',
+				type: 'number',
+				typeOptions: { minValue: 6, maxValue: 30, numberStepSize: 1 },
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: 6,
+				description: 'Video duration from 6 to 30 seconds',
+			},
+			{
+				displayName: 'Resolution',
+				name: 'resolution',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: '480p', value: '480p' },
+					{ name: '720p', value: '720p' },
+				],
+				default: '480p',
+			},
+			{
 				displayName: 'Negative Prompt',
 				name: 'negativePrompt',
 				type: 'string',
@@ -272,6 +334,12 @@ export class GrokImagine implements INodeType {
 					}
 					if (['textToImage', 'imageToImage'].includes(operation)) {
 						input.aspect_ratio = (this.getNodeParameter('aspectRatio', i) as string) || '1:1';
+					}
+					if (['textToVideo', 'imageToVideo'].includes(operation)) {
+						input.aspect_ratio = this.getNodeParameter('videoAspectRatio', i, '16:9') as string;
+						input.mode = this.getNodeParameter('mode', i, 'normal') as string;
+						input.duration = String(this.getNodeParameter('duration', i, 6) as number);
+						input.resolution = this.getNodeParameter('resolution', i, '480p') as string;
 					}
 					if (operation === 'imageToImage') {
 						const primaryUrl = this.getNodeParameter('imageUrl', i, '') as string;

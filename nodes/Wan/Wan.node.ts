@@ -65,6 +65,12 @@ export class Wan implements INodeType {
 						action: 'Animate',
 					},
 					{
+						name: 'Image',
+						value: 'image',
+						description: 'Generate or edit images with Wan 2.7 Image models',
+						action: 'Generate image',
+					},
+					{
 						name: 'Query Task Status',
 						value: 'queryTaskStatus',
 						description: 'Check the status of a generation task',
@@ -136,6 +142,165 @@ export class Wan implements INodeType {
 					{ name: 'Animate Replace', value: 'wan/2-2-animate-replace' },
 				],
 				default: 'wan/2-2-animate-move',
+			},
+			{
+				displayName: 'Model',
+				name: 'modelImage',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				options: [
+					{ name: 'Wan 2.7 Image', value: 'wan/2-7-image' },
+					{ name: 'Wan 2.7 Image Pro', value: 'wan/2-7-image-pro' },
+				],
+				default: 'wan/2-7-image',
+			},
+			{
+				displayName: 'Prompt',
+				name: 'imagePrompt',
+				type: 'string',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: '',
+				description: 'Prompt for image generation or editing',
+			},
+			{
+				displayName: 'Input Image URL',
+				name: 'inputImageUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: '',
+				placeholder: 'https://...',
+				description: 'Optional source image URL. When set, Wan 2.7 performs image editing instead of pure generation.',
+			},
+			{
+				displayName: 'Additional Input Image URLs',
+				name: 'additionalInputImageUrls',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: {},
+				placeholder: 'Add Input Image URL',
+				options: [
+					{
+						displayName: 'Image',
+						name: 'image',
+						values: [{ displayName: 'URL', name: 'url', type: 'string', default: '' }],
+					},
+				],
+				description: 'Optional extra edit/reference images. Wan 2.7 supports up to 9 input URLs.',
+			},
+			{
+				displayName: 'Aspect Ratio',
+				name: 'imageAspectRatio',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				options: [
+					{ name: '1:1', value: '1:1' },
+					{ name: '16:9', value: '16:9' },
+					{ name: '4:3', value: '4:3' },
+					{ name: '21:9', value: '21:9' },
+					{ name: '3:4', value: '3:4' },
+					{ name: '9:16', value: '9:16' },
+					{ name: '8:1', value: '8:1' },
+					{ name: '1:8', value: '1:8' },
+				],
+				default: '1:1',
+				description: 'Used for text-to-image generation. Kie hides this server-side when input images are provided.',
+			},
+			{
+				displayName: 'Number of Images',
+				name: 'imageCount',
+				type: 'number',
+				typeOptions: { minValue: 1, maxValue: 12, numberStepSize: 1 },
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: 4,
+				description: '1-4 in standard mode, 1-12 when sequential mode is enabled',
+			},
+			{
+				displayName: 'Sequential Mode',
+				name: 'enableSequential',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: false,
+			},
+			{
+				displayName: 'Resolution',
+				name: 'imageResolution',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				options: [
+					{ name: '1K', value: '1K' },
+					{ name: '2K', value: '2K' },
+					{ name: '4K', value: '4K' },
+				],
+				default: '2K',
+			},
+			{
+				displayName: 'Thinking Mode',
+				name: 'thinkingMode',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: false,
+				description: 'Only applies when sequential mode is disabled and no input images are provided',
+			},
+			{
+				displayName: 'Watermark',
+				name: 'imageWatermark',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: false,
+			},
+			{
+				displayName: 'Seed',
+				name: 'imageSeed',
+				type: 'number',
+				typeOptions: { minValue: 0, maxValue: 2147483647, numberStepSize: 1 },
+				displayOptions: {
+					show: {
+						operation: ['image'],
+					},
+				},
+				default: 0,
 			},
 			{
 				displayName: 'Prompt',
@@ -354,7 +519,26 @@ export class Wan implements INodeType {
 					let model = '';
 					const input: IDataObject = {};
 
-					if (operation === 'textToVideo') {
+					if (operation === 'image') {
+						model = this.getNodeParameter('modelImage', i) as string;
+						input.prompt = this.getNodeParameter('imagePrompt', i) as string;
+						input.aspect_ratio = this.getNodeParameter('imageAspectRatio', i, '1:1') as string;
+						input.enable_sequential = this.getNodeParameter('enableSequential', i, false) as boolean;
+						input.n = this.getNodeParameter('imageCount', i, 4) as number;
+						input.resolution = this.getNodeParameter('imageResolution', i, '2K') as string;
+						input.thinking_mode = this.getNodeParameter('thinkingMode', i, false) as boolean;
+						input.watermark = this.getNodeParameter('imageWatermark', i, false) as boolean;
+						const imageSeed = this.getNodeParameter('imageSeed', i, 0) as number;
+						if (imageSeed) input.seed = imageSeed;
+
+						const primaryUrl = this.getNodeParameter('inputImageUrl', i, '') as string;
+						const additionalCollection = this.getNodeParameter('additionalInputImageUrls', i, {}) as IDataObject;
+						const additionalUrls = ((additionalCollection.image as IDataObject[]) || [])
+							.map((img) => img.url as string)
+							.filter((url) => url && url.trim() !== '');
+						const allInputUrls = primaryUrl ? [primaryUrl, ...additionalUrls] : additionalUrls;
+						if (allInputUrls.length) input.input_urls = allInputUrls.slice(0, 9);
+					} else if (operation === 'textToVideo') {
 						model = this.getNodeParameter('model', i) as string;
 						input.prompt = this.getNodeParameter('prompt', i) as string;
 						input.ratio = this.getNodeParameter('ratio', i) as string;

@@ -66,11 +66,13 @@ export class Seedance implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Seedance 2.0', value: 'bytedance/seedance-2' },
+					{ name: 'Seedance 2.0 Fast', value: 'bytedance/seedance-2-fast' },
 					{ name: 'Seedance 1.5 Pro', value: 'bytedance/seedance-1.5-pro' },
 					{ name: 'Bytedance V1 Pro', value: 'bytedance/v1-pro-text-to-video' },
 					{ name: 'Bytedance V1 Lite', value: 'bytedance/v1-lite-text-to-video' },
 				],
-				default: 'bytedance/seedance-1.5-pro',
+				default: 'bytedance/seedance-2',
 				description: 'Model to use for text-to-video generation',
 			},
 			{
@@ -122,13 +124,73 @@ export class Seedance implements INodeType {
 					},
 				},
 				options: [
+					{ name: 'Seedance 2.0', value: 'bytedance/seedance-2' },
+					{ name: 'Seedance 2.0 Fast', value: 'bytedance/seedance-2-fast' },
 					{ name: 'Seedance 1.5 Pro', value: 'bytedance/seedance-1.5-pro' },
 					{ name: 'Bytedance V1 Pro', value: 'bytedance/v1-pro-image-to-video' },
 					{ name: 'Bytedance V1 Pro Fast', value: 'bytedance/v1-pro-fast-image-to-video' },
 					{ name: 'Bytedance V1 Lite', value: 'bytedance/v1-lite-image-to-video' },
 				],
-				default: 'bytedance/seedance-1.5-pro',
+				default: 'bytedance/seedance-2',
 				description: 'Model to use for image-to-video generation',
+			},
+			{
+				displayName: 'Last Frame URL',
+				name: 'lastFrameUrl',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['imageToVideo'],
+						model: ['bytedance/seedance-2', 'bytedance/seedance-2-fast'],
+					},
+				},
+				default: '',
+				description: 'Optional last frame URL for Seedance 2.0 image-to-video',
+			},
+			{
+				displayName: 'Reference Image URLs',
+				name: 'referenceImageUrls',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: {},
+				placeholder: 'Add Reference Image URL',
+				options: [{ displayName: 'Image', name: 'image', values: [{ displayName: 'URL', name: 'url', type: 'string', default: '' }] }],
+				description: 'Optional Seedance 2.0 multimodal reference images (up to 9)',
+			},
+			{
+				displayName: 'Reference Video URLs',
+				name: 'referenceVideoUrls',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: {},
+				placeholder: 'Add Reference Video URL',
+				options: [{ displayName: 'Video', name: 'video', values: [{ displayName: 'URL', name: 'url', type: 'string', default: '' }] }],
+				description: 'Optional Seedance 2.0 reference videos (up to 3)',
+			},
+			{
+				displayName: 'Reference Audio URLs',
+				name: 'referenceAudioUrls',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: {},
+				placeholder: 'Add Reference Audio URL',
+				options: [{ displayName: 'Audio', name: 'audio', values: [{ displayName: 'URL', name: 'url', type: 'string', default: '' }] }],
+				description: 'Optional Seedance 2.0 reference audio clips (up to 3)',
 			},
 			{
 				displayName: 'Duration',
@@ -142,6 +204,8 @@ export class Seedance implements INodeType {
 				options: [
 					{ name: '4 Seconds', value: '4' },
 					{ name: '8 Seconds', value: '8' },
+					{ name: '12 Seconds', value: '12' },
+					{ name: '15 Seconds', value: '15' },
 				],
 				default: '8',
 			},
@@ -158,8 +222,60 @@ export class Seedance implements INodeType {
 					{ name: '16:9', value: '16:9' },
 					{ name: '9:16', value: '9:16' },
 					{ name: '1:1', value: '1:1' },
+					{ name: '4:3', value: '4:3' },
+					{ name: '3:4', value: '3:4' },
+					{ name: '21:9', value: '21:9' },
+					{ name: 'Adaptive', value: 'adaptive' },
 				],
 				default: '16:9',
+			},
+			{
+				displayName: 'Resolution',
+				name: 'resolution',
+				type: 'options',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				options: [
+					{ name: '480p', value: '480p' },
+					{ name: '720p', value: '720p' },
+				],
+				default: '720p',
+			},
+			{
+				displayName: 'Generate Audio',
+				name: 'generateAudio',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: true,
+			},
+			{
+				displayName: 'Return Last Frame',
+				name: 'returnLastFrame',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: false,
+			},
+			{
+				displayName: 'Web Search',
+				name: 'webSearch',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						operation: ['textToVideo', 'imageToVideo'],
+					},
+				},
+				default: false,
 			},
 			{
 				displayName: 'Seed',
@@ -260,19 +376,36 @@ export class Seedance implements INodeType {
 					const taskId = this.getNodeParameter('taskId', i) as string;
 					returnData.push(await kieQueryTask(this, taskId));
 				} else if (operation === 'textToVideo') {
-					// Seedance 2.0 model ID: 'bytedance/seedance-2.0-pro' (Coming Soon — activate when live)
-					const model = this.getNodeParameter('modelT2V', i, 'bytedance/seedance-1.5-pro') as string;
+					const model = this.getNodeParameter('modelT2V', i, 'bytedance/seedance-2') as string;
+					const isSeedance2 = ['bytedance/seedance-2', 'bytedance/seedance-2-fast'].includes(model);
 
 					const input: IDataObject = {
 						prompt: this.getNodeParameter('prompt', i) as string,
 						duration: this.getNodeParameter('duration', i) as string,
 						aspect_ratio: this.getNodeParameter('ratio', i) as string,
 					};
+					if (isSeedance2) {
+						input.resolution = this.getNodeParameter('resolution', i, '720p') as string;
+						input.generate_audio = this.getNodeParameter('generateAudio', i, true) as boolean;
+						input.return_last_frame = this.getNodeParameter('returnLastFrame', i, false) as boolean;
+						input.web_search = this.getNodeParameter('webSearch', i, false) as boolean;
+					}
 
 					const seed = this.getNodeParameter('seed', i, 0) as number;
 					if (seed) input.seed = seed;
 					const t2vNegPrompt = this.getNodeParameter('negativePrompt', i, '') as string;
 					if (t2vNegPrompt) input.negative_prompt = t2vNegPrompt;
+					if (isSeedance2) {
+						const referenceImages = (this.getNodeParameter('referenceImageUrls', i, {}) as IDataObject).image as IDataObject[] | undefined;
+						const referenceVideos = (this.getNodeParameter('referenceVideoUrls', i, {}) as IDataObject).video as IDataObject[] | undefined;
+						const referenceAudios = (this.getNodeParameter('referenceAudioUrls', i, {}) as IDataObject).audio as IDataObject[] | undefined;
+						const imageUrls = (referenceImages || []).map((entry) => entry.url as string).filter(Boolean).slice(0, 9);
+						const videoUrls = (referenceVideos || []).map((entry) => entry.url as string).filter(Boolean).slice(0, 3);
+						const audioUrls = (referenceAudios || []).map((entry) => entry.url as string).filter(Boolean).slice(0, 3);
+						if (imageUrls.length) input.reference_image_urls = imageUrls;
+						if (videoUrls.length) input.reference_video_urls = videoUrls;
+						if (audioUrls.length) input.reference_audio_urls = audioUrls;
+					}
 
 					const body: IDataObject = { model, input };
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
@@ -296,12 +429,33 @@ export class Seedance implements INodeType {
 					}
 				} else if (operation === 'imageToVideo') {
 					const model = this.getNodeParameter('model', i) as string;
+					const isSeedance2 = ['bytedance/seedance-2', 'bytedance/seedance-2-fast'].includes(model);
 
 					const input: IDataObject = {
-						image_url: this.getNodeParameter('imageUrl', i) as string,
 						duration: this.getNodeParameter('duration', i) as string,
 						aspect_ratio: this.getNodeParameter('ratio', i) as string,
 					};
+					const imageUrl = this.getNodeParameter('imageUrl', i) as string;
+					if (isSeedance2) {
+						input.first_frame_url = imageUrl;
+						input.resolution = this.getNodeParameter('resolution', i, '720p') as string;
+						input.generate_audio = this.getNodeParameter('generateAudio', i, true) as boolean;
+						input.return_last_frame = this.getNodeParameter('returnLastFrame', i, false) as boolean;
+						input.web_search = this.getNodeParameter('webSearch', i, false) as boolean;
+						const lastFrameUrl = this.getNodeParameter('lastFrameUrl', i, '') as string;
+						if (lastFrameUrl) input.last_frame_url = lastFrameUrl;
+						const referenceImages = (this.getNodeParameter('referenceImageUrls', i, {}) as IDataObject).image as IDataObject[] | undefined;
+						const referenceVideos = (this.getNodeParameter('referenceVideoUrls', i, {}) as IDataObject).video as IDataObject[] | undefined;
+						const referenceAudios = (this.getNodeParameter('referenceAudioUrls', i, {}) as IDataObject).audio as IDataObject[] | undefined;
+						const imageUrls = (referenceImages || []).map((entry) => entry.url as string).filter(Boolean).slice(0, 9);
+						const videoUrls = (referenceVideos || []).map((entry) => entry.url as string).filter(Boolean).slice(0, 3);
+						const audioUrls = (referenceAudios || []).map((entry) => entry.url as string).filter(Boolean).slice(0, 3);
+						if (imageUrls.length) input.reference_image_urls = imageUrls;
+						if (videoUrls.length) input.reference_video_urls = videoUrls;
+						if (audioUrls.length) input.reference_audio_urls = audioUrls;
+					} else {
+						input.image_url = imageUrl;
+					}
 
 					const prompt = this.getNodeParameter('prompt', i, '') as string;
 					if (prompt) input.prompt = prompt;

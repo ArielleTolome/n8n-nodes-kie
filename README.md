@@ -92,12 +92,14 @@ Key parameters:
 #### Seedance
 Operations: Text-to-Video, Image-to-Video, Query Task Status
 
-Models: `bytedance/seedance-1.5-pro`, `bytedance/v1-pro-text-to-video`, `bytedance/v1-lite-text-to-video`, `bytedance/v1-pro-image-to-video`, `bytedance/v1-lite-image-to-video`, `bytedance/v1-pro-fast-image-to-video`
+Models: `bytedance/seedance-2`, `bytedance/seedance-2-fast`, `bytedance/seedance-1.5-pro`, `bytedance/v1-pro-text-to-video`, `bytedance/v1-lite-text-to-video`, `bytedance/v1-pro-image-to-video`, `bytedance/v1-lite-image-to-video`, `bytedance/v1-pro-fast-image-to-video`
 
 Key parameters:
 - `prompt`, `imageUrl`
-- `model`, `ratio`, `duration` (5 or 10s)
-- `seed`, `endImageUrl`, `replyUrl`, `replyRef`, `captchaToken`
+- `model`, `ratio`, `duration` (4/8/12/15s)
+- `seed`, `lastFrameUrl`, `resolution`, `generateAudio`, `returnLastFrame`, `webSearch`
+- `referenceImageUrls`, `referenceVideoUrls`, `referenceAudioUrls`
+- `replyUrl`, `replyRef`, `captchaToken`
 - `waitForCompletion`
 
 ---
@@ -105,22 +107,23 @@ Key parameters:
 #### Veo
 Operations: Generate, Extend, Get 1080p Video, Get 4K Video, Query Task Status
 
-Models: `veo3` (Veo 3 Standard), `veo3_fast` (Veo 3 Fast)
+Models: `veo3` (Veo 3.1 Quality), `veo3_fast` (Veo 3.1 Fast), `veo3_lite` (Veo 3.1 Lite)
 
 Key parameters:
-- `prompt`, `model` — `veo3` or `veo3_fast`
+- `prompt`, `model` — `veo3`, `veo3_fast`, or `veo3_lite`
 - `imageUrl` — source image for I2V
 - `referenceUrls` — multiple reference images
 - `endImageUrl` — end frame
-- `ratio` — aspect ratio
+- `ratio` — `16:9`, `9:16`, or `Auto`
+- `generationType` — auto, first/last frame, or reference-to-video
 - `duration` — 5 or 8 seconds
-- `seed`, `replyUrl`, `replyRef`
+- `seed`, `watermark`, `replyUrl`, `replyRef`
 - `waitForCompletion`
 
 ---
 
 #### Wan
-Operations: Text-to-Video, Image-to-Video, Video-to-Video, Speech-to-Video, Animate, Query Task Status
+Operations: Text-to-Video, Image-to-Video, Video-to-Video, Speech-to-Video, Animate, Image, Query Task Status
 
 Models (T2V): `wan/2-6-text-to-video`, `wan/2-5-text-to-video`, `wan/2-2-a14b-text-to-video-turbo`
 
@@ -128,10 +131,14 @@ Models (I2V): `wan/2-6-image-to-video`, `wan/2-6-flash-image-to-video` ✨, `wan
 
 Models (V2V): `wan/2-6-video-to-video`, `wan/2-6-flash-video-to-video` ✨, `wan/2-2-animate-move`, `wan/2-2-animate-replace`
 
+Models (Image): `wan/2-7-image`, `wan/2-7-image-pro`
+
 Key parameters:
 - `prompt`, `imageUrl`, `videoUrl`
 - `model`, `ratio`, `duration`
 - `seed`, `endImageUrl`, `replyUrl`, `replyRef`, `captchaToken`
+- `imagePrompt`, `inputImageUrl`, `additionalInputImageUrls`
+- `imageCount`, `enableSequential`, `imageResolution`, `thinkingMode`, `imageWatermark`, `imageSeed`
 - `waitForCompletion`
 
 ---
@@ -174,7 +181,7 @@ Models: `grok-imagine/text-to-image`, `grok-imagine/image-to-image`, `grok-imagi
 
 Key parameters:
 - `prompt`, `imageUrl`
-- `aspectRatio`, `model`, `seed`
+- `aspectRatio`, `videoAspectRatio`, `mode`, `duration`, `resolution`, `seed`
 - `outputFormat` — JPEG or PNG
 - `replyUrl`, `replyRef`
 - `waitForCompletion`

@@ -6,6 +6,20 @@ Format: [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [0.14.0] - 2026-04-05
+
+### Added
+- **Seedance**: Added `bytedance/seedance-2` and `bytedance/seedance-2-fast` for both text-to-video and image-to-video
+- **Seedance**: Added Seedance 2.0 fields for multimodal references (`referenceImageUrls`, `referenceVideoUrls`, `referenceAudioUrls`), `lastFrameUrl`, `resolution`, `generateAudio`, `returnLastFrame`, and `webSearch`
+- **Veo**: Added `veo3_lite` (Veo 3.1 Lite) model option
+- **Veo**: Added explicit `generationType` selection and optional `watermark`
+- **Wan**: Added new `Image` operation for `wan/2-7-image` and `wan/2-7-image-pro`
+- **Wan**: Added Wan 2.7 image fields for optional editing inputs, `imageCount`, `enableSequential`, `imageResolution`, `thinkingMode`, `imageWatermark`, and `imageSeed`
+
+### Changed
+- **GrokImagine**: Video generation now exposes documented `duration` (6–30s), `mode`, `resolution`, and video `aspect_ratio`
+- **Seedance**: Expanded duration and aspect ratio options to better match newer Seedance 2.0 docs
+
 ## [0.13.0] - 2026-03-28
 
 ### Added

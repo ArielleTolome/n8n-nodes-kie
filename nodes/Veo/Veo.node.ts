@@ -52,6 +52,7 @@ export class Veo implements INodeType {
 				options: [
 					{ name: 'Veo 3.1 (Standard)', value: 'veo3' },
 					{ name: 'Veo 3.1 Fast', value: 'veo3_fast' },
+					{ name: 'Veo 3.1 Lite', value: 'veo3_lite' },
 				],
 				default: 'veo3',
 			},
@@ -115,9 +116,31 @@ export class Veo implements INodeType {
 				options: [
 					{ name: '16:9', value: '16:9' },
 					{ name: '9:16', value: '9:16' },
-					{ name: '1:1', value: '1:1' },
+					{ name: 'Auto', value: 'Auto' },
 				],
 				default: '16:9',
+			},
+			{
+				displayName: 'Generation Type',
+				name: 'generationType',
+				type: 'options',
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
+				options: [
+					{ name: 'Auto', value: '' },
+					{ name: 'Text to Video', value: 'TEXT_2_VIDEO' },
+					{ name: 'First and Last Frames to Video', value: 'FIRST_AND_LAST_FRAMES_2_VIDEO' },
+					{ name: 'Reference to Video', value: 'REFERENCE_2_VIDEO' },
+				],
+				default: '',
+				description: 'Optional explicit generation mode. Leave as Auto to let Kie infer it.',
+			},
+			{
+				displayName: 'Watermark',
+				name: 'watermark',
+				type: 'string',
+				displayOptions: { show: { operation: ['textToVideo', 'imageToVideo'] } },
+				default: '',
+				description: 'Optional watermark text',
 			},
 			{
 				displayName: 'Duration (Seconds)',
@@ -234,12 +257,15 @@ export class Veo implements INodeType {
 					const body: IDataObject = {
 						model: this.getNodeParameter('model', i) as string,
 						prompt: this.getNodeParameter('prompt', i) as string,
-						ratio: this.getNodeParameter('ratio', i) as string,
-						duration: this.getNodeParameter('duration', i) as number,
+						aspect_ratio: this.getNodeParameter('ratio', i) as string,
 						enableTranslation: this.getNodeParameter('enableTranslation', i) as boolean,
 					};
+					const generationType = this.getNodeParameter('generationType', i, '') as string;
+					if (generationType) body.generationType = generationType;
+					const watermark = this.getNodeParameter('watermark', i, '') as string;
+					if (watermark) body.watermark = watermark;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
-					if (seed) body.seed = seed;
+					if (seed) body.seeds = seed;
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
 					if (replyUrl) body.replyUrl = replyUrl;
 					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
@@ -262,10 +288,13 @@ export class Veo implements INodeType {
 					const body: IDataObject = {
 						model: this.getNodeParameter('model', i) as string,
 						prompt: this.getNodeParameter('prompt', i) as string,
-						ratio: this.getNodeParameter('ratio', i) as string,
-						duration: this.getNodeParameter('duration', i) as number,
+						aspect_ratio: this.getNodeParameter('ratio', i) as string,
 						enableTranslation: this.getNodeParameter('enableTranslation', i) as boolean,
 					};
+					const generationType = this.getNodeParameter('generationType', i, '') as string;
+					if (generationType) body.generationType = generationType;
+					const watermark = this.getNodeParameter('watermark', i, '') as string;
+					if (watermark) body.watermark = watermark;
 					const referenceCollection = this.getNodeParameter('referenceUrls', i, {}) as IDataObject;
 					const referenceUrls = ((referenceCollection.image as IDataObject[]) || [])
 						.map((img) => img.url as string)
@@ -279,7 +308,7 @@ export class Veo implements INodeType {
 					const endImageUrl = this.getNodeParameter('endImageUrl', i, '') as string;
 					if (endImageUrl) body.endImageUrl = endImageUrl;
 					const seed = this.getNodeParameter('seed', i, 0) as number;
-					if (seed) body.seed = seed;
+					if (seed) body.seeds = seed;
 					const replyUrl = this.getNodeParameter('replyUrl', i, '') as string;
 					if (replyUrl) body.replyUrl = replyUrl;
 					const replyRef = this.getNodeParameter('replyRef', i, '') as string;
